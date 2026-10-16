@@ -186,6 +186,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: RoadTile
       objectReference: {fileID: 0}
+    - target: {fileID: 2771879841038969137, guid: c44134367df9e7d438fe361d7d010eb1, type: 3}
+      propertyPath: m_DynamicOccludee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2771879841038969137, guid: c44134367df9e7d438fe361d7d010eb1, type: 3}
+      propertyPath: m_LightProbeUsage
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3003911268834767372, guid: c44134367df9e7d438fe361d7d010eb1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.5
@@ -306,7 +314,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6133746844832366647, guid: 997715802684b024192b1412fa0144e2, type: 3}
   m_PrefabInstance: {fileID: 4599766350070675843}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2918255526326043871
+--- !u!114 &6926769616841467031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
