@@ -8,18 +8,30 @@ public class Door : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.GetComponent<PlayerMovement>() != null)
+        {
             playerNear = true;
+        }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
         if (other.GetComponent<PlayerMovement>() != null)
+        {
             playerNear = false;
+        }
     }
 
     void Update()
     {
-        if (playerNear && Keyboard.current.eKey.wasPressedThisFrame)
+        var keyboard = Keyboard.current;
+
+        if (keyboard == null) return;
+        if (!playerNear) return;
+        if (InteractionState.IsInteracting) return;
+
+        if (keyboard.eKey.wasPressedThisFrame)
+        {
             Debug.Log("Masuk rumah!");
+        }
     }
 }
