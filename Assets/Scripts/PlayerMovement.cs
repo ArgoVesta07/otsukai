@@ -15,6 +15,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (InteractionState.IsInteracting)
+        {
+            input = Vector2.zero;
+            return;
+        }
+
         var k = Keyboard.current;
         if (k == null) return;
 
