@@ -9,9 +9,9 @@ public class NPC : MonoBehaviour
     QuestManager questManager;
 
     void Start()
-    {
-        questManager = FindAnyObjectByType<QuestManager>();
-    }
+{
+    questManager = QuestManager.Instance;
+}
 
     void OnTriggerEnter2D(Collider2D other)
     {

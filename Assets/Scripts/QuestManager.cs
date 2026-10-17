@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class QuestManager : MonoBehaviour
 {
+    public static QuestManager Instance;
+
     public enum QuestStatus
     {
         NotStarted,
@@ -16,6 +18,16 @@ public class QuestManager : MonoBehaviour
 
     void Awake()
     {
+        // kalau sudah ada QuestManager asli, buang salinan dari scene yang di-load ulang
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         inventory = GetComponent<InventoryManager>();
     }
 

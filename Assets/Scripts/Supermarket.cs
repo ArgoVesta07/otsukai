@@ -7,9 +7,9 @@ public class Supermarket : MonoBehaviour
     private QuestManager questManager;
 
     void Start()
-    {
-        questManager = FindAnyObjectByType<QuestManager>();
-    }
+{
+    questManager = QuestManager.Instance;
+}
 
     void OnTriggerEnter2D(Collider2D other)
     {
