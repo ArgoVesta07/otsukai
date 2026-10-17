@@ -3,7 +3,10 @@ using UnityEngine.InputSystem;
 
 public class Door : MonoBehaviour
 {
-    bool playerNear;
+    public string sceneToLoad;
+    public Vector3 spawnPosition;
+
+    private bool playerNear;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -23,15 +26,23 @@ public class Door : MonoBehaviour
 
     void Update()
     {
-        var keyboard = Keyboard.current;
-
-        if (keyboard == null) return;
+        if (Keyboard.current == null) return;
         if (!playerNear) return;
         if (InteractionState.IsInteracting) return;
 
-        if (keyboard.eKey.wasPressedThisFrame)
+        if (Keyboard.current.eKey.wasPressedThisFrame)
         {
-            Debug.Log("Masuk rumah!");
+            if (SceneTransition.Instance != null)
+            {
+                SceneTransition.Instance.GoToScene(
+                    sceneToLoad,
+                    spawnPosition
+                );
+            }
+            else
+            {
+                Debug.LogWarning("SceneTransitionManager tidak ditemukan!");
+            }
         }
     }
 }
