@@ -20,7 +20,7 @@ public class Supermarket : MonoBehaviour
         {
             playerNear = true;
             InteractionPrompt.Show(promptText, transform, promptOffset);
-            Debug.Log("You are near the supermarket.");
+            
         }
     }
 

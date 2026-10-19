@@ -1,13 +1,34 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+public enum DialogueStyle
+{
+    Box,      // bottom dialogue box, locks the player
+    Bubble    // speech bubble above the NPC, player can keep moving
+}
+
 public class NPC : MonoBehaviour
 {
-   public Vector2 promptOffset = new Vector2(0f, 1.2f);   // how far above the object
-    public string promptText = "[E] Talk";   // NEW: prompt text; can be changed in the Inspector
+    [Header("Name and prompt")]
+    public string npcName = "Mom";
+    public string promptText = "[E] Talk";
+
+    [Header("Dialogue lines, one set per quest state")]
+    [TextArea(2, 4)] public string[] linesNotStarted;
+    [TextArea(2, 4)] public string[] linesAccepted;
+    [TextArea(2, 4)] public string[] linesHasEggs;
+    [TextArea(2, 4)] public string[] linesCompleted;
+
+    [Header("Style per quest state")]
+    public DialogueStyle styleNotStarted = DialogueStyle.Box;
+    public DialogueStyle styleAccepted = DialogueStyle.Bubble;
+    public DialogueStyle styleHasEggs = DialogueStyle.Box;
+    public DialogueStyle styleCompleted = DialogueStyle.Bubble;
+    public float secondsPerBubbleLine = 3f;
 
     bool playerNear;
-    bool interactingWithMe;
+    bool inDialogue;     // bottom box is open (player locked)
+    bool bubbleActive;   // speech bubble is showing (player free)
 
     QuestManager questManager;
 
@@ -21,7 +42,9 @@ public class NPC : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = true;
-            InteractionPrompt.Show(promptText, transform, promptOffset);
+
+            if (!bubbleActive)
+                InteractionPrompt.Show(promptText, transform);
         }
     }
 
@@ -30,12 +53,20 @@ public class NPC : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = false;
-            InteractionPrompt.Hide();   // NEW
+            InteractionPrompt.Hide();
 
-            if (interactingWithMe)
+            if (bubbleActive)
             {
-                interactingWithMe = false;
+                bubbleActive = false;
+                SpeechBubble.Hide();
+            }
+
+            // Safety net: player left while the box was open (e.g. teleported)
+            if (inDialogue)
+            {
+                inDialogue = false;
                 InteractionState.IsInteracting = false;
+                DialogBox.Cancel();
             }
         }
     }
@@ -44,54 +75,108 @@ public class NPC : MonoBehaviour
     {
         var k = Keyboard.current;
         if (k == null) return;
-
         if (!k.eKey.wasPressedThisFrame) return;
+
+        if (inDialogue)
+        {
+            DialogBox.Next();
+            return;
+        }
+
         if (!playerNear) return;
 
-        if (interactingWithMe)
+        if (bubbleActive)
         {
-            interactingWithMe = false;
-            InteractionState.IsInteracting = false;
-
-            Debug.Log("Exited interaction mode");
+            SpeechBubble.Skip();
             return;
         }
 
         if (InteractionState.IsInteracting) return;
 
-        TalkToMom();
+        StartTalk();
     }
 
-    void TalkToMom()
+    void StartTalk()
     {
-        InteractionPrompt.Hide();   // NEW
-
         if (questManager == null)
         {
             Debug.LogWarning("QuestManager was not found!");
             return;
         }
 
+        InteractionPrompt.Hide();
+
+        string[] lines;
+        DialogueStyle style;
+        System.Action afterDialogue = null;   // quest action that runs once the dialogue ends
+
         switch (questManager.currentStatus)
         {
             case QuestManager.QuestStatus.NotStarted:
-                interactingWithMe = true;
-                InteractionState.IsInteracting = true;
-
-                questManager.AcceptQuest();
+                lines = linesNotStarted;
+                style = styleNotStarted;
+                afterDialogue = questManager.AcceptQuest;
                 break;
 
             case QuestManager.QuestStatus.Accepted:
-                Debug.Log("Mom: Don't forget to buy the eggs!");
+                lines = linesAccepted;
+                style = styleAccepted;
                 break;
 
             case QuestManager.QuestStatus.HasEggs:
-                questManager.CompleteQuest();
+                lines = linesHasEggs;
+                style = styleHasEggs;
+                afterDialogue = questManager.CompleteQuest;
                 break;
 
-            case QuestManager.QuestStatus.Completed:
-                Debug.Log("Mom: Thank you!");
+            default:
+                lines = linesCompleted;
+                style = styleCompleted;
                 break;
         }
+
+        // No text set in the Inspector: skip the dialogue and run the action right away
+        if (lines == null || lines.Length == 0)
+        {
+            afterDialogue?.Invoke();
+            return;
+        }
+
+        if (style == DialogueStyle.Bubble)
+            StartBubble(lines, afterDialogue);
+        else
+            StartBox(lines, afterDialogue);
+    }
+
+    void StartBox(string[] lines, System.Action afterDialogue)
+    {
+        inDialogue = true;
+        InteractionState.IsInteracting = true;   // locks the player's movement
+
+        DialogBox.Open(npcName, lines, () =>
+        {
+            inDialogue = false;
+            InteractionState.IsInteracting = false;
+
+            if (playerNear)
+                InteractionPrompt.Show(promptText, transform);
+
+            afterDialogue?.Invoke();
+        });
+    }
+
+    void StartBubble(string[] lines, System.Action afterDialogue)
+    {
+        bubbleActive = true;   // the player is NOT locked
+
+        SpeechBubble.Show(transform, lines, secondsPerBubbleLine, () =>
+        {
+            bubbleActive = false;
+
+            if (playerNear)
+                InteractionPrompt.Show(promptText, transform);
+
+            afterDialogue?.Invoke();
+        });
     }
 }
