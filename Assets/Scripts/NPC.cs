@@ -3,21 +3,25 @@ using UnityEngine.InputSystem;
 
 public class NPC : MonoBehaviour
 {
+   public Vector2 promptOffset = new Vector2(0f, 1.2f);   // seberapa jauh di atas objek
+    public string promptText = "[E] Bicara";   // BARU: teks prompt, bisa diganti di Inspector
+
     bool playerNear;
     bool interactingWithMe;
 
     QuestManager questManager;
 
     void Start()
-{
-    questManager = QuestManager.Instance;
-}
+    {
+        questManager = QuestManager.Instance;
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = true;
+            InteractionPrompt.Show(promptText, transform, promptOffset);
         }
     }
 
@@ -26,6 +30,7 @@ public class NPC : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = false;
+            InteractionPrompt.Hide();   // BARU
 
             if (interactingWithMe)
             {
@@ -43,8 +48,6 @@ public class NPC : MonoBehaviour
         if (!k.eKey.wasPressedThisFrame) return;
         if (!playerNear) return;
 
-        // Jika sedang mengunci gerakan saat menerima misi,
-        // tekan E lagi untuk keluar dari mode interaksi.
         if (interactingWithMe)
         {
             interactingWithMe = false;
@@ -54,8 +57,6 @@ public class NPC : MonoBehaviour
             return;
         }
 
-        // Jangan memulai interaksi jika player sedang
-        // terkunci oleh sistem interaksi lain.
         if (InteractionState.IsInteracting) return;
 
         TalkToMom();
@@ -63,6 +64,8 @@ public class NPC : MonoBehaviour
 
     void TalkToMom()
     {
+        InteractionPrompt.Hide();   // BARU
+
         if (questManager == null)
         {
             Debug.LogWarning("QuestManager tidak ditemukan!");
@@ -72,8 +75,6 @@ public class NPC : MonoBehaviour
         switch (questManager.currentStatus)
         {
             case QuestManager.QuestStatus.NotStarted:
-
-                // Kunci gerakan hanya ketika menerima misi pertama.
                 interactingWithMe = true;
                 InteractionState.IsInteracting = true;
 
@@ -81,21 +82,14 @@ public class NPC : MonoBehaviour
                 break;
 
             case QuestManager.QuestStatus.Accepted:
-
-                // Misi sedang berjalan, jadi tidak mengunci gerakan.
                 Debug.Log("Mom: Jangan lupa beli telurnya, ya!");
                 break;
 
             case QuestManager.QuestStatus.HasEggs:
-
-                // Player sudah membawa telur.
-                // Tidak mengunci gerakan saat menyerahkannya.
                 questManager.CompleteQuest();
                 break;
 
             case QuestManager.QuestStatus.Completed:
-
-                // Misi selesai, interaksi biasa.
                 Debug.Log("Mom: Terima kasih, ya!");
                 break;
         }

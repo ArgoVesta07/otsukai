@@ -5,6 +5,8 @@ public class Door : MonoBehaviour
 {
     public string sceneToLoad;
     public Vector3 spawnPosition;
+    public Vector2 promptOffset = new Vector2(0f, 1.2f); // seberapa jauh di atas objek
+    public string promptText = "[E] Masuk";   // BARU
 
     private bool playerNear;
 
@@ -13,6 +15,7 @@ public class Door : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = true;
+            InteractionPrompt.Show(promptText, transform, promptOffset);
         }
     }
 
@@ -21,6 +24,7 @@ public class Door : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = false;
+            InteractionPrompt.Hide();   // BARU
         }
     }
 
@@ -32,6 +36,8 @@ public class Door : MonoBehaviour
 
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
+            InteractionPrompt.Hide();   // BARU: wajib, lihat catatan di bawah
+
             if (SceneTransition.Instance != null)
             {
                 SceneTransition.Instance.GoToScene(
