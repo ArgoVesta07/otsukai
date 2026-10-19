@@ -4,26 +4,36 @@ using UnityEngine.InputSystem;
 public enum DialogueStyle
 {
     Box,      // bottom dialogue box, locks the player
-    Bubble    // speech bubble above the NPC, player can keep moving
+    Bubble    // speech bubble next to the NPC, player can keep moving
+}
+
+// What happens once a dialogue has finished. Add new actions here later (e.g. start a timer).
+public enum NpcAction
+{
+    None,
+    AcceptQuest,
+    CompleteQuest
+}
+
+[System.Serializable]
+public class DialogueEntry
+{
+    public string note;                                // free note for yourself, not used by the game
+    public bool anyQuestStatus = true;                 // ticked = matches whatever the quest status is
+    public QuestManager.QuestStatus requiredStatus;    // only used when anyQuestStatus is off
+    public DialogueStyle style = DialogueStyle.Box;
+    [TextArea(2, 4)] public string[] lines;
+    public NpcAction afterDialogue = NpcAction.None;
 }
 
 public class NPC : MonoBehaviour
 {
     [Header("Name and prompt")]
-    public string npcName = "Mom";
+    public string npcName = "NPC";
     public string promptText = "[E] Talk";
 
-    [Header("Dialogue lines, one set per quest state")]
-    [TextArea(2, 4)] public string[] linesNotStarted;
-    [TextArea(2, 4)] public string[] linesAccepted;
-    [TextArea(2, 4)] public string[] linesHasEggs;
-    [TextArea(2, 4)] public string[] linesCompleted;
-
-    [Header("Style per quest state")]
-    public DialogueStyle styleNotStarted = DialogueStyle.Box;
-    public DialogueStyle styleAccepted = DialogueStyle.Bubble;
-    public DialogueStyle styleHasEggs = DialogueStyle.Box;
-    public DialogueStyle styleCompleted = DialogueStyle.Bubble;
+    [Header("Dialogue: the first entry that matches the quest status is used")]
+    public DialogueEntry[] dialogues;
     public float secondsPerBubbleLine = 3f;
 
     bool playerNear;
@@ -96,64 +106,57 @@ public class NPC : MonoBehaviour
         StartTalk();
     }
 
+    DialogueEntry FindEntry()
+    {
+        if (dialogues == null) return null;
+
+        foreach (DialogueEntry entry in dialogues)
+        {
+            if (Matches(entry)) return entry;
+        }
+
+        return null;
+    }
+
+    bool Matches(DialogueEntry entry)
+    {
+        if (entry.anyQuestStatus) return true;
+        if (questManager == null) return false;
+
+        return questManager.currentStatus == entry.requiredStatus;
+    }
+
     void StartTalk()
     {
-        if (questManager == null)
+        DialogueEntry entry = FindEntry();
+
+        if (entry == null)
         {
-            Debug.LogWarning("QuestManager was not found!");
+            Debug.Log(npcName + " has no dialogue for the current quest status.");
+            return;
+        }
+
+        // Nothing to say: still run the entry's action if it has one
+        if (entry.lines == null || entry.lines.Length == 0)
+        {
+            RunAction(entry.afterDialogue);
             return;
         }
 
         InteractionPrompt.Hide();
 
-        string[] lines;
-        DialogueStyle style;
-        System.Action afterDialogue = null;   // quest action that runs once the dialogue ends
-
-        switch (questManager.currentStatus)
-        {
-            case QuestManager.QuestStatus.NotStarted:
-                lines = linesNotStarted;
-                style = styleNotStarted;
-                afterDialogue = questManager.AcceptQuest;
-                break;
-
-            case QuestManager.QuestStatus.Accepted:
-                lines = linesAccepted;
-                style = styleAccepted;
-                break;
-
-            case QuestManager.QuestStatus.HasEggs:
-                lines = linesHasEggs;
-                style = styleHasEggs;
-                afterDialogue = questManager.CompleteQuest;
-                break;
-
-            default:
-                lines = linesCompleted;
-                style = styleCompleted;
-                break;
-        }
-
-        // No text set in the Inspector: skip the dialogue and run the action right away
-        if (lines == null || lines.Length == 0)
-        {
-            afterDialogue?.Invoke();
-            return;
-        }
-
-        if (style == DialogueStyle.Bubble)
-            StartBubble(lines, afterDialogue);
+        if (entry.style == DialogueStyle.Bubble)
+            StartBubble(entry);
         else
-            StartBox(lines, afterDialogue);
+            StartBox(entry);
     }
 
-    void StartBox(string[] lines, System.Action afterDialogue)
+    void StartBox(DialogueEntry entry)
     {
         inDialogue = true;
         InteractionState.IsInteracting = true;   // locks the player's movement
 
-        DialogBox.Open(npcName, lines, () =>
+        DialogBox.Open(npcName, entry.lines, () =>
         {
             inDialogue = false;
             InteractionState.IsInteracting = false;
@@ -161,22 +164,44 @@ public class NPC : MonoBehaviour
             if (playerNear)
                 InteractionPrompt.Show(promptText, transform);
 
-            afterDialogue?.Invoke();
+            RunAction(entry.afterDialogue);
         });
     }
 
-    void StartBubble(string[] lines, System.Action afterDialogue)
+    void StartBubble(DialogueEntry entry)
     {
         bubbleActive = true;   // the player is NOT locked
 
-        SpeechBubble.Show(transform, lines, secondsPerBubbleLine, () =>
+        SpeechBubble.Show(transform, entry.lines, secondsPerBubbleLine, () =>
         {
             bubbleActive = false;
 
             if (playerNear)
                 InteractionPrompt.Show(promptText, transform);
 
-            afterDialogue?.Invoke();
+            RunAction(entry.afterDialogue);
         });
+    }
+
+    void RunAction(NpcAction action)
+    {
+        if (action == NpcAction.None) return;
+
+        if (questManager == null)
+        {
+            Debug.LogWarning("QuestManager was not found!");
+            return;
+        }
+
+        switch (action)
+        {
+            case NpcAction.AcceptQuest:
+                questManager.AcceptQuest();
+                break;
+
+            case NpcAction.CompleteQuest:
+                questManager.CompleteQuest();
+                break;
+        }
     }
 }

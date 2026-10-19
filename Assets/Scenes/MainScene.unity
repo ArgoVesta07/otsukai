@@ -663,19 +663,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPC
   npcName: Mom
   promptText: '[E] Interact'
-  linesNotStarted:
-  - "Oh, it\u2019s you! Could you buy some eggs at the supermarket?"
-  - Be quick, it closes soon!
-  linesAccepted:
-  - Did you forget? I need eggs from the supermarket.
-  linesHasEggs:
-  - You got the eggs! Thank you, dear.
-  linesCompleted:
-  - Thanks again for your help today!
-  styleNotStarted: 0
-  styleAccepted: 1
-  styleHasEggs: 0
-  styleCompleted: 1
+  dialogues:
+  - note: 
+    anyQuestStatus: 0
+    requiredStatus: 0
+    style: 0
+    lines:
+    - "Oh, it\u2019s you! Could you buy some eggs at the supermarket?"
+    - Be quick, it closes soon!
+    afterDialogue: 1
+  - note: 
+    anyQuestStatus: 0
+    requiredStatus: 1
+    style: 1
+    lines:
+    - Did you forget? I need eggs from the supermarket.
+    afterDialogue: 0
+  - note: 
+    anyQuestStatus: 0
+    requiredStatus: 2
+    style: 0
+    lines:
+    - You got the eggs! Thank you, dear.
+    afterDialogue: 2
+  - note: 
+    anyQuestStatus: 0
+    requiredStatus: 3
+    style: 1
+    lines:
+    - Thanks again for your help today!
+    afterDialogue: 0
   secondsPerBubbleLine: 3
 --- !u!1 &401616162
 GameObject:
@@ -1458,7 +1475,6 @@ GameObject:
   - component: {fileID: 627731584}
   - component: {fileID: 627731586}
   - component: {fileID: 627731585}
-  - component: {fileID: 627731587}
   m_Layer: 5
   m_Name: BubblePanel
   m_TagString: Untagged
@@ -1524,18 +1540,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 627731583}
   m_CullTransparentMesh: 1
---- !u!225 &627731587
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 627731583}
-  m_Enabled: 1
-  m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &704977665
 GameObject:
   m_ObjectHideFlags: 0
@@ -1896,7 +1900,6 @@ GameObject:
   - component: {fileID: 939311833}
   - component: {fileID: 939311835}
   - component: {fileID: 939311834}
-  - component: {fileID: 939311836}
   m_Layer: 5
   m_Name: PromptPanel
   m_TagString: Untagged
@@ -1962,18 +1965,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 939311832}
   m_CullTransparentMesh: 1
---- !u!225 &939311836
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 939311832}
-  m_Enabled: 1
-  m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &1004943112
 GameObject:
   m_ObjectHideFlags: 0
@@ -3383,7 +3374,6 @@ GameObject:
   - component: {fileID: 1607473157}
   - component: {fileID: 1607473156}
   - component: {fileID: 1607473155}
-  - component: {fileID: 1607473158}
   m_Layer: 5
   m_Name: DialogPanel
   m_TagString: Untagged
@@ -3466,18 +3456,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1607473153}
   m_CullTransparentMesh: 1
---- !u!225 &1607473158
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1607473153}
-  m_Enabled: 1
-  m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &1633163354
 GameObject:
   m_ObjectHideFlags: 0
