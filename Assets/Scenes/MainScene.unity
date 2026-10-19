@@ -662,7 +662,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPC
   promptOffset: {x: 0, y: 1.2}
-  promptText: '[E] Bicara'
+  promptText: '[E] Interact'
 --- !u!1 &401616162
 GameObject:
   m_ObjectHideFlags: 0
@@ -941,7 +941,7 @@ MonoBehaviour:
   sceneToLoad: 
   spawnPosition: {x: 0, y: -7, z: 0}
   promptOffset: {x: 0, y: 1.2}
-  promptText: '[E] Masuk'
+  promptText: '[E] Enter'
 --- !u!61 &597520059
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1478,7 +1478,7 @@ MonoBehaviour:
   sceneToLoad: Supermarket
   spawnPosition: {x: 9, y: 0, z: 0}
   promptOffset: {x: 0, y: 1.2}
-  promptText: '[E] Masuk'
+  promptText: '[E] Enter'
 --- !u!61 &1004943114
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -409,6 +409,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6cfaafab73a18744a1dbc3b0cd57ec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Supermarket
+  promptOffset: {x: 0, y: 1.2}
+  promptText: '[E] Egg'
 --- !u!61 &511719552
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -806,6 +808,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Door
   sceneToLoad: MainScene
   spawnPosition: {x: -11, y: 0, z: 0}
+  promptOffset: {x: 0, y: 1.2}
+  promptText: '[E] Exit'
 --- !u!61 &1480548851
 BoxCollider2D:
   m_ObjectHideFlags: 0
