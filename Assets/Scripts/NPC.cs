@@ -3,8 +3,8 @@ using UnityEngine.InputSystem;
 
 public class NPC : MonoBehaviour
 {
-   public Vector2 promptOffset = new Vector2(0f, 1.2f);   // seberapa jauh di atas objek
-    public string promptText = "[E] Bicara";   // BARU: teks prompt, bisa diganti di Inspector
+   public Vector2 promptOffset = new Vector2(0f, 1.2f);   // how far above the object
+    public string promptText = "[E] Talk";   // NEW: prompt text; can be changed in the Inspector
 
     bool playerNear;
     bool interactingWithMe;
@@ -30,7 +30,7 @@ public class NPC : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = false;
-            InteractionPrompt.Hide();   // BARU
+            InteractionPrompt.Hide();   // NEW
 
             if (interactingWithMe)
             {
@@ -53,7 +53,7 @@ public class NPC : MonoBehaviour
             interactingWithMe = false;
             InteractionState.IsInteracting = false;
 
-            Debug.Log("Keluar mode interaksi");
+            Debug.Log("Exited interaction mode");
             return;
         }
 
@@ -64,11 +64,11 @@ public class NPC : MonoBehaviour
 
     void TalkToMom()
     {
-        InteractionPrompt.Hide();   // BARU
+        InteractionPrompt.Hide();   // NEW
 
         if (questManager == null)
         {
-            Debug.LogWarning("QuestManager tidak ditemukan!");
+            Debug.LogWarning("QuestManager was not found!");
             return;
         }
 
@@ -82,7 +82,7 @@ public class NPC : MonoBehaviour
                 break;
 
             case QuestManager.QuestStatus.Accepted:
-                Debug.Log("Mom: Jangan lupa beli telurnya, ya!");
+                Debug.Log("Mom: Don't forget to buy the eggs!");
                 break;
 
             case QuestManager.QuestStatus.HasEggs:
@@ -90,7 +90,7 @@ public class NPC : MonoBehaviour
                 break;
 
             case QuestManager.QuestStatus.Completed:
-                Debug.Log("Mom: Terima kasih, ya!");
+                Debug.Log("Mom: Thank you!");
                 break;
         }
     }

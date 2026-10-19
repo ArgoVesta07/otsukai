@@ -3,8 +3,8 @@ using UnityEngine.InputSystem;
 
 public class Supermarket : MonoBehaviour
 {
-    public Vector2 promptOffset = new Vector2(0f, 1.2f); // seberapa jauh di atas objek
-    public string promptText = "[E] Ambil telur";   // BARU
+    public Vector2 promptOffset = new Vector2(0f, 1.2f); // how far above the object
+    public string promptText = "[E] Get eggs";   // NEW
 
     private bool playerNear;
     private QuestManager questManager;
@@ -20,7 +20,7 @@ public class Supermarket : MonoBehaviour
         {
             playerNear = true;
             InteractionPrompt.Show(promptText, transform, promptOffset);
-            Debug.Log("Kamu berada di dekat supermarket.");
+            Debug.Log("You are near the supermarket.");
         }
     }
 
@@ -29,7 +29,7 @@ public class Supermarket : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = false;
-            InteractionPrompt.Hide();   // BARU
+            InteractionPrompt.Hide();   // NEW
         }
     }
 
@@ -41,7 +41,7 @@ public class Supermarket : MonoBehaviour
         if (!playerNear) return;
         if (!keyboard.eKey.wasPressedThisFrame) return;
 
-        InteractionPrompt.Hide();   // BARU
+        InteractionPrompt.Hide();   // NEW
         InteractWithSupermarket();
     }
 
@@ -49,14 +49,14 @@ public class Supermarket : MonoBehaviour
     {
         if (questManager == null)
         {
-            Debug.LogWarning("QuestManager tidak ditemukan!");
+            Debug.LogWarning("QuestManager was not found!");
             return;
         }
 
         switch (questManager.currentStatus)
         {
             case QuestManager.QuestStatus.NotStarted:
-                Debug.Log("Supermarket: Kamu belum menerima tugas dari Mom.");
+                Debug.Log("Supermarket: You haven't received a task from Mom yet.");
                 break;
 
             case QuestManager.QuestStatus.Accepted:
@@ -64,11 +64,11 @@ public class Supermarket : MonoBehaviour
                 break;
 
             case QuestManager.QuestStatus.HasEggs:
-                Debug.Log("Supermarket: Kamu sudah mengambil telur. Sekarang pulang!");
+                Debug.Log("Supermarket: You've already gotten the eggs. Now go home!");
                 break;
 
             case QuestManager.QuestStatus.Completed:
-                Debug.Log("Supermarket: Misi sudah selesai.");
+                Debug.Log("Supermarket: The mission is complete.");
                 break;
         }
     }

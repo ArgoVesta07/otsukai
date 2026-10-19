@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-[DefaultExecutionOrder(100)]   // jalan setelah CameraFollow, biar nggak getar
+[DefaultExecutionOrder(100)]   // runs after CameraFollow to prevent shaking
 public class InteractionPrompt : MonoBehaviour
 {
     static InteractionPrompt instance;
@@ -9,11 +9,11 @@ public class InteractionPrompt : MonoBehaviour
     [SerializeField] GameObject panel;
     [SerializeField] TMP_Text label;
 
-    [Header("Posisi")]
-    [SerializeField] float gap = 0.15f;            // celah antara panel dan objek (unit dunia)
-    [SerializeField] float moveSpeed = 12f;        // kecepatan panel pindah sisi
-    [SerializeField] float switchMargin = 0.2f;    // makin besar, makin susah pindah (anti kedip)
-    [SerializeField] float screenMargin = 20f;     // jarak minimal dari tepi layar (pixel)
+    [Header("Position")]
+    [SerializeField] float gap = 0.15f;            // gap between the panel and the object (world units)
+    [SerializeField] float moveSpeed = 12f;        // panel side-switching speed
+    [SerializeField] float switchMargin = 0.2f;    // higher values make switching harder (prevents flickering)
+    [SerializeField] float screenMargin = 20f;     // minimum distance from the edge of the screen (pixels)
 
     static readonly Vector2[] sides =
     {
@@ -24,8 +24,8 @@ public class InteractionPrompt : MonoBehaviour
     Vector2 defaultAnchoredPos;
     Transform target;
     Transform player;
-    Vector2 targetExtents;       // setengah lebar dan tinggi objek (unit dunia)
-    Vector2 targetCenterOffset;  // titik tengah objek relatif ke posisinya
+    Vector2 targetExtents;       // half the object's width and height (world units)
+    Vector2 targetCenterOffset;  // object's center relative to its position
     Vector2 offsetNow;
     int currentSide;
 
@@ -45,8 +45,8 @@ public class InteractionPrompt : MonoBehaviour
         panel.SetActive(false);
     }
 
-    // target kosong = prompt tetap di posisi layar (bawah tengah).
-    // Parameter offset sudah nggak dipakai, jaraknya dihitung otomatis.
+    // If target is empty, the prompt stays at a fixed screen position (bottom center).
+    // The offset parameter is no longer used; the distance is calculated automatically.
     public static void Show(string text, Transform target = null, Vector2 offset = default)
     {
         if (instance == null) return;
@@ -100,7 +100,7 @@ public class InteractionPrompt : MonoBehaviour
         }
     }
 
-    // ukur objek: pakai sprite dulu, kalau nggak ada pakai collider, kalau nggak ada pakai 1x1
+    // Measure the object: use the sprite first, then the collider, or 1x1 if neither exists.
     void MeasureTarget()
     {
         Bounds b;
@@ -120,7 +120,7 @@ public class InteractionPrompt : MonoBehaviour
         targetCenterOffset = (Vector2)b.center - (Vector2)target.position;
     }
 
-    // skor tiap sisi: makin searah "dari player ke objek", makin bagus
+    // Score each side: the more it points "from the player to the object," the better.
     int BestSide()
     {
         if (player == null || target == null) return 0;
@@ -155,12 +155,12 @@ public class InteractionPrompt : MonoBehaviour
         float bestScore = Vector2.Dot(sides[best], away);
         float currentScore = Vector2.Dot(sides[currentSide], away);
 
-        // pindah sisi cuma kalau sisi baru jelas lebih bagus (hindari kedip di diagonal)
+        // Switch sides only when the new side is clearly better (prevents flickering diagonally).
         if (best != currentSide && bestScore > currentScore + switchMargin)
             currentSide = best;
     }
 
-    // setengah ukuran panel dalam unit dunia (kamera orthographic)
+    // Half the panel size in world units (orthographic camera).
     Vector2 PanelHalfWorld(Camera cam)
     {
         float pixelsPerUnit = Screen.height / (2f * cam.orthographicSize);
@@ -196,7 +196,7 @@ public class InteractionPrompt : MonoBehaviour
         Vector3 world = target.position + (Vector3)offsetNow;
         Vector3 screen = cam.WorldToScreenPoint(world);
 
-        // jaga panel tetap di dalam layar
+        // Keep the panel inside the screen.
         Vector2 half = new Vector2(
             panelRect.rect.width * panelRect.lossyScale.x,
             panelRect.rect.height * panelRect.lossyScale.y) * 0.5f;

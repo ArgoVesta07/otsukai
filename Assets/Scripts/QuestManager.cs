@@ -18,7 +18,7 @@ public class QuestManager : MonoBehaviour
 
     void Awake()
     {
-        // kalau sudah ada QuestManager asli, buang salinan dari scene yang di-load ulang
+        // If a QuestManager already exists, destroy the duplicate from the reloaded scene.
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -38,7 +38,7 @@ public class QuestManager : MonoBehaviour
 
         currentStatus = QuestStatus.Accepted;
 
-        Debug.Log("Mom: Tolong belikan telur di supermarket!");
+        Debug.Log("Mom: Please buy eggs at the supermarket!");
     }
 
     public void GetEggs()
@@ -49,7 +49,7 @@ public class QuestManager : MonoBehaviour
         if (inventory == null)
         {
             Debug.LogWarning(
-                "InventoryManager tidak ditemukan! Pastikan sudah dipasang di GameObject QuestManager."
+                "InventoryManager was not found! Make sure it is attached to the QuestManager GameObject."
             );
             return;
         }
@@ -58,7 +58,7 @@ public class QuestManager : MonoBehaviour
 
         currentStatus = QuestStatus.HasEggs;
 
-        Debug.Log("Kamu mendapatkan telur! Sekarang kembali ke Mom.");
+        Debug.Log("You got the eggs! Now go back to Mom.");
     }
 
     public void CompleteQuest()
@@ -68,7 +68,7 @@ public class QuestManager : MonoBehaviour
 
         if (inventory == null || !inventory.HasItem("Egg", 1))
         {
-            Debug.Log("Mom: Kamu belum membawa telur!");
+            Debug.Log("Mom: You haven't brought the eggs!");
             return;
         }
 
@@ -76,7 +76,7 @@ public class QuestManager : MonoBehaviour
 
         currentStatus = QuestStatus.Completed;
 
-        Debug.Log("Mom: Terima kasih sudah membelikan telur!");
-        Debug.Log("MISI SELESAI!");
+        Debug.Log("Mom: Thank you for buying the eggs!");
+        Debug.Log("MISSION COMPLETE!");
     }
 }

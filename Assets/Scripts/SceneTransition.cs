@@ -9,7 +9,7 @@ public class SceneTransition : MonoBehaviour
 
     [SerializeField] private string houseSceneName = "House";
     [SerializeField] private CanvasGroup loadingGroup;
-    [SerializeField] private Slider loadingBar;       // bar loading (boleh dikosongin)
+    [SerializeField] private Slider loadingBar;       // loading bar (can be left empty)
     [SerializeField] private float fadeDuration = 0.3f;
     [SerializeField] private float minLoadingTime = 0.8f;
 
@@ -44,7 +44,7 @@ public class SceneTransition : MonoBehaviour
     IEnumerator LoadRoutine(string sceneToLoad, Vector3 spawnPosition)
     {
         isLoading = true;
-        InteractionState.IsInteracting = true;   // kunci gerakan selama transisi
+        InteractionState.IsInteracting = true;   // lock movement during the transition
 
         SetBar(0f);
         yield return Fade(1f);
@@ -59,7 +59,7 @@ public class SceneTransition : MonoBehaviour
         {
             timer += Time.unscaledDeltaTime;
 
-            // bar ngikutin yang paling lambat: progress asli atau waktu minimal
+            // The bar follows whichever is slower: actual progress or the minimum time.
             float real = Mathf.Clamp01(op.progress / 0.9f);
             float byTime = Mathf.Clamp01(timer / minLoadingTime);
             float target = Mathf.Min(real, byTime);
@@ -72,13 +72,13 @@ public class SceneTransition : MonoBehaviour
         SetBar(1f);
         op.allowSceneActivation = true;
         while (!op.isDone) yield return null;
-        yield return null;   // tunggu satu frame biar semua objek scene siap
+        yield return null;   // wait one frame so all scene objects are ready
 
         GameObject player = GameObject.Find("player");
         if (player != null)
             player.transform.position = spawnPosition;
         else
-            Debug.LogWarning("Objek player tidak ditemukan di scene!");
+            Debug.LogWarning("Player object was not found in the scene!");
 
         yield return Fade(0f);
 

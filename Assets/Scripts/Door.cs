@@ -5,8 +5,8 @@ public class Door : MonoBehaviour
 {
     public string sceneToLoad;
     public Vector3 spawnPosition;
-    public Vector2 promptOffset = new Vector2(0f, 1.2f); // seberapa jauh di atas objek
-    public string promptText = "[E] Masuk";   // BARU
+    public Vector2 promptOffset = new Vector2(0f, 1.2f); // how far above the object
+    public string promptText = "[E] Enter";   // NEW
 
     private bool playerNear;
 
@@ -24,7 +24,7 @@ public class Door : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = false;
-            InteractionPrompt.Hide();   // BARU
+            InteractionPrompt.Hide();   // NEW
         }
     }
 
@@ -36,7 +36,7 @@ public class Door : MonoBehaviour
 
         if (Keyboard.current.eKey.wasPressedThisFrame)
         {
-            InteractionPrompt.Hide();   // BARU: wajib, lihat catatan di bawah
+            InteractionPrompt.Hide();   // NEW: required; see the note below
 
             if (SceneTransition.Instance != null)
             {
@@ -47,7 +47,7 @@ public class Door : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("SceneTransitionManager tidak ditemukan!");
+                Debug.LogWarning("SceneTransitionManager was not found!");
             }
         }
     }

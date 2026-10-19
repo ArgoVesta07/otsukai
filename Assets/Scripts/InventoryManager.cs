@@ -19,7 +19,7 @@ public class InventoryManager : MonoBehaviour
             items.Add(itemName, amount);
         }
 
-        Debug.Log($"Mendapatkan {itemName} x{amount}. Total: {GetItemCount(itemName)}");
+        Debug.Log($"Got {itemName} x{amount}. Total: {GetItemCount(itemName)}");
     }
 
     public bool RemoveItem(string itemName, int amount = 1)
@@ -37,7 +37,7 @@ public class InventoryManager : MonoBehaviour
             items.Remove(itemName);
         }
 
-        Debug.Log($"Mengurangi {itemName} x{amount}.");
+        Debug.Log($"Removed {itemName} x{amount}.");
         return true;
     }
 
