@@ -55,4 +55,25 @@ public class InventoryManager : MonoBehaviour
     {
         return GetItemCount(itemName) >= amount;
     }
+
+    // ---------- Save / load ----------
+
+    // Read-only view of everything the player carries
+    public IReadOnlyDictionary<string, int> All => items;
+
+    // Sets an item count directly, without a log message (used when loading)
+    public void SetItem(string itemName, int amount)
+    {
+        if (string.IsNullOrWhiteSpace(itemName)) return;
+
+        if (amount <= 0)
+            items.Remove(itemName);
+        else
+            items[itemName] = amount;
+    }
+
+    public void Clear()
+    {
+        items.Clear();
+    }
 }

@@ -29,6 +29,9 @@ public class QuestManager : MonoBehaviour
     [Tooltip("Stop errand timers while the player is locked (dialogue box, loading screen).")]
     [SerializeField] bool pauseTimerWhileInteracting = true;
 
+    [Tooltip("Every ErrandData asset in the game. Needed to restore running errands from a save.")]
+    [SerializeField] ErrandData[] errandLibrary;
+
     readonly List<ActiveErrand> active = new List<ActiveErrand>();
     readonly HashSet<string> completed = new HashSet<string>();
     readonly HashSet<string> failed = new HashSet<string>();
@@ -225,5 +228,71 @@ public class QuestManager : MonoBehaviour
 
         foreach (string flag in flags)
             GameFlags.Set(flag);
+    }
+
+    // ---------- Save / load ----------
+
+    public ErrandData FindErrandData(string errandId)
+    {
+        if (errandLibrary == null) return null;
+
+        foreach (ErrandData data in errandLibrary)
+        {
+            if (data != null && data.errandId == errandId) return data;
+        }
+
+        return null;
+    }
+
+    public void WriteTo(SaveData save)
+    {
+        save.completedErrands.AddRange(completed);
+        save.failedErrands.AddRange(failed);
+
+        foreach (ActiveErrand errand in active)
+        {
+            save.activeErrands.Add(new SavedErrand
+            {
+                errandId = errand.data.errandId,
+                stepIndex = errand.stepIndex,
+                timeLeft = errand.timeLeft
+            });
+        }
+    }
+
+    public void ReadFrom(SaveData save)
+    {
+        ResetState();
+
+        completed.UnionWith(save.completedErrands);
+        failed.UnionWith(save.failedErrands);
+
+        foreach (SavedErrand saved in save.activeErrands)
+        {
+            ErrandData data = FindErrandData(saved.errandId);
+            if (data == null)
+            {
+                Debug.LogWarning("Errand '" + saved.errandId + "' is in the save but not in the Errand Library. Skipped.");
+                continue;
+            }
+
+            int lastStep = data.steps != null ? data.steps.Length - 1 : 0;
+
+            active.Add(new ActiveErrand
+            {
+                data = data,
+                stepIndex = Mathf.Clamp(saved.stepIndex, 0, Mathf.Max(lastStep, 0)),
+                timeLeft = saved.timeLeft
+            });
+        }
+    }
+
+    // Forgets all errand progress (used by New Game and before loading)
+    public void ResetState()
+    {
+        active.Clear();
+        completed.Clear();
+        failed.Clear();
+        LastFailed = null;
     }
 }
