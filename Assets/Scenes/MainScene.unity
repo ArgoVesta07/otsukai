@@ -1151,7 +1151,7 @@ MonoBehaviour:
     flagToSet: 
   - note: 
     errand: {fileID: 11400000, guid: ba99d92e7fc012346b7fb453a626582d, type: 2}
-    condition: 0
+    condition: 3
     step: 1
     requiredFlag: 
     style: 0
