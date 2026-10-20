@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\NavTarget.cs" />
+    <Compile Include="Assets\Scripts\Toast.cs" />
     <Compile Include="Assets\Scripts\ErrandSpot.cs" />
     <Compile Include="Assets\Scripts\GameFlags.cs" />
     <Compile Include="Assets\Scripts\IncidentManager.cs" />

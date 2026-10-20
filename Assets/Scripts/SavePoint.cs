@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // A checkpoint the player can use to save (bed, desk, ...).
-// Needs a Collider2D with Is Trigger ticked.
+// Needs a Collider2D with Is Trigger ticked. Results are shown with a Toast pop-up.
 public class SavePoint : MonoBehaviour
 {
     public string promptText = "[E] Save";
-    public string savedText = "Saved";
+    public string savedText = "Game saved";
     public string blockedText = "Can't save during an errand";
     public string failedText = "Save failed";
 
@@ -46,10 +46,10 @@ public class SavePoint : MonoBehaviour
 
         if (errandRunning && !allowDuringErrand)
         {
-            InteractionPrompt.Show(blockedText, transform);
+            Toast.Show(blockedText);
             return;
         }
 
-        InteractionPrompt.Show(SaveSystem.Save() ? savedText : failedText, transform);
+        Toast.Show(SaveSystem.Save() ? savedText : failedText);
     }
 }
