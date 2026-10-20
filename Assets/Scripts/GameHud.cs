@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,18 +5,10 @@ using UnityEngine.UI;
 
 // Top-right HUD: timer card, navigation arrow + errand card, incident "!" card.
 // Layout, colors and sizes live on the UI objects; this script only fills them in.
+// The errand text and arrow target come from the tracked errand's current step (ErrandData asset).
 [DefaultExecutionOrder(100)]   // runs after the player and camera have moved
 public class GameHud : MonoBehaviour
 {
-    [Serializable]
-    public class ErrandInfo
-    {
-        public QuestManager.QuestStatus status;
-        public string shortText;              // e.g. "Buy eggs"
-        [TextArea(2, 4)] public string detailText;   // shown when the card is expanded
-        public string navTargetId;            // NavTarget id the arrow points to (empty = no arrow)
-    }
-
     static GameHud instance;
 
     [Header("Timer")]
@@ -32,7 +23,11 @@ public class GameHud : MonoBehaviour
     [SerializeField] TMP_Text errandShortText;
     [SerializeField] GameObject errandDetail;      // the detail text object, hidden when collapsed
     [SerializeField] TMP_Text errandDetailText;
-    [SerializeField] ErrandInfo[] errands;
+    [SerializeField] float autoCollapseSeconds = 1f;   // 0 = stays open until toggled again
+
+    [Header("Failed errand text")]
+    [SerializeField] string failedShortText = "Time's up";
+    [SerializeField, TextArea(2, 4)] string failedDetailText = "You ran out of time.";
 
     [Header("Navigation")]
     [SerializeField] RectTransform navArrow;
@@ -47,6 +42,8 @@ public class GameHud : MonoBehaviour
     RectTransform layoutRoot;
     Transform player;
     bool expanded;
+    float collapseTimer;
+    string shownShort;   // what the card currently shows, to avoid rebuilding every frame
 
     void Awake()
     {
@@ -67,6 +64,14 @@ public class GameHud : MonoBehaviour
 
     void Update()
     {
+        // Auto-collapse the expanded errand card after a delay
+        if (expanded && autoCollapseSeconds > 0f)
+        {
+            collapseTimer -= Time.deltaTime;
+            if (collapseTimer <= 0f)
+                SetExpanded(false);
+        }
+
         var k = Keyboard.current;
         if (k == null) return;
 
@@ -85,10 +90,12 @@ public class GameHud : MonoBehaviour
     void LateUpdate()
     {
         QuestManager quest = QuestManager.Instance;
+        ActiveErrand tracked = quest != null ? quest.Tracked : null;
+        bool showFailed = tracked == null && quest != null && quest.LastFailed != null;
 
-        UpdateTimer(quest);
-        ErrandInfo info = UpdateErrand(quest);
-        UpdateArrow(info);
+        UpdateTimer(tracked, showFailed);
+        UpdateErrand(tracked, showFailed);
+        UpdateArrow(tracked);
 
         if (incidentCard != null)
             SetActive(incidentCard, IncidentManager.HasActive);
@@ -103,45 +110,61 @@ public class GameHud : MonoBehaviour
     void SetExpanded(bool value)
     {
         expanded = value;
+        collapseTimer = autoCollapseSeconds;   // restart the countdown every time it opens
 
         if (errandDetail != null)
             errandDetail.SetActive(expanded);
 
+        // Swap: show either the short text or the detail text, never both
+        if (errandShortText != null)
+            errandShortText.gameObject.SetActive(!expanded);
+
         RebuildLayout();
     }
 
-    void UpdateTimer(QuestManager quest)
+    void UpdateTimer(ActiveErrand tracked, bool showFailed)
     {
-        bool show = quest != null &&
-                    (quest.TimerRunning || quest.currentStatus == QuestManager.QuestStatus.Failed);
+        bool running = tracked != null && tracked.HasTimer;
 
-        SetActive(timerCard, show);
-        if (!show) return;
+        SetActive(timerCard, running || showFailed);
+        if (!running && !showFailed) return;
 
-        int seconds = Mathf.CeilToInt(quest.TimeLeft);
+        float timeLeft = running ? tracked.timeLeft : 0f;
+        int seconds = Mathf.CeilToInt(timeLeft);
         timerText.text = string.Format("{0:00}:{1:00}", seconds / 60, seconds % 60);
-        timerText.color = quest.TimeLeft <= warningSeconds ? timerWarningColor : timerNormalColor;
+        timerText.color = timeLeft <= warningSeconds ? timerWarningColor : timerNormalColor;
     }
 
-    ErrandInfo UpdateErrand(QuestManager quest)
+    void UpdateErrand(ActiveErrand tracked, bool showFailed)
     {
-        ErrandInfo info = quest != null ? FindErrand(quest.currentStatus) : null;
-        bool show = info != null && !string.IsNullOrEmpty(info.shortText);
+        string shortText = null;
+        string detailText = null;
 
-        SetActive(errandRow, show);
-        if (!show) return null;
-
-        if (errandShortText.text != info.shortText)
+        if (tracked != null && tracked.CurrentStep != null)
         {
-            errandShortText.text = info.shortText;
-            errandDetailText.text = info.detailText;
-            RebuildLayout();
+            shortText = tracked.CurrentStep.shortText;
+            detailText = tracked.CurrentStep.detailText;
+        }
+        else if (showFailed)
+        {
+            shortText = failedShortText;
+            detailText = failedDetailText;
         }
 
-        return info;
+        bool show = !string.IsNullOrEmpty(shortText);
+        SetActive(errandRow, show);
+        if (!show) return;
+
+        if (shownShort != shortText)
+        {
+            shownShort = shortText;
+            errandShortText.text = shortText;
+            errandDetailText.text = detailText;
+            RebuildLayout();
+        }
     }
 
-    void UpdateArrow(ErrandInfo info)
+    void UpdateArrow(ActiveErrand tracked)
     {
         if (navArrow == null) return;
 
@@ -152,9 +175,11 @@ public class GameHud : MonoBehaviour
         }
 
         NavTarget target = null;
-        if (info != null && !string.IsNullOrEmpty(info.navTargetId))
+        ErrandStep step = tracked != null ? tracked.CurrentStep : null;
+
+        if (step != null && !string.IsNullOrEmpty(step.NavId))
         {
-            target = NavTarget.Find(info.navTargetId);
+            target = NavTarget.Find(step.NavId);
             if (target == null) target = NavTarget.Find(fallbackTargetId);
         }
 
@@ -166,18 +191,6 @@ public class GameHud : MonoBehaviour
         Vector2 dir = target.transform.position - player.position;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
         navArrow.localRotation = Quaternion.Euler(0f, 0f, angle);
-    }
-
-    ErrandInfo FindErrand(QuestManager.QuestStatus status)
-    {
-        if (errands == null) return null;
-
-        foreach (ErrandInfo e in errands)
-        {
-            if (e.status == status) return e;
-        }
-
-        return null;
     }
 
     void SetActive(GameObject go, bool value)

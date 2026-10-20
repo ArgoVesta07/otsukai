@@ -7,45 +7,63 @@ public enum DialogueStyle
     Bubble    // speech bubble next to the NPC, player can keep moving
 }
 
-// What happens once a dialogue has finished. Add new actions here later (e.g. start a timer).
+// What happens once a dialogue has finished. New actions get added at the END of this list.
 public enum NpcAction
 {
     None,
-    AcceptQuest,
-    CompleteQuest
+    StartErrand,        // starts the entry's errand
+    CompleteStepHere    // completes the current errand step if it targets this NPC
+}
+
+// When a dialogue entry is allowed to play, based on its errand
+public enum ErrandCondition
+{
+    Any,          // ignore the errand
+    NotStarted,
+    Active,       // any step
+    AtStep,       // a specific step (see Step)
+    Completed,
+    Failed
 }
 
 [System.Serializable]
 public class DialogueEntry
 {
-    public string note;                                // free note for yourself, not used by the game
-    public bool anyQuestStatus = true;                 // ticked = matches whatever the quest status is
-    public QuestManager.QuestStatus requiredStatus;    // only used when anyQuestStatus is off
+    public string note;   // free note for yourself, not used by the game
+
+    [Header("When")]
+    public ErrandData errand;
+    public ErrandCondition condition = ErrandCondition.Any;
+    [Tooltip("Only used with AtStep. 0 = first step.")]
+    public int step;
+    [Tooltip("Only plays if this flag is set. Empty = ignore.")]
+    public string requiredFlag;
+
+    [Header("What")]
     public DialogueStyle style = DialogueStyle.Box;
     [TextArea(2, 4)] public string[] lines;
+
+    [Header("After")]
     public NpcAction afterDialogue = NpcAction.None;
+    [Tooltip("Flag set to 1 after this dialogue. Empty = none.")]
+    public string flagToSet;
 }
 
 public class NPC : MonoBehaviour
 {
     [Header("Name and prompt")]
     public string npcName = "NPC";
+    [Tooltip("Used by errand steps that target this NPC (e.g. 'Mom').")]
+    public string targetId = "NPC";
     public string promptText = "[E] Talk";
 
-    [Header("Dialogue: the first entry that matches the quest status is used")]
+    [Header("Dialogue: the first entry whose conditions match is used")]
     public DialogueEntry[] dialogues;
     public float secondsPerBubbleLine = 3f;
 
     bool playerNear;
     bool inDialogue;     // bottom box is open (player locked)
     bool bubbleActive;   // speech bubble is showing (player free)
-
-    QuestManager questManager;
-
-    void Start()
-    {
-        questManager = QuestManager.Instance;
-    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -120,10 +138,25 @@ public class NPC : MonoBehaviour
 
     bool Matches(DialogueEntry entry)
     {
-        if (entry.anyQuestStatus) return true;
-        if (questManager == null) return false;
+        if (!string.IsNullOrEmpty(entry.requiredFlag) && !GameFlags.Has(entry.requiredFlag))
+            return false;
 
-        return questManager.currentStatus == entry.requiredStatus;
+        if (entry.condition == ErrandCondition.Any) return true;
+
+        QuestManager quest = QuestManager.Instance;
+        if (quest == null || entry.errand == null) return false;
+
+        ErrandState state = quest.GetState(entry.errand.errandId);
+
+        switch (entry.condition)
+        {
+            case ErrandCondition.NotStarted: return state == ErrandState.NotStarted;
+            case ErrandCondition.Active:     return state == ErrandState.Active;
+            case ErrandCondition.AtStep:     return quest.GetStep(entry.errand.errandId) == entry.step;
+            case ErrandCondition.Completed:  return state == ErrandState.Completed;
+            case ErrandCondition.Failed:     return state == ErrandState.Failed;
+            default:                         return false;
+        }
     }
 
     void StartTalk()
@@ -132,14 +165,14 @@ public class NPC : MonoBehaviour
 
         if (entry == null)
         {
-            Debug.Log(npcName + " has no dialogue for the current quest status.");
+            Debug.Log(npcName + " has no dialogue that matches right now.");
             return;
         }
 
         // Nothing to say: still run the entry's action if it has one
         if (entry.lines == null || entry.lines.Length == 0)
         {
-            RunAction(entry.afterDialogue);
+            Finish(entry);
             return;
         }
 
@@ -164,7 +197,7 @@ public class NPC : MonoBehaviour
             if (playerNear)
                 InteractionPrompt.Show(promptText, transform);
 
-            RunAction(entry.afterDialogue);
+            Finish(entry);
         });
     }
 
@@ -179,28 +212,32 @@ public class NPC : MonoBehaviour
             if (playerNear)
                 InteractionPrompt.Show(promptText, transform);
 
-            RunAction(entry.afterDialogue);
+            Finish(entry);
         });
     }
 
-    void RunAction(NpcAction action)
+    void Finish(DialogueEntry entry)
     {
-        if (action == NpcAction.None) return;
+        if (!string.IsNullOrEmpty(entry.flagToSet))
+            GameFlags.Set(entry.flagToSet);
 
-        if (questManager == null)
+        if (entry.afterDialogue == NpcAction.None) return;
+
+        QuestManager quest = QuestManager.Instance;
+        if (quest == null)
         {
             Debug.LogWarning("QuestManager was not found!");
             return;
         }
 
-        switch (action)
+        switch (entry.afterDialogue)
         {
-            case NpcAction.AcceptQuest:
-                questManager.AcceptQuest();
+            case NpcAction.StartErrand:
+                quest.StartErrand(entry.errand);
                 break;
 
-            case NpcAction.CompleteQuest:
-                questManager.CompleteQuest();
+            case NpcAction.CompleteStepHere:
+                quest.TryCompleteStep(targetId);
                 break;
         }
     }

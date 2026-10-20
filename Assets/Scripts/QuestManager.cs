@@ -1,28 +1,48 @@
+using System.Collections.Generic;
 using UnityEngine;
 
+public enum ErrandState
+{
+    NotStarted,
+    Active,
+    Completed,
+    Failed
+}
+
+// An errand that is currently running
+public class ActiveErrand
+{
+    public ErrandData data;
+    public int stepIndex;
+    public float timeLeft;
+
+    public bool HasTimer => data.timeLimit > 0f;
+    public ErrandStep CurrentStep =>
+        data.steps != null && stepIndex < data.steps.Length ? data.steps[stepIndex] : null;
+}
+
+// Runs errands from ErrandData assets. Knows nothing about eggs or Mom: all of that lives in the assets.
 public class QuestManager : MonoBehaviour
 {
     public static QuestManager Instance;
 
-    public enum QuestStatus
-    {
-        NotStarted,
-        Accepted,
-        HasEggs,
-        Completed,
-        Failed      // added at the end so existing Inspector values stay the same
-    }
+    [Tooltip("Stop errand timers while the player is locked (dialogue box, loading screen).")]
+    [SerializeField] bool pauseTimerWhileInteracting = true;
 
-    public QuestStatus currentStatus = QuestStatus.NotStarted;
+    readonly List<ActiveErrand> active = new List<ActiveErrand>();
+    readonly HashSet<string> completed = new HashSet<string>();
+    readonly HashSet<string> failed = new HashSet<string>();
 
-    [Header("Timer")]
-    [Tooltip("Seconds the player has after accepting the quest.")]
-    public float timeLimit = 180f;
+    InventoryManager inventory;
 
-    public float TimeLeft { get; private set; }
-    public bool TimerRunning { get; private set; }
+    // The errand shown on the HUD (the oldest active one)
+    public ActiveErrand Tracked => active.Count > 0 ? active[0] : null;
 
-    private InventoryManager inventory;
+    // The last errand that failed, so the HUD can show "Time's up". Cleared when a new errand starts.
+    public ErrandData LastFailed { get; private set; }
+
+    public IReadOnlyList<ActiveErrand> Active => active;
+    public InventoryManager Inventory => inventory;
 
     void Awake()
     {
@@ -37,83 +57,173 @@ public class QuestManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         inventory = GetComponent<InventoryManager>();
+        if (inventory == null)
+            Debug.LogWarning("InventoryManager was not found! Attach it to the QuestManager GameObject.");
     }
 
     void Update()
     {
-        if (!TimerRunning) return;
+        if (pauseTimerWhileInteracting && InteractionState.IsInteracting) return;
 
-        TimeLeft -= Time.deltaTime;
-
-        if (TimeLeft <= 0f)
+        // Loop backwards because Fail() removes errands from the list
+        for (int i = active.Count - 1; i >= 0; i--)
         {
-            TimeLeft = 0f;
-            TimerRunning = false;
-            FailQuest();
+            ActiveErrand errand = active[i];
+            if (!errand.HasTimer) continue;
+
+            errand.timeLeft -= Time.deltaTime;
+
+            if (errand.timeLeft <= 0f)
+            {
+                errand.timeLeft = 0f;
+                Fail(errand);
+            }
         }
     }
 
-    public void AcceptQuest()
+    // ---------- Starting ----------
+
+    public bool StartErrand(ErrandData data)
     {
-        if (currentStatus != QuestStatus.NotStarted)
-            return;
-
-        currentStatus = QuestStatus.Accepted;
-
-        TimeLeft = timeLimit;
-        TimerRunning = true;
-
-        Debug.Log("Quest accepted. Timer started: " + timeLimit + " seconds.");
-    }
-
-    public void GetEggs()
-    {
-        if (currentStatus != QuestStatus.Accepted)
-            return;
-
-        if (inventory == null)
+        if (data == null)
         {
-            Debug.LogWarning(
-                "InventoryManager was not found! Make sure it is attached to the QuestManager GameObject."
-            );
-            return;
+            Debug.LogWarning("StartErrand: no ErrandData assigned.");
+            return false;
         }
 
-        inventory.AddItem("Egg", 1);
+        ErrandState state = GetState(data.errandId);
+        if (state == ErrandState.Active || state == ErrandState.Completed)
+            return false;
 
-        currentStatus = QuestStatus.HasEggs;
-
-        Debug.Log("You got the eggs! Now go back to Mom.");
-    }
-
-    public void CompleteQuest()
-    {
-        if (currentStatus != QuestStatus.HasEggs)
-            return;
-
-        if (inventory == null || !inventory.HasItem("Egg", 1))
+        if (data.steps == null || data.steps.Length == 0)
         {
-            Debug.Log("Mom: You haven't brought the eggs!");
-            return;
+            Debug.LogWarning("Errand '" + data.errandId + "' has no steps.");
+            return false;
         }
 
-        inventory.RemoveItem("Egg", 1);
+        failed.Remove(data.errandId);   // a failed errand can be retried
+        LastFailed = null;
 
-        currentStatus = QuestStatus.Completed;
-        TimerRunning = false;
+        active.Add(new ActiveErrand
+        {
+            data = data,
+            stepIndex = 0,
+            timeLeft = data.timeLimit
+        });
 
-        Debug.Log("MISSION COMPLETE! Time left: " + Mathf.CeilToInt(TimeLeft) + " seconds.");
+        Debug.Log("Errand started: " + data.errandId);
+        return true;
     }
 
-    // Called when the timer runs out. Win/lose screens can hook in here later.
-    public void FailQuest()
+    // ---------- Progress ----------
+
+    // Called by ErrandSpots and NPCs when the player interacts with them.
+    // Returns true if a step was completed.
+    public bool TryCompleteStep(string targetId)
     {
-        if (currentStatus != QuestStatus.Accepted && currentStatus != QuestStatus.HasEggs)
-            return;
+        if (string.IsNullOrEmpty(targetId)) return false;
 
-        currentStatus = QuestStatus.Failed;
-        TimerRunning = false;
+        foreach (ActiveErrand errand in active)
+        {
+            ErrandStep step = errand.CurrentStep;
+            if (step == null || step.targetId != targetId) continue;
 
-        Debug.Log("MISSION FAILED: time ran out.");
+            // Check the required item
+            if (!string.IsNullOrEmpty(step.requiredItem))
+            {
+                if (inventory == null || !inventory.HasItem(step.requiredItem, step.requiredAmount))
+                {
+                    Debug.Log("You need " + step.requiredItem + " x" + step.requiredAmount + ".");
+                    return false;
+                }
+
+                if (step.consumeRequiredItem)
+                    inventory.RemoveItem(step.requiredItem, step.requiredAmount);
+            }
+
+            // Give the reward item
+            if (!string.IsNullOrEmpty(step.rewardItem) && inventory != null)
+                inventory.AddItem(step.rewardItem, step.rewardAmount);
+
+            errand.stepIndex++;
+            Debug.Log("Errand '" + errand.data.errandId + "' step done: " + step.shortText);
+
+            if (errand.stepIndex >= errand.data.steps.Length)
+                Complete(errand);
+
+            return true;   // one step per interaction
+        }
+
+        return false;
+    }
+
+    // True if any active errand is waiting for this target right now
+    public bool IsCurrentTarget(string targetId)
+    {
+        if (string.IsNullOrEmpty(targetId)) return false;
+
+        foreach (ActiveErrand errand in active)
+        {
+            ErrandStep step = errand.CurrentStep;
+            if (step != null && step.targetId == targetId) return true;
+        }
+
+        return false;
+    }
+
+    // ---------- Queries ----------
+
+    public ErrandState GetState(string errandId)
+    {
+        if (FindActive(errandId) != null) return ErrandState.Active;
+        if (completed.Contains(errandId)) return ErrandState.Completed;
+        if (failed.Contains(errandId)) return ErrandState.Failed;
+        return ErrandState.NotStarted;
+    }
+
+    // Current step index of an active errand, or -1 if it isn't active
+    public int GetStep(string errandId)
+    {
+        ActiveErrand errand = FindActive(errandId);
+        return errand != null ? errand.stepIndex : -1;
+    }
+
+    ActiveErrand FindActive(string errandId)
+    {
+        foreach (ActiveErrand errand in active)
+        {
+            if (errand.data.errandId == errandId) return errand;
+        }
+
+        return null;
+    }
+
+    // ---------- Ending ----------
+
+    void Complete(ActiveErrand errand)
+    {
+        active.Remove(errand);
+        completed.Add(errand.data.errandId);
+        SetFlags(errand.data.flagsOnComplete);
+
+        Debug.Log("ERRAND COMPLETE: " + errand.data.errandId);
+    }
+
+    void Fail(ActiveErrand errand)
+    {
+        active.Remove(errand);
+        failed.Add(errand.data.errandId);
+        SetFlags(errand.data.flagsOnFail);
+        LastFailed = errand.data;
+
+        Debug.Log("ERRAND FAILED: " + errand.data.errandId + " (time ran out)");
+    }
+
+    static void SetFlags(string[] flags)
+    {
+        if (flags == null) return;
+
+        foreach (string flag in flags)
+            GameFlags.Set(flag);
     }
 }

@@ -54,7 +54,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\NavTarget.cs" />
-    <Compile Include="Assets\Scripts\Supermarket.cs" />
+    <Compile Include="Assets\Scripts\ErrandSpot.cs" />
+    <Compile Include="Assets\Scripts\GameFlags.cs" />
     <Compile Include="Assets\Scripts\IncidentManager.cs" />
     <Compile Include="Assets\Scripts\NPC.cs" />
     <Compile Include="Assets\Scripts\SpeechBubble.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Assets\Scripts\InteractionState.cs" />
     <Compile Include="Assets\Scripts\SceneTransition.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\ErrandData.cs" />
     <Compile Include="Assets\Scripts\QuestManager.cs" />
     <Compile Include="Assets\Scripts\Door.cs" />
     <Compile Include="Assets\Scripts\GameHud.cs" />

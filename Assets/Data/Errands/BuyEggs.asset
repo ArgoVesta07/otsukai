@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950534ad8bb4a4e44b451f1e65b16fd4, type: 3}
+  m_Name: BuyEggs
+  m_EditorClassIdentifier: Assembly-CSharp::ErrandData
+  errandId: BuyEggs
+  timeLimit: 120
+  steps:
+  - note: get eggs
+    shortText: Buy eggs
+    detailText: Buy eggs at the supermarket.
+    targetId: EggShelf
+    navTargetId: Supermarket
+    requiredItem: 
+    requiredAmount: 1
+    consumeRequiredItem: 0
+    rewardItem: Egg
+    rewardAmount: 1
+  - note: give eggs to mom
+    shortText: Bring eggs home
+    detailText: Bring the eggs back to Mom.
+    targetId: Mom
+    navTargetId: Mom
+    requiredItem: Egg
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: 
+    rewardAmount: 1
+  flagsOnComplete: []
+  flagsOnFail: []
