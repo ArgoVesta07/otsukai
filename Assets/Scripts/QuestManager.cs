@@ -219,7 +219,30 @@ public class QuestManager : MonoBehaviour
         SetFlags(errand.data.flagsOnFail);
         LastFailed = errand.data;
 
+        if (errand.data.takeBackRewardsOnFail)
+            TakeBackRewards(errand);
+
         Debug.Log("ERRAND FAILED: " + errand.data.errandId + " (time ran out)");
+    }
+
+    // Removes the items this errand gave the player in the steps already done,
+    // so a retry starts clean and leftovers can't be used for other errands.
+    void TakeBackRewards(ActiveErrand errand)
+    {
+        if (inventory == null || errand.data.steps == null) return;
+
+        int doneSteps = Mathf.Min(errand.stepIndex, errand.data.steps.Length);
+
+        for (int i = 0; i < doneSteps; i++)
+        {
+            ErrandStep step = errand.data.steps[i];
+            if (string.IsNullOrEmpty(step.rewardItem)) continue;
+
+            // Never remove more than the player still has (they may have used some already)
+            int amount = Mathf.Min(step.rewardAmount, inventory.GetItemCount(step.rewardItem));
+            if (amount > 0)
+                inventory.RemoveItem(step.rewardItem, amount);
+        }
     }
 
     static void SetFlags(string[] flags)

@@ -21,6 +21,10 @@ public class ErrandData : ScriptableObject
 
     [Tooltip("Flags set to 1 when the errand fails.")]
     public string[] flagsOnFail;
+
+    [Header("On fail")]
+    [Tooltip("Take back the reward items this errand already gave the player when it fails.")]
+    public bool takeBackRewardsOnFail = true;
 }
 
 [Serializable]
