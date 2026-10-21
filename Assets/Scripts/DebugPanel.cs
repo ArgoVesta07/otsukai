@@ -239,9 +239,29 @@ public class DebugPanel : MonoBehaviour
 
     void DrawMisc()
     {
-        GUILayout.Label("Incidents:");
+        GUILayout.Label("Incidents active: " + (IncidentManager.HasActive ? string.Join(", ", new List<string>(IncidentManager.ActiveIds)) : "none"));
+
+        // Incidents scheduled in the current round
+        TimeManager time = TimeManager.Instance;
+        PeriodData period = time != null ? time.CurrentPeriod : null;
+        if (period != null && period.incidents != null && period.incidents.Length > 0)
+        {
+            GUILayout.Label("This round (round time " + Mathf.FloorToInt(time.RoundElapsed) + " s):");
+            foreach (ScheduledIncident si in period.incidents)
+            {
+                if (si == null || si.incident == null) continue;
+
+                bool on = IncidentManager.IsActive(si.incident.incidentId);
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(si.incident.incidentId + "  at " + si.startAt + " s");
+                if (GUILayout.Button(on ? "End" : "Start", GUILayout.Width(70)))
+                    time.DebugSetIncident(si.incident, !on);
+                GUILayout.EndHorizontal();
+            }
+        }
+
         bool test = IncidentManager.IsActive("Test");
-        if (GUILayout.Button(test ? "End test incident" : "Start test incident"))
+        if (GUILayout.Button(test ? "End test \"!\"" : "Show test \"!\" (no effect)"))
         {
             if (test) IncidentManager.End("Test");
             else IncidentManager.Begin("Test");

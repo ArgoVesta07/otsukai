@@ -19,13 +19,18 @@ MonoBehaviour:
     errands:
     - errand: {fileID: 11400000, guid: ba99d92e7fc012346b7fb453a626582d, type: 2}
       autoStart: 0
+    incidents:
+    - incident: {fileID: 11400000, guid: b93cfcd42c99dad4aac2e059f7c53803, type: 2}
+      startAt: 5
   - note: eggs again, auto
     period: 1
     timeLimit: 90
     errands:
     - errand: {fileID: 11400000, guid: ba99d92e7fc012346b7fb453a626582d, type: 2}
       autoStart: 1
+    incidents: []
   - note: free time
     period: 2
     timeLimit: 15
     errands: []
+    incidents: []

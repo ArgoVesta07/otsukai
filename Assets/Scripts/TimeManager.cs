@@ -51,12 +51,14 @@ public class TimeManager : MonoBehaviour
     readonly List<PeriodResult> results = new List<PeriodResult>();
     bool restoredFromSave;
     bool transitioning;   // a banner is showing between rounds
+    readonly HashSet<string> debugControlled = new HashSet<string>();   // incidents the debug panel took over
     bool onBreak;         // free time after a round, before the next one starts
     float breakLeft;
 
     public int DayIndex { get; private set; }
     public int PeriodIndex { get; private set; }
     public float TimeLeft { get; private set; }
+    public float RoundElapsed { get; private set; }   // round time passed (pauses like the timer)
     public bool Running { get; private set; }
     public bool StoryFinished { get; private set; }
     public bool OnBreak => onBreak;
@@ -138,9 +140,13 @@ public class TimeManager : MonoBehaviour
             return;
         }
 
-        if (period.timeLimit <= 0f) return;
         if (pauseWhileInteracting && InteractionState.IsInteracting) return;
         if (DebugFreezeTimer) return;
+
+        RoundElapsed += Time.deltaTime;
+        UpdateIncidents(period);
+
+        if (period.timeLimit <= 0f) return;
 
         TimeLeft -= Time.deltaTime;
 
@@ -187,6 +193,9 @@ public class TimeManager : MonoBehaviour
         }
 
         TimeLeft = period.timeLimit;
+        RoundElapsed = 0f;
+        IncidentManager.EndAll();
+        debugControlled.Clear();
         transitioning = true;
 
         PeriodBanner.Show(CurrentLabel, "", bannerSeconds, () =>
@@ -216,6 +225,7 @@ public class TimeManager : MonoBehaviour
     {
         Running = false;
         transitioning = true;
+        IncidentManager.EndAll();   // incidents only last within their round
 
         PeriodData period = CurrentPeriod;
         PeriodResult result = MakeResult(period);
@@ -315,6 +325,28 @@ public class TimeManager : MonoBehaviour
 
         PeriodBanner.Show(storyEndTitle, "", bannerSeconds, null);
         Debug.Log("Story finished.");
+    }
+
+    // ---------- Incidents ----------
+
+    // An incident is active while: startAt <= round time < startAt + duration.
+    // Because it only depends on round time, a loaded save brings back the same incidents.
+    void UpdateIncidents(PeriodData period)
+    {
+        if (period.incidents == null) return;
+
+        foreach (ScheduledIncident si in period.incidents)
+        {
+            if (si == null || si.incident == null) continue;
+            if (debugControlled.Contains(si.incident.incidentId)) continue;
+
+            float end = si.incident.duration > 0f ? si.startAt + si.incident.duration : float.MaxValue;
+            bool shouldBeActive = RoundElapsed >= si.startAt && RoundElapsed < end;
+            bool isActive = IncidentManager.IsActive(si.incident.incidentId);
+
+            if (shouldBeActive && !isActive) IncidentManager.Begin(si.incident);
+            else if (!shouldBeActive && isActive) IncidentManager.End(si.incident.incidentId);
+        }
     }
 
     // ---------- Helpers ----------
@@ -440,6 +472,16 @@ public class TimeManager : MonoBehaviour
         StartPeriod(dayIndex, periodIndex);
     }
 
+    // Starts or ends an incident right now, ignoring the schedule until the round ends
+    public void DebugSetIncident(IncidentData incident, bool on)
+    {
+        if (incident == null) return;
+
+        debugControlled.Add(incident.incidentId);
+        if (on) IncidentManager.Begin(incident);
+        else IncidentManager.End(incident.incidentId);
+    }
+
     public void DebugSetTimeLeft(float seconds)
     {
         TimeLeft = Mathf.Max(0f, seconds);
@@ -462,6 +504,7 @@ public class TimeManager : MonoBehaviour
         save.periodTimeLeft = TimeLeft;
         save.storyFinished = StoryFinished;
         save.betweenRounds = onBreak;
+        save.roundElapsed = RoundElapsed;
         save.periodResults.AddRange(results);
     }
 
@@ -476,6 +519,8 @@ public class TimeManager : MonoBehaviour
         DayIndex = save.dayIndex;
         PeriodIndex = save.periodIndex;
         TimeLeft = save.periodTimeLeft;
+        RoundElapsed = save.roundElapsed;
+        IncidentManager.EndAll();   // the schedule restarts the right ones on the next frame
         StoryFinished = save.storyFinished;
 
         results.Clear();

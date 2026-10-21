@@ -29,6 +29,7 @@ public class SaveData
     public float periodTimeLeft;
     public bool storyFinished;
     public bool betweenRounds;   // saved during the break after a round
+    public float roundElapsed;   // round time passed, used to restore scheduled incidents
     public List<PeriodResult> periodResults = new List<PeriodResult>();
 }
 

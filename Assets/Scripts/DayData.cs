@@ -28,6 +28,18 @@ public class PeriodData
 
     [Tooltip("Errands that belong to this round. The round ends when all of them are done or failed.")]
     public PeriodErrand[] errands;
+
+    [Tooltip("Incidents that happen during this round.")]
+    public ScheduledIncident[] incidents;
+}
+
+[Serializable]
+public class ScheduledIncident
+{
+    public IncidentData incident;
+
+    [Tooltip("Seconds after the round starts (round time: it pauses during dialogue and loading).")]
+    public float startAt = 20f;
 }
 
 [Serializable]

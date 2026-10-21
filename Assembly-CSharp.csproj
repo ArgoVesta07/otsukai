@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\SaveSystem.cs" />
     <Compile Include="Assets\Scripts\SaveData.cs" />
     <Compile Include="Assets\Scripts\NPC.cs" />
+    <Compile Include="Assets\Scripts\IncidentData.cs" />
     <Compile Include="Assets\Scripts\SpeechBubble.cs" />
     <Compile Include="Assets\Scripts\InventoryManager.cs" />
     <Compile Include="Assets\Scripts\ItemData.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Assets\Scripts\GameHud.cs" />
     <Compile Include="Assets\Scripts\InteractionPrompt.cs" />
     <Compile Include="Assets\Scripts\CameraFoll.cs" />
+    <Compile Include="Assets\Scripts\IncidentTarget.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
