@@ -6,6 +6,7 @@ using UnityEngine.UI;
 // Top-right HUD: timer card, navigation arrow + errand card, incident "!" card.
 // Layout, colors and sizes live on the UI objects; this script only fills them in.
 // The errand text and arrow target come from the tracked errand's current step (ErrandData asset).
+// The timer shows the story round time when a round is running, otherwise the errand's own timer.
 [DefaultExecutionOrder(100)]   // runs after the player and camera have moved
 public class GameHud : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class GameHud : MonoBehaviour
     [SerializeField] Color timerNormalColor = Color.white;
     [SerializeField] Color timerWarningColor = new Color(1f, 0.55f, 0.45f);
     [SerializeField] float warningSeconds = 30f;
+    [SerializeField] TMP_Text periodText;   // optional "Day 1 · Morning" label
 
     [Header("Errand")]
     [SerializeField] GameObject errandRow;
@@ -124,12 +126,26 @@ public class GameHud : MonoBehaviour
 
     void UpdateTimer(ActiveErrand tracked, bool showFailed)
     {
-        bool running = tracked != null && tracked.HasTimer;
+        TimeManager time = TimeManager.Instance;
+        bool inRound = time != null && time.Running;
+        bool roundTimer = time != null && time.HasTimer;
+        bool errandTimer = !roundTimer && tracked != null && tracked.HasTimer;
 
-        SetActive(timerCard, running || showFailed);
-        if (!running && !showFailed) return;
+        bool show = inRound || errandTimer || showFailed;
+        SetActive(timerCard, show);
 
-        float timeLeft = running ? tracked.timeLeft : 0f;
+        if (periodText != null)
+            periodText.text = inRound ? time.CurrentLabel : "";
+
+        if (!show) return;
+
+        if (!roundTimer && !errandTimer && !showFailed)
+        {
+            timerText.text = "";   // a round without a time limit: only the label is shown
+            return;
+        }
+
+        float timeLeft = roundTimer ? time.TimeLeft : errandTimer ? tracked.timeLeft : 0f;
         int seconds = Mathf.CeilToInt(timeLeft);
         timerText.text = string.Format("{0:00}:{1:00}", seconds / 60, seconds % 60);
         timerText.color = timeLeft <= warningSeconds ? timerWarningColor : timerNormalColor;

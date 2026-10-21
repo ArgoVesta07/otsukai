@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 // and LoadGame() from the main menu's Continue button.
 public static class SaveSystem
 {
-    public const int CurrentVersion = 1;
+    public const int CurrentVersion = 2;   // 2 = added story days and periods
     const string FileName = "save.json";
 
     static SaveData pendingLoad;   // waiting to be applied once the game scene has loaded
@@ -70,6 +70,9 @@ public static class SaveSystem
 
         foreach (var pair in GameFlags.All)
             data.flags.Add(new SavedPair(pair.Key, pair.Value));
+
+        if (TimeManager.Instance != null)
+            TimeManager.Instance.WriteTo(data);
 
         return data;
     }
@@ -153,6 +156,10 @@ public static class SaveSystem
 
         quest.ReadFrom(data);
 
+        // After the quest state, because it sets which errands are available this round
+        if (TimeManager.Instance != null)
+            TimeManager.Instance.ReadFrom(data);
+
         if (quest.Inventory != null)
         {
             quest.Inventory.Clear();
@@ -175,6 +182,14 @@ public static class SaveSystem
         {
             quest.ResetState();
             if (quest.Inventory != null) quest.Inventory.Clear();
+        }
+
+        // Only exists here if a game was already running (e.g. back to the menu later)
+        TimeManager time = TimeManager.Instance;
+        if (time != null)
+        {
+            time.ResetState();
+            if (time.HasStory) time.BeginStory();
         }
     }
 

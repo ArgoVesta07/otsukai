@@ -2898,6 +2898,7 @@ MonoBehaviour:
   timerNormalColor: {r: 1, g: 1, b: 1, a: 1}
   timerWarningColor: {r: 1, g: 0.55, b: 0.45, a: 1}
   warningSeconds: 30
+  periodText: {fileID: 0}
   errandRow: {fileID: 187050645}
   errandShortText: {fileID: 1704820275}
   errandDetail: {fileID: 1271133191}

@@ -23,7 +23,8 @@ public enum ErrandCondition
     Active,       // any step
     AtStep,       // a specific step (see Step)
     Completed,
-    Failed
+    Failed,
+    Unavailable   // not part of the current story round
 }
 
 [System.Serializable]
@@ -155,6 +156,7 @@ public class NPC : MonoBehaviour
             case ErrandCondition.AtStep:     return quest.GetStep(entry.errand.errandId) == entry.step;
             case ErrandCondition.Completed:  return state == ErrandState.Completed;
             case ErrandCondition.Failed:     return state == ErrandState.Failed;
+            case ErrandCondition.Unavailable: return state == ErrandState.Unavailable;
             default:                         return false;
         }
     }

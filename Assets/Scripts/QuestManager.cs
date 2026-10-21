@@ -6,7 +6,8 @@ public enum ErrandState
     NotStarted,
     Active,
     Completed,
-    Failed
+    Failed,
+    Unavailable   // not part of the current story round, so it can't be started now
 }
 
 // An errand that is currently running
@@ -35,6 +36,10 @@ public class QuestManager : MonoBehaviour
     readonly List<ActiveErrand> active = new List<ActiveErrand>();
     readonly HashSet<string> completed = new HashSet<string>();
     readonly HashSet<string> failed = new HashSet<string>();
+
+    // Story mode: only these errands can be started this round. Off when no story is running.
+    readonly HashSet<string> available = new HashSet<string>();
+    bool restrictToAvailable;
 
     InventoryManager inventory;
 
@@ -97,6 +102,12 @@ public class QuestManager : MonoBehaviour
         ErrandState state = GetState(data.errandId);
         if (state == ErrandState.Active || state == ErrandState.Completed)
             return false;
+
+        if (state == ErrandState.Unavailable)
+        {
+            Debug.Log("Errand '" + data.errandId + "' isn't part of this round.");
+            return false;
+        }
 
         if (data.steps == null || data.steps.Length == 0)
         {
@@ -181,6 +192,7 @@ public class QuestManager : MonoBehaviour
         if (FindActive(errandId) != null) return ErrandState.Active;
         if (completed.Contains(errandId)) return ErrandState.Completed;
         if (failed.Contains(errandId)) return ErrandState.Failed;
+        if (restrictToAvailable && !available.Contains(errandId)) return ErrandState.Unavailable;
         return ErrandState.NotStarted;
     }
 
@@ -253,6 +265,49 @@ public class QuestManager : MonoBehaviour
             GameFlags.Set(flag);
     }
 
+    // ---------- Story rounds (used by TimeManager) ----------
+
+    // Limits which errands can be started. Called at the start of every round.
+    public void SetAvailableErrands(IEnumerable<string> errandIds)
+    {
+        available.Clear();
+        available.UnionWith(errandIds);
+        restrictToAvailable = true;
+    }
+
+    // Removes any record of this errand so it can be done again (repeating errands)
+    public void ForgetErrand(string errandId)
+    {
+        ActiveErrand errand = FindActive(errandId);
+        if (errand != null) active.Remove(errand);
+
+        completed.Remove(errandId);
+        failed.Remove(errandId);
+    }
+
+    // Fails an errand that is running or was never started. Completed errands stay completed.
+    public void ForceFail(ErrandData data)
+    {
+        if (data == null) return;
+
+        ActiveErrand errand = FindActive(data.errandId);
+        if (errand != null)
+        {
+            Fail(errand);
+            return;
+        }
+
+        if (completed.Contains(data.errandId) || failed.Contains(data.errandId)) return;
+
+        failed.Add(data.errandId);
+        SetFlags(data.flagsOnFail);
+    }
+
+    public void ClearLastFailed()
+    {
+        LastFailed = null;
+    }
+
     // ---------- Save / load ----------
 
     public ErrandData FindErrandData(string errandId)
@@ -317,5 +372,7 @@ public class QuestManager : MonoBehaviour
         completed.Clear();
         failed.Clear();
         LastFailed = null;
+        available.Clear();
+        restrictToAvailable = false;
     }
 }

@@ -53,11 +53,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\DialogBox.cs" />
+    <Compile Include="Assets\Scripts\PeriodBanner.cs" />
     <Compile Include="Assets\Scripts\NavTarget.cs" />
     <Compile Include="Assets\Scripts\Toast.cs" />
     <Compile Include="Assets\Scripts\ErrandSpot.cs" />
     <Compile Include="Assets\Scripts\GameFlags.cs" />
     <Compile Include="Assets\Scripts\InventoryRow.cs" />
+    <Compile Include="Assets\Scripts\StoryData.cs" />
     <Compile Include="Assets\Scripts\IncidentManager.cs" />
     <Compile Include="Assets\Scripts\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\SaveSystem.cs" />
@@ -72,8 +74,10 @@
     <Compile Include="Assets\Scripts\SavePoint.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\ErrandData.cs" />
+    <Compile Include="Assets\Scripts\DayData.cs" />
     <Compile Include="Assets\Scripts\QuestManager.cs" />
     <Compile Include="Assets\Scripts\Door.cs" />
+    <Compile Include="Assets\Scripts\TimeManager.cs" />
     <Compile Include="Assets\Scripts\GameHud.cs" />
     <Compile Include="Assets\Scripts\InteractionPrompt.cs" />
     <Compile Include="Assets\Scripts\CameraFoll.cs" />

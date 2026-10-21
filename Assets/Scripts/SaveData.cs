@@ -22,6 +22,25 @@ public class SaveData
     // Inventory and flags
     public List<SavedPair> items = new List<SavedPair>();
     public List<SavedPair> flags = new List<SavedPair>();
+
+    // Story time (version 2)
+    public int dayIndex;
+    public int periodIndex;
+    public float periodTimeLeft;
+    public bool storyFinished;
+    public List<PeriodResult> periodResults = new List<PeriodResult>();
+}
+
+// How one story round went
+[Serializable]
+public class PeriodResult
+{
+    public int day;
+    public string period;
+    public int completed;
+    public int total;
+    public float timeLeft;
+    public PeriodRating rating;
 }
 
 [Serializable]
