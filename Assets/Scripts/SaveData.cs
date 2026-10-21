@@ -28,6 +28,7 @@ public class SaveData
     public int periodIndex;
     public float periodTimeLeft;
     public bool storyFinished;
+    public bool betweenRounds;   // saved during the break after a round
     public List<PeriodResult> periodResults = new List<PeriodResult>();
 }
 

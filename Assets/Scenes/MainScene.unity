@@ -5661,8 +5661,12 @@ MonoBehaviour:
   - Good
   - Perfect!
   resultFormat: '{0}  {1}/{2} errands'
+  dayCompleteFormat: Day {0} complete
+  dayRecapFormat: '{0}/{1} errands'
   storyEndTitle: The End
   bannerSeconds: 2
+  showRoundResults: 0
+  breakSeconds: 5
 --- !u!4 &1589605086
 Transform:
   m_ObjectHideFlags: 0

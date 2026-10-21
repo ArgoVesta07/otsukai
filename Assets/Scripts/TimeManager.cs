@@ -13,6 +13,8 @@ public enum PeriodRating
 // Runs story mode: Day 1 Morning -> Afternoon -> Night -> Day 2 ...
 // Each period is one round with its own timer. The round ends when all its errands are done,
 // or when time runs out (the rest count as failed and the story moves on).
+// After each round: a short break, then the next round (a result card is optional).
+// After the last round of a day: a day recap card.
 public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance;
@@ -34,18 +36,30 @@ public class TimeManager : MonoBehaviour
     [SerializeField] string[] periodNames = { "Morning", "Afternoon", "Night" };
     [SerializeField] string[] ratingNames = { "", "Failed", "Partly done", "Good", "Perfect!" };
     [SerializeField] string resultFormat = "{0}  {1}/{2} errands";   // rating, done, total
+    [SerializeField] string dayCompleteFormat = "Day {0} complete";   // day number
+    [SerializeField] string dayRecapFormat = "{0}/{1} errands";        // done, total
     [SerializeField] string storyEndTitle = "The End";
     [SerializeField] float bannerSeconds = 2f;
+
+    [Tooltip("Show a result card after every round. Off = only the day recap after the last round.")]
+    [SerializeField] bool showRoundResults = false;
+
+    [Header("Break")]
+    [Tooltip("Free time between rounds (seconds). The timer is stopped and nothing happens.")]
+    [SerializeField] float breakSeconds = 5f;
 
     readonly List<PeriodResult> results = new List<PeriodResult>();
     bool restoredFromSave;
     bool transitioning;   // a banner is showing between rounds
+    bool onBreak;         // free time after a round, before the next one starts
+    float breakLeft;
 
     public int DayIndex { get; private set; }
     public int PeriodIndex { get; private set; }
     public float TimeLeft { get; private set; }
     public bool Running { get; private set; }
     public bool StoryFinished { get; private set; }
+    public bool OnBreak => onBreak;
 
     public int DayNumber => DayIndex + 1;
     public bool HasStory => story != null && story.days != null && story.days.Length > 0;
@@ -98,6 +112,17 @@ public class TimeManager : MonoBehaviour
 
     void Update()
     {
+        if (onBreak)
+        {
+            breakLeft -= Time.deltaTime;
+            if (breakLeft <= 0f)
+            {
+                onBreak = false;
+                NextPeriod();
+            }
+            return;
+        }
+
         if (!Running || transitioning) return;
 
         PeriodData period = CurrentPeriod;
@@ -190,22 +215,71 @@ public class TimeManager : MonoBehaviour
         PeriodData period = CurrentPeriod;
         PeriodResult result = MakeResult(period);
         results.Add(result);
-        GameFlags.Set("D" + result.day + "_" + result.period, (int)result.rating);
-
-        string subtitle = string.Format(resultFormat,
-            RatingName(result.rating), result.completed, result.total);
+        if (result.total > 0)
+            GameFlags.Set("D" + result.day + "_" + result.period, (int)result.rating);
 
         Debug.Log("Round over: " + CurrentLabel + " -> " + result.rating);
 
-        PeriodBanner.Show(CurrentLabel, subtitle, bannerSeconds, () =>
+        string title;
+        string subtitle;
+
+        if (IsLastPeriodOfDay())
+        {
+            // Day recap: errands done across the whole day
+            int done = 0;
+            int total = 0;
+            foreach (PeriodResult r in results)
+            {
+                if (r.day != DayNumber) continue;
+                done += r.completed;
+                total += r.total;
+            }
+
+            title = string.Format(dayCompleteFormat, DayNumber);
+            subtitle = string.Format(dayRecapFormat, done, total);
+        }
+        else if (!showRoundResults || result.total == 0)
+        {
+            // No result card (turned off, or a round without errands): go straight to the break
+            transitioning = false;
+            StartBreak();
+            return;
+        }
+        else
+        {
+            title = CurrentLabel;
+            subtitle = string.Format(resultFormat, RatingName(result.rating), result.completed, result.total);
+        }
+
+        PeriodBanner.Show(title, subtitle, bannerSeconds, () =>
         {
             transitioning = false;
-            NextPeriod();
+            StartBreak();
         });
+    }
+
+    void StartBreak()
+    {
+        if (breakSeconds <= 0f)
+        {
+            NextPeriod();
+            return;
+        }
+
+        onBreak = true;
+        breakLeft = breakSeconds;
+    }
+
+    bool IsLastPeriodOfDay()
+    {
+        DayData day = story.days[DayIndex];
+        return day == null || day.periods == null || PeriodIndex >= day.periods.Length - 1;
     }
 
     void NextPeriod()
     {
+        if (!HasStory) return;
+
         int day = DayIndex;
         int period = PeriodIndex + 1;
 
@@ -279,7 +353,11 @@ public class TimeManager : MonoBehaviour
         }
 
         PeriodRating rating;
-        if (total == 0 || completed == total)
+        if (total == 0)
+        {
+            rating = PeriodRating.None;   // nothing to rate
+        }
+        else if (completed == total)
         {
             bool plentyOfTime = period.timeLimit <= 0f || TimeLeft >= period.timeLimit * perfectTimeShare;
             rating = plentyOfTime ? PeriodRating.Perfect : PeriodRating.Good;
@@ -347,6 +425,7 @@ public class TimeManager : MonoBehaviour
         save.periodIndex = PeriodIndex;
         save.periodTimeLeft = TimeLeft;
         save.storyFinished = StoryFinished;
+        save.betweenRounds = onBreak;
         save.periodResults.AddRange(results);
     }
 
@@ -367,9 +446,20 @@ public class TimeManager : MonoBehaviour
         results.AddRange(save.periodResults);
 
         PeriodData period = CurrentPeriod;
-        Running = period != null && !StoryFinished;
-
         if (period != null) ApplyAvailability(period);
+
+        if (save.betweenRounds && !StoryFinished && HasStory)
+        {
+            // Saved during the break: this round is already over, continue with the break
+            Running = false;
+            onBreak = true;
+            breakLeft = breakSeconds;
+        }
+        else
+        {
+            Running = period != null && !StoryFinished;
+            onBreak = false;
+        }
     }
 
     // Used by New Game
@@ -379,6 +469,7 @@ public class TimeManager : MonoBehaviour
         Running = false;
         StoryFinished = false;
         transitioning = false;
+        onBreak = false;
         restoredFromSave = false;
         DayIndex = 0;
         PeriodIndex = 0;
