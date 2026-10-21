@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec06f7cfcc162a34aaef902c31ec8747, type: 3}
+  m_Name: Day1
+  m_EditorClassIdentifier: Assembly-CSharp::DayData
+  periods:
+  - note: eggs from Mom
+    period: 0
+    timeLimit: 120
+    errands:
+    - errand: {fileID: 11400000, guid: ba99d92e7fc012346b7fb453a626582d, type: 2}
+      autoStart: 0
+  - note: eggs again, auto
+    period: 1
+    timeLimit: 90
+    errands:
+    - errand: {fileID: 11400000, guid: ba99d92e7fc012346b7fb453a626582d, type: 2}
+      autoStart: 1
+  - note: free time
+    period: 2
+    timeLimit: 15
+    errands: []

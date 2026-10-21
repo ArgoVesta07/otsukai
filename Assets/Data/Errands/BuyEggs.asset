@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BuyEggs
   m_EditorClassIdentifier: Assembly-CSharp::ErrandData
   errandId: BuyEggs
-  timeLimit: 100
+  timeLimit: 0
   steps:
   - note: get eggs
     shortText: Buy eggs
