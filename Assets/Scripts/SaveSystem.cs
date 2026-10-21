@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public static class SaveSystem
 {
     public const int CurrentVersion = 2;   // 2 = added story days and periods
-    const string FileName = "save.json";
+    const string FileName = "story.json";   // story mode only; classic mode will get its own file
 
     static SaveData pendingLoad;   // waiting to be applied once the game scene has loaded
     static string lastSavedFingerprint;   // progress at the last save or load, to spot unsaved changes
@@ -93,6 +93,12 @@ public static class SaveSystem
         pendingLoad = data;
         SceneManager.LoadScene(gameSceneName);
         return true;
+    }
+
+    // Reads the save without loading it (for the Continue button). Null when there is none.
+    public static SaveData PeekSave()
+    {
+        return HasSave ? ReadFile() : null;
     }
 
     static SaveData ReadFile()
@@ -190,13 +196,8 @@ public static class SaveSystem
             if (quest.Inventory != null) quest.Inventory.Clear();
         }
 
-        // Only exists here if a game was already running (e.g. back to the menu later)
         TimeManager time = TimeManager.Instance;
-        if (time != null)
-        {
-            time.ResetState();
-            if (time.HasStory) time.BeginStory();
-        }
+        if (time != null) time.ResetState();
     }
 
     // ---------- Unsaved progress ----------
@@ -205,6 +206,10 @@ public static class SaveSystem
     // Walking around and timers ticking don't count, only real progress (errands, items, flags, rounds).
     public static bool HasUnsavedProgress()
     {
+        // Only story mode is saved; free mode has nothing to lose
+        TimeManager time = TimeManager.Instance;
+        if (time == null || !time.InStory) return false;
+
         if (lastSavedFingerprint == null) return true;
         return Fingerprint(Collect()) != lastSavedFingerprint;
     }

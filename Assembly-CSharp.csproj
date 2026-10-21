@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\SceneTransition.cs" />
     <Compile Include="Assets\Scripts\SavePoint.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\ModeSelectUI.cs" />
     <Compile Include="Assets\Scripts\ErrandData.cs" />
     <Compile Include="Assets\Scripts\GameSession.cs" />
     <Compile Include="Assets\Scripts\DayData.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Assets\Scripts\GameHud.cs" />
     <Compile Include="Assets\Scripts\InteractionPrompt.cs" />
     <Compile Include="Assets\Scripts\CameraFoll.cs" />
+    <Compile Include="Assets\Scripts\ModeSelectPoint.cs" />
     <Compile Include="Assets\Scripts\IncidentTarget.cs" />
   </ItemGroup>
   <ItemGroup>

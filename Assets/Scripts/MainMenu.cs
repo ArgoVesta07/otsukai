@@ -1,31 +1,35 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
+// Main menu: Start (enters town in free mode), How to Play, Quit.
+// Story and Classic are chosen in town with a ModeSelectPoint.
 public class MainMenu : MonoBehaviour
 {
     public string gameSceneName = "MainScene";
 
-    [Tooltip("Optional. Hidden when there is no save file.")]
-    [SerializeField] Button continueButton;
+    [Tooltip("Optional panel that explains the game. Hidden at start.")]
+    [SerializeField] GameObject howToPlayPanel;
 
     void Start()
     {
-        if (continueButton != null)
-            continueButton.gameObject.SetActive(SaveSystem.HasSave);
+        if (howToPlayPanel != null)
+            howToPlayPanel.SetActive(false);
     }
 
-    // New game: starts from the beginning. The old save file stays until the next save.
     public void StartGame()
     {
         SaveSystem.ResetProgress();
         SceneManager.LoadScene(gameSceneName);
     }
 
-    public void ContinueGame()
+    public void OpenHowToPlay()
     {
-        if (!SaveSystem.LoadGame(gameSceneName))
-            Debug.LogWarning("Couldn't load the save.");
+        if (howToPlayPanel != null) howToPlayPanel.SetActive(true);
+    }
+
+    public void CloseHowToPlay()
+    {
+        if (howToPlayPanel != null) howToPlayPanel.SetActive(false);
     }
 
     public void QuitGame()

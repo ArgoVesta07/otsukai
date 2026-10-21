@@ -21,8 +21,8 @@ public class TimeManager : MonoBehaviour
 
     [Header("Story")]
     [SerializeField] StoryData story;
-    [Tooltip("Start Day 1 automatically when the game scene opens (New Game).")]
-    [SerializeField] bool startStoryOnPlay = true;
+    [Tooltip("Off = the game starts in free mode and the story is started from a ModeSelectPoint.")]
+    [SerializeField] bool autoStartStory = false;
     [SerializeField] bool autoSaveAtPeriodStart = true;
     [Tooltip("Pause the round timer while the player is locked (dialogue box, loading, banners).")]
     [SerializeField] bool pauseWhileInteracting = true;
@@ -51,6 +51,7 @@ public class TimeManager : MonoBehaviour
     readonly List<PeriodResult> results = new List<PeriodResult>();
     bool restoredFromSave;
     bool transitioning;   // a banner is showing between rounds
+    bool inStory;         // false = free mode (walk around, no timer, no errands)
     readonly HashSet<string> debugControlled = new HashSet<string>();   // incidents the debug panel took over
     bool onBreak;         // free time after a round, before the next one starts
     float breakLeft;
@@ -61,6 +62,7 @@ public class TimeManager : MonoBehaviour
     public float RoundElapsed { get; private set; }   // round time passed (pauses like the timer)
     public bool Running { get; private set; }
     public bool StoryFinished { get; private set; }
+    public bool InStory => inStory;
     public bool OnBreak => onBreak;
 
     public int DayNumber => DayIndex + 1;
@@ -112,8 +114,12 @@ public class TimeManager : MonoBehaviour
         if (Instance != this) return;   // duplicate from a reloaded scene, about to be destroyed
 
         // A loaded save already set everything up (SaveSystem runs before Start)
-        if (!restoredFromSave && startStoryOnPlay && HasStory)
+        if (restoredFromSave) return;
+
+        if (autoStartStory && HasStory)
             BeginStory();
+        else
+            EnterFreeMode();
     }
 
     void Update()
@@ -162,9 +168,33 @@ public class TimeManager : MonoBehaviour
 
     public void BeginStory()
     {
+        if (!HasStory)
+        {
+            Debug.LogWarning("No Story assigned to the TimeManager.");
+            return;
+        }
+
+        inStory = true;
         results.Clear();
         StoryFinished = false;
         StartPeriod(0, 0);
+    }
+
+    // Free mode: walk around town, no timer, no errands. The game starts here.
+    public void EnterFreeMode()
+    {
+        inStory = false;
+        Running = false;
+        onBreak = false;
+        transitioning = false;
+        IncidentManager.EndAll();
+
+        QuestManager quest = QuestManager.Instance;
+        if (quest != null)
+        {
+            quest.DebugClearActive();                  // drop any running errands
+            quest.SetAvailableErrands(new string[0]);  // nothing can be started
+        }
     }
 
     void StartPeriod(int dayIndex, int periodIndex)
@@ -323,8 +353,11 @@ public class TimeManager : MonoBehaviour
         QuestManager quest = QuestManager.Instance;
         if (quest != null) quest.SetAvailableErrands(new string[0]);
 
-        PeriodBanner.Show(storyEndTitle, "", bannerSeconds, null);
+        SaveSystem.Save();   // remember that the story is finished
         Debug.Log("Story finished.");
+
+        // After the end card, back to free mode
+        PeriodBanner.Show(storyEndTitle, "", bannerSeconds, EnterFreeMode);
     }
 
     // ---------- Incidents ----------
@@ -442,6 +475,17 @@ public class TimeManager : MonoBehaviour
         }
     }
 
+    // "Day 2 · Afternoon" for any day/period (0-based), e.g. for a Continue button
+    public string LabelFor(int dayIndex, int periodIndex)
+    {
+        if (!HasStory || dayIndex < 0 || dayIndex >= story.days.Length) return "";
+
+        DayData day = story.days[dayIndex];
+        if (day == null || day.periods == null || periodIndex < 0 || periodIndex >= day.periods.Length) return "";
+
+        return string.Format(dayFormat, dayIndex + 1) + " · " + PeriodName(day.periods[periodIndex].period);
+    }
+
     string PeriodName(DayPeriod period)
     {
         int i = (int)period;
@@ -512,6 +556,18 @@ public class TimeManager : MonoBehaviour
     {
         // Saves from before the day system: start the story fresh instead
         if (save.version < 2) return;
+        if (save.storyFinished)
+        {
+            // A finished story loads into free mode
+            restoredFromSave = true;
+            results.Clear();
+            results.AddRange(save.periodResults);
+            DayIndex = save.dayIndex;
+            PeriodIndex = save.periodIndex;
+            EnterFreeMode();
+            StoryFinished = true;
+            return;
+        }
 
         restoredFromSave = true;
         transitioning = false;
@@ -522,6 +578,7 @@ public class TimeManager : MonoBehaviour
         RoundElapsed = save.roundElapsed;
         IncidentManager.EndAll();   // the schedule restarts the right ones on the next frame
         StoryFinished = save.storyFinished;
+        inStory = !StoryFinished;
 
         results.Clear();
         results.AddRange(save.periodResults);
@@ -546,6 +603,7 @@ public class TimeManager : MonoBehaviour
     // Used by New Game
     public void ResetState()
     {
+        inStory = false;
         results.Clear();
         Running = false;
         StoryFinished = false;

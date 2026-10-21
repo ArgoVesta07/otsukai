@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// A checkpoint the player can use to save (bed, desk, ...).
+// A checkpoint the player can use to save (bed, desk, ...). Only works in story mode.
 // Needs a Collider2D with Is Trigger ticked. Results are shown with a Toast pop-up.
 public class SavePoint : MonoBehaviour
 {
@@ -14,14 +14,14 @@ public class SavePoint : MonoBehaviour
     public bool allowDuringErrand = false;
 
     bool playerNear;
+    bool promptShown;
+
+    static bool InStory => TimeManager.Instance != null && TimeManager.Instance.InStory;
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.GetComponent<PlayerMovement>() != null)
-        {
             playerNear = true;
-            InteractionPrompt.Show(promptText, transform);
-        }
     }
 
     void OnTriggerExit2D(Collider2D other)
@@ -29,13 +29,17 @@ public class SavePoint : MonoBehaviour
         if (other.GetComponent<PlayerMovement>() != null)
         {
             playerNear = false;
-            InteractionPrompt.Hide();
+            SetPrompt(false);
         }
     }
 
     void Update()
     {
         if (!playerNear) return;
+
+        SetPrompt(InStory && !InteractionState.IsInteracting);
+
+        if (!InStory) return;
         if (InteractionState.IsInteracting) return;
 
         var k = Keyboard.current;
@@ -51,5 +55,15 @@ public class SavePoint : MonoBehaviour
         }
 
         Toast.Show(SaveSystem.Save() ? savedText : failedText);
+    }
+
+    // Only touches the shared prompt when our own state changes
+    void SetPrompt(bool show)
+    {
+        if (show == promptShown) return;
+        promptShown = show;
+
+        if (show) InteractionPrompt.Show(promptText, transform);
+        else InteractionPrompt.Hide();
     }
 }
