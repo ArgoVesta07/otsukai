@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +13,7 @@ public static class SaveSystem
     const string FileName = "save.json";
 
     static SaveData pendingLoad;   // waiting to be applied once the game scene has loaded
+    static string lastSavedFingerprint;   // progress at the last save or load, to spot unsaved changes
 
     public static string FilePath => Path.Combine(Application.persistentDataPath, FileName);
     public static bool HasSave => File.Exists(FilePath);
@@ -33,6 +36,7 @@ public static class SaveSystem
         try
         {
             File.WriteAllText(FilePath, JsonUtility.ToJson(data, true));
+            lastSavedFingerprint = Fingerprint(data);
             Debug.Log("Game saved: " + FilePath);
             return true;
         }
@@ -123,6 +127,7 @@ public static class SaveSystem
         pendingLoad = null;
 
         Apply(data);
+        lastSavedFingerprint = Fingerprint(data);
 
         // The save was made in another scene (e.g. House): go there with the loading screen
         if (!string.IsNullOrEmpty(data.sceneName) && data.sceneName != scene.name && SceneTransition.Instance != null)
@@ -174,6 +179,7 @@ public static class SaveSystem
     public static void ResetProgress()
     {
         pendingLoad = null;
+        lastSavedFingerprint = null;
         InteractionState.IsInteracting = false;
         GameFlags.Clear();
 
@@ -191,6 +197,54 @@ public static class SaveSystem
             time.ResetState();
             if (time.HasStory) time.BeginStory();
         }
+    }
+
+    // ---------- Unsaved progress ----------
+
+    // True if the game state changed since the last save or load.
+    // Walking around and timers ticking don't count, only real progress (errands, items, flags, rounds).
+    public static bool HasUnsavedProgress()
+    {
+        if (lastSavedFingerprint == null) return true;
+        return Fingerprint(Collect()) != lastSavedFingerprint;
+    }
+
+    // Forget the last save point (used when the game session ends)
+    public static void ForgetLastSave()
+    {
+        lastSavedFingerprint = null;
+    }
+
+    static string Fingerprint(SaveData d)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.Append(d.dayIndex).Append('|').Append(d.periodIndex).Append('|')
+          .Append(d.storyFinished).Append('|').Append(d.betweenRounds).Append('|')
+          .Append(d.periodResults.Count).Append('|');
+
+        AppendSorted(sb, d.completedErrands);
+        AppendSorted(sb, d.failedErrands);
+
+        List<string> active = new List<string>();
+        foreach (SavedErrand e in d.activeErrands) active.Add(e.errandId + ":" + e.stepIndex);
+        AppendSorted(sb, active);
+
+        List<string> items = new List<string>();
+        foreach (SavedPair p in d.items) items.Add(p.key + "=" + p.value);
+        AppendSorted(sb, items);
+
+        List<string> flags = new List<string>();
+        foreach (SavedPair p in d.flags) flags.Add(p.key + "=" + p.value);
+        AppendSorted(sb, flags);
+
+        return sb.ToString();
+    }
+
+    static void AppendSorted(StringBuilder sb, List<string> values)
+    {
+        List<string> sorted = new List<string>(values);
+        sorted.Sort(StringComparer.Ordinal);
+        sb.Append(string.Join(",", sorted)).Append('|');
     }
 
     public static void DeleteSave()

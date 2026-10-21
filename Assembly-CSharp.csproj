@@ -60,6 +60,7 @@
     <Compile Include="Assets\Scripts\GameFlags.cs" />
     <Compile Include="Assets\Scripts\InventoryRow.cs" />
     <Compile Include="Assets\Scripts\StoryData.cs" />
+    <Compile Include="Assets\Scripts\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\IncidentManager.cs" />
     <Compile Include="Assets\Scripts\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\SaveSystem.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Assets\Scripts\SavePoint.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\ErrandData.cs" />
+    <Compile Include="Assets\Scripts\GameSession.cs" />
     <Compile Include="Assets\Scripts\DayData.cs" />
     <Compile Include="Assets\Scripts\QuestManager.cs" />
     <Compile Include="Assets\Scripts\Door.cs" />
