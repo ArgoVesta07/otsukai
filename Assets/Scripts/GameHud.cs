@@ -37,7 +37,7 @@ public class GameHud : MonoBehaviour
     [SerializeField] GameObject incidentCard;
 
     [Header("Testing")]
-    [SerializeField] bool debugIncidentKey = true;   // press I to toggle a test incident
+    [SerializeField] bool debugIncidentKey = true;   // press F9 to toggle a test incident
 
     RectTransform layoutRoot;
     Transform player;
@@ -78,7 +78,7 @@ public class GameHud : MonoBehaviour
         if (k.tabKey.wasPressedThisFrame)
             ToggleDetail();
 
-        if (debugIncidentKey && k.iKey.wasPressedThisFrame)
+        if (debugIncidentKey && k.f9Key.wasPressedThisFrame)
         {
             if (IncidentManager.IsActive("Test"))
                 IncidentManager.End("Test");
