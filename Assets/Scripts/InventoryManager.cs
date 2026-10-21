@@ -9,6 +9,8 @@ public class InventoryManager : MonoBehaviour
 
     private Dictionary<string, int> items = new Dictionary<string, int>();
 
+    public ItemData[] ItemLibrary => itemLibrary;
+
     // Fired whenever the contents change (used by the inventory UI)
     public event Action Changed;
 

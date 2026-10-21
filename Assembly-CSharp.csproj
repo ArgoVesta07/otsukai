@@ -55,6 +55,7 @@
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\PeriodBanner.cs" />
     <Compile Include="Assets\Scripts\NavTarget.cs" />
+    <Compile Include="Assets\Scripts\DebugPanel.cs" />
     <Compile Include="Assets\Scripts\Toast.cs" />
     <Compile Include="Assets\Scripts\ErrandSpot.cs" />
     <Compile Include="Assets\Scripts\GameFlags.cs" />

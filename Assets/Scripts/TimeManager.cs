@@ -62,6 +62,10 @@ public class TimeManager : MonoBehaviour
     public bool OnBreak => onBreak;
 
     public int DayNumber => DayIndex + 1;
+    public StoryData Story => story;
+
+    // Debug panel: freezes the round timer
+    [System.NonSerialized] public bool DebugFreezeTimer;
     public bool HasStory => story != null && story.days != null && story.days.Length > 0;
     public IReadOnlyList<PeriodResult> Results => results;
 
@@ -136,6 +140,7 @@ public class TimeManager : MonoBehaviour
 
         if (period.timeLimit <= 0f) return;
         if (pauseWhileInteracting && InteractionState.IsInteracting) return;
+        if (DebugFreezeTimer) return;
 
         TimeLeft -= Time.deltaTime;
 
@@ -415,6 +420,37 @@ public class TimeManager : MonoBehaviour
     {
         int i = (int)rating;
         return ratingNames != null && i < ratingNames.Length ? ratingNames[i] : rating.ToString();
+    }
+
+    // ---------- Debug ----------
+
+    // Jumps straight to a day and period (0-based). Running errands are dropped.
+    public void DebugJumpTo(int dayIndex, int periodIndex)
+    {
+        if (!HasStory) return;
+
+        onBreak = false;
+        transitioning = false;
+        Running = false;
+        StoryFinished = false;
+
+        QuestManager quest = QuestManager.Instance;
+        if (quest != null) quest.DebugClearActive();
+
+        StartPeriod(dayIndex, periodIndex);
+    }
+
+    public void DebugSetTimeLeft(float seconds)
+    {
+        TimeLeft = Mathf.Max(0f, seconds);
+    }
+
+    public void DebugEndRoundNow()
+    {
+        if (!Running) return;
+        PeriodData period = CurrentPeriod;
+        if (period != null) FailRemaining(period);
+        EndPeriod();
     }
 
     // ---------- Save / load ----------

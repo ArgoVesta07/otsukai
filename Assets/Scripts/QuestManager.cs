@@ -50,6 +50,7 @@ public class QuestManager : MonoBehaviour
     public ErrandData LastFailed { get; private set; }
 
     public IReadOnlyList<ActiveErrand> Active => active;
+    public ErrandData[] ErrandLibrary => errandLibrary;
     public InventoryManager Inventory => inventory;
 
     void Awake()
@@ -305,6 +306,46 @@ public class QuestManager : MonoBehaviour
 
     public void ClearLastFailed()
     {
+        LastFailed = null;
+    }
+
+    // ---------- Debug ----------
+
+    // Completes the current step without checking items (rewards are still given)
+    public void DebugCompleteStep(ActiveErrand errand)
+    {
+        if (errand == null || !active.Contains(errand)) return;
+
+        ErrandStep step = errand.CurrentStep;
+        if (step != null && !string.IsNullOrEmpty(step.rewardItem) && inventory != null)
+            inventory.AddItem(step.rewardItem, step.rewardAmount);
+
+        errand.stepIndex++;
+        if (errand.stepIndex >= errand.data.steps.Length)
+            Complete(errand);
+    }
+
+    public void DebugCompleteErrand(ActiveErrand errand)
+    {
+        if (errand == null || !active.Contains(errand)) return;
+        Complete(errand);
+    }
+
+    // Starts an errand even if it isn't part of the current round
+    public void DebugForceStart(ErrandData data)
+    {
+        if (data == null) return;
+
+        bool wasRestricted = restrictToAvailable;
+        restrictToAvailable = false;
+        ForgetErrand(data.errandId);
+        StartErrand(data);
+        restrictToAvailable = wasRestricted;
+    }
+
+    public void DebugClearActive()
+    {
+        active.Clear();
         LastFailed = null;
     }
 
