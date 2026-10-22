@@ -1,9 +1,10 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 
 // The mode menu opened by a ModeSelectPoint.
-//   Main panel:    Story / Classic / Close
+//   Main panel:    Story / Challenge / Close
 //   Story panel:   Continue (Day 2 · Afternoon) / New story / Back   (only when a story save exists)
 //   Confirm panel: "Your saved story will be overwritten" Yes / No
 // Put this on a root canvas (e.g. HudCanvas). Hook the buttons to the public methods below.
@@ -25,7 +26,7 @@ public class ModeSelectUI : MonoBehaviour
     [Header("Text")]
     [GameText] [SerializeField] string continueFormat = "Continue  ({0})";   // {0} = "Day 2 · Afternoon"
     [GameText] [SerializeField] string storyCompleteText = "You finished the story.";
-    [GameText] [SerializeField] string classicComingSoonText = "Challenge mode is coming soon";
+    [GameText] [SerializeField, FormerlySerializedAs("classicComingSoonText")] string challengeComingSoonText = "Challenge mode is coming soon";
 
     [SerializeField] string gameSceneName = "MainScene";
 
@@ -119,16 +120,16 @@ public class ModeSelectUI : MonoBehaviour
         ShowOnly(storyPanel);
     }
 
-    public void ChooseClassic()
+    public void ChooseChallenge()
     {
-        if (ClassicManager.Instance == null)
+        if (ChallengeManager.Instance == null)
         {
-            Toast.Show(Loc.T(classicComingSoonText));
+            Toast.Show(Loc.T(challengeComingSoonText));
             return;
         }
 
         Close();
-        ClassicManager.Instance.StartClassic();
+        ChallengeManager.Instance.StartChallenge();
     }
 
     // ---------- Story panel ----------

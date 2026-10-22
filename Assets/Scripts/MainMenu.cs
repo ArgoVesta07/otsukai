@@ -3,9 +3,9 @@ using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.SceneManagement;
 
-// Main menu: Start (enters town in free mode), How to Play, Quit, the classic best score
+// Main menu: Start (enters town in free mode), How to Play, Quit, the challenge best score
 // and the language switch (see LanguageToggle).
-// Story and Classic are chosen in town with a ModeSelectPoint.
+// Story and Challenge are chosen in town with a ModeSelectPoint.
 public class MainMenu : MonoBehaviour
 {
     public string gameSceneName = "MainScene";
@@ -13,11 +13,11 @@ public class MainMenu : MonoBehaviour
     [Tooltip("Optional panel that explains the game. Hidden at start.")]
     [SerializeField] GameObject howToPlayPanel;
 
-    [Header("Classic best score")]
+    [Header("Challenge best score")]
     [SerializeField] TMP_Text bestScoreText;
-    [Tooltip("Entry text uses {0} = score, {1} = day. Example: Classic best: {0} · Day {1}")]
+    [Tooltip("Entry text uses {0} = score, {1} = day. Example: Challenge best: {0} · Day {1}")]
     [SerializeField] LocalizedString bestScoreFormat;
-    [Tooltip("Shown when there is no classic record yet.")]
+    [Tooltip("Shown when there is no challenge record yet.")]
     [SerializeField] LocalizedString noRecordText;
 
     LocalizedString shownText;   // the one currently feeding bestScoreText
@@ -43,7 +43,7 @@ public class MainMenu : MonoBehaviour
         StopListening();
         if (bestScoreText == null) return;
 
-        int best = ClassicManager.BestScore;
+        int best = ChallengeManager.BestScore;
         LocalizedString next = best > 0 ? bestScoreFormat : noRecordText;
 
         if (next == null || next.IsEmpty)
@@ -54,7 +54,7 @@ public class MainMenu : MonoBehaviour
         }
 
         if (best > 0)
-            next.Arguments = new object[] { best, ClassicManager.BestDay };
+            next.Arguments = new object[] { best, ChallengeManager.BestDay };
 
         shownText = next;
         shownText.StringChanged += SetBestScoreText;   // runs now and again on every language change

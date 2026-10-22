@@ -63,8 +63,8 @@
     <Compile Include="Assets\Scripts\LanguageToggle.cs" />
     <Compile Include="Assets\Scripts\Loc.cs" />
     <Compile Include="Assets\Scripts\InventoryRow.cs" />
+    <Compile Include="Assets\Scripts\ChallengeManager.cs" />
     <Compile Include="Assets\Scripts\StoryData.cs" />
-    <Compile Include="Assets\Scripts\ClassicManager.cs" />
     <Compile Include="Assets\Scripts\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\IncidentManager.cs" />
     <Compile Include="Assets\Scripts\InventoryUI.cs" />

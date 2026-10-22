@@ -352,6 +352,22 @@ MonoBehaviour:
     m_Localized: Postbox
     m_Metadata:
       m_Items: []
+  - m_Id: 32082394050560
+    m_Localized: Challenge Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32082394050561
+    m_Localized: Next day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34184352722944
+    m_Localized: Score {1}   Strikes {2}/{3}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34752949350400
+    m_Localized: Score {1}   Strikes {2}/{3}   {4}
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

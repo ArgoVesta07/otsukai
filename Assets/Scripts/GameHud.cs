@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ using UnityEngine.UI;
 // Layout, colors and sizes live on the UI objects; this script only fills them in.
 // The errand text and arrow target come from the tracked errand's current step (ErrandData asset).
 // The timer shows the story round time when a round is running, otherwise the errand's own timer.
-// In classic mode it shows the clock, and the other running errands are listed under the card.
+// In challenge mode it shows the clock, and the other running errands are listed under the card.
 [DefaultExecutionOrder(100)]   // runs after the player and camera have moved
 public class GameHud : MonoBehaviour
 {
@@ -35,10 +36,10 @@ public class GameHud : MonoBehaviour
     [SerializeField] GameObject switchHint;            // optional "[Q] Switch", shown when 2+ errands run
     [SerializeField] Key switchKey = Key.Q;
 
-    [Header("Classic mode")]
-    [GameText] [SerializeField] string classicLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
+    [Header("Challenge mode")]
+    [GameText] [SerializeField, FormerlySerializedAs("classicLabelFormat")] string challengeLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
     [Tooltip("The clock turns to the warning color when this many in-game minutes are left in the day.")]
-    [SerializeField] float classicWarningMinutes = 60f;
+    [SerializeField, FormerlySerializedAs("classicWarningMinutes")] float challengeWarningMinutes = 60f;
 
     [Header("Failed errand text")]
     [GameText] [SerializeField] string failedShortText = "Time's up";
@@ -147,17 +148,17 @@ public class GameHud : MonoBehaviour
 
     void UpdateTimer(ActiveErrand tracked, bool showFailed)
     {
-        // Classic mode: the card shows the clock
-        if (ClassicManager.IsActive)
+        // Challenge mode: the card shows the clock
+        if (ChallengeManager.IsActive)
         {
-            ClassicManager classic = ClassicManager.Instance;
+            ChallengeManager challenge = ChallengeManager.Instance;
             SetActive(timerCard, true);
-            timerText.text = classic.ClockText;
-            timerText.color = classic.MinutesLeftInDay <= classicWarningMinutes ? timerWarningColor : timerNormalColor;
+            timerText.text = challenge.ClockText;
+            timerText.color = challenge.MinutesLeftInDay <= challengeWarningMinutes ? timerWarningColor : timerNormalColor;
 
             if (periodText != null)
-                periodText.text = Loc.F(classicLabelFormat,
-                    classic.Day, classic.Score, classic.Strikes, classic.StrikesAllowed);
+                periodText.text = Loc.F(challengeLabelFormat,
+                    challenge.Day, challenge.Score, challenge.Strikes, challenge.StrikesAllowed);
             return;
         }
 

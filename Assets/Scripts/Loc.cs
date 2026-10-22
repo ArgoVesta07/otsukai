@@ -64,14 +64,19 @@ public static class Loc
     {
         if (string.IsNullOrEmpty(format)) return format;
 
+        string text = T(format);
+
         try
         {
-            return string.Format(T(format), args);
+            return string.Format(text, args);
         }
         catch (FormatException)
         {
-            Debug.LogWarning("Loc: the translation of \"" + format + "\" has broken {0} {1} markers.");
-            return string.Format(format, args);
+            // A {n} marker that doesn't exist here (e.g. {4} when only 4 values are given).
+            // Show the text without filling it in, instead of breaking the game.
+            if (warned.Add("format:" + format))
+                Debug.LogWarning("Loc: \"" + text + "\" uses a {n} marker that isn't available here. Check the numbers in the brackets.");
+            return text;
         }
     }
 

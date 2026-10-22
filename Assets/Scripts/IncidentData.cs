@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 // One kind of unexpected event (road closed, shop busy, ...), made as an asset:
 // right-click in the Project window > Create > Otsukai > Incident.
@@ -16,13 +17,13 @@ public class IncidentData : ScriptableObject
     [GameText] public string startMessage = "Something happened!";
     [GameText] public string endMessage = "";
 
-    [Header("Classic mode (random days)")]
-    [Tooltip("Can the classic mode pick this incident at random?")]
-    public bool allowInClassic = true;
+    [Header("Challenge mode (random days)")]
+    [Tooltip("Can the challenge mode pick this incident at random?")]
+    [FormerlySerializedAs("allowInClassic")] public bool allowInChallenge = true;
 
     [Tooltip("Higher = picked more often.")]
     public float weight = 1f;
 
-    [Tooltip("Earliest day it may appear in classic mode.")]
+    [Tooltip("Earliest day it may appear in challenge mode.")]
     public int minDay = 1;
 }

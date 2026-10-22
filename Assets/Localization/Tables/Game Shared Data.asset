@@ -349,6 +349,22 @@ MonoBehaviour:
     m_Key: Postbox
     m_Metadata:
       m_Items: []
+  - m_Id: 32082394050560
+    m_Key: Challenge Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32082394050561
+    m_Key: Next day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34184352722944
+    m_Key: Score {1}   Strikes {2}/{3}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34752949350400
+    m_Key: Score {1}   Strikes {2}/{3}   {4}
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -5860,8 +5860,8 @@ MonoBehaviour:
   otherErrandRowPrefab: {fileID: 5661404450804088132, guid: 14fa2fd5e4849b54586085ebf779f9bf, type: 3}
   switchHint: {fileID: 569460986}
   switchKey: 31
-  classicLabelFormat: Day {0}   Score {1}   Strikes {2}/{3}
-  classicWarningMinutes: 60
+  challengeLabelFormat: Score {1}   Strikes {2}/{3}
+  challengeWarningMinutes: 60
   failedShortText: Time's up
   failedDetailText: You ran out of time.
   navArrow: {fileID: 1251636952}
@@ -5940,7 +5940,7 @@ MonoBehaviour:
   storyInfoText: {fileID: 404740161}
   continueFormat: Continue  ({0})
   storyCompleteText: You finished the story.
-  classicComingSoonText: Challenge mode is coming soon
+  challengeComingSoonText: Challenge mode is coming soon
   gameSceneName: MainScene
 --- !u!1 &850774054
 GameObject:
@@ -8940,7 +8940,7 @@ GameObject:
   - component: {fileID: 1255188122}
   - component: {fileID: 1255188121}
   m_Layer: 0
-  m_Name: ClassicManager
+  m_Name: ChallengeManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8977,7 +8977,8 @@ MonoBehaviour:
   incidentChanceDay1: 0.25
   incidentChancePerDay: 0.1
   maxIncidents: 2
-  dayTitleFormat: "Challenge \xB7 Day {0}"
+  dayTitleFormat: Challenge Mode
+  nextDayTitle: Next day
   dayDoneFormat: Day {0} survived
   daySummaryFormat: Score {0}   Strikes {1}/{2}
   gameOverTitle: Game over
@@ -11229,7 +11230,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 838116587}
         m_TargetAssemblyTypeName: ModeSelectUI, Assembly-CSharp
-        m_MethodName: ChooseClassic
+        m_MethodName: ChooseChallenge
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

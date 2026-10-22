@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 // One errand (e.g. "Buy eggs"), made as an asset: right-click in the Project window >
 // Create > Otsukai > Errand. New errands are new assets; no code changes needed.
@@ -26,21 +27,21 @@ public class ErrandData : ScriptableObject
     [Tooltip("Take back the reward items this errand already gave the player when it fails.")]
     public bool takeBackRewardsOnFail = true;
 
-    [Header("Classic mode (random days)")]
-    [Tooltip("Can the classic mode hand out this errand?")]
-    public bool allowInClassic = true;
+    [Header("Challenge mode (random days)")]
+    [Tooltip("Can the challenge mode hand out this errand?")]
+    [FormerlySerializedAs("allowInClassic")] public bool allowInChallenge = true;
 
     [Tooltip("Higher = picked more often.")]
     public float weight = 1f;
 
-    [Tooltip("Earliest day it may appear in classic mode.")]
+    [Tooltip("Earliest day it may appear in challenge mode.")]
     public int minDay = 1;
 
     [Tooltip("In-game minutes the player gets on Day 1 (gets shorter on later days).")]
-    public float classicDeadlineMinutes = 60f;
+    [FormerlySerializedAs("classicDeadlineMinutes")] public float challengeDeadlineMinutes = 60f;
 
-    [Tooltip("Points for finishing it in classic mode (plus a bonus for time left).")]
-    public int classicScore = 100;
+    [Tooltip("Points for finishing it in challenge mode (plus a bonus for time left).")]
+    [FormerlySerializedAs("classicScore")] public int challengeScore = 100;
 }
 
 [Serializable]

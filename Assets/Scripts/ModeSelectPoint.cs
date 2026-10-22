@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Object in town that opens the mode menu (Story / Classic). Only usable in free mode.
+// Object in town that opens the mode menu (Story / Challenge). Only usable in free mode.
 // Needs a Collider2D with Is Trigger ticked.
 public class ModeSelectPoint : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class ModeSelectPoint : MonoBehaviour
     bool promptShown;
 
     static bool InFreeMode =>
-        (TimeManager.Instance == null || !TimeManager.Instance.InStory) && !ClassicManager.IsActive;
+        (TimeManager.Instance == null || !TimeManager.Instance.InStory) && !ChallengeManager.IsActive;
 
     void OnTriggerEnter2D(Collider2D other)
     {

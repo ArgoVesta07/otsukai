@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Classic mode: endless random days.
+// Challenge mode: endless random days.
 // A clock runs from the start hour to the end hour. Errands appear at random with a deadline,
 // incidents happen at random, and each day gets harder. A late errand is a strike;
 // too many strikes = game over. Only the best score is kept (no save).
 // Put this on its own object in the game scene (e.g. next to the TimeManager).
-public class ClassicManager : MonoBehaviour
+public class ChallengeManager : MonoBehaviour
 {
-    public static ClassicManager Instance;
+    public static ChallengeManager Instance;
 
     [Header("Clock")]
     [SerializeField] int startHour = 8;
@@ -37,7 +37,7 @@ public class ClassicManager : MonoBehaviour
     [SerializeField, Range(0.1f, 1f)] float minDeadlineShare = 0.5f;
 
     [Header("Incidents")]
-    [Tooltip("Incidents classic mode may use (only those with Allow In Classic ticked).")]
+    [Tooltip("Incidents challenge mode may use (only those with Allow In Challenge ticked).")]
     [SerializeField] IncidentData[] incidentPool;
     [Tooltip("In-game minutes between incident rolls.")]
     [SerializeField] float incidentCheckEvery = 30f;
@@ -46,7 +46,10 @@ public class ClassicManager : MonoBehaviour
     [SerializeField] int maxIncidents = 2;
 
     [Header("Text")]
+    [Tooltip("Banner on the first day. {0} = day number (optional).")]
     [GameText] [SerializeField] string dayTitleFormat = "Challenge · Day {0}";
+    [Tooltip("Banner on every later day. Empty = use Day Title Format.")]
+    [GameText] [SerializeField] string nextDayTitle = "Next day";
     [GameText] [SerializeField] string dayDoneFormat = "Day {0} survived";
     [GameText] [SerializeField] string daySummaryFormat = "Score {0}   Strikes {1}/{2}";
     [GameText] [SerializeField] string gameOverTitle = "Game over";
@@ -58,13 +61,14 @@ public class ClassicManager : MonoBehaviour
     [SerializeField] float bannerSeconds = 2.5f;
     [SerializeField] float breakSeconds = 3f;
 
+    // Old key names are kept so earlier best scores aren't lost
     const string BestScoreKey = "Otsukai_ClassicBestScore";
     const string BestDayKey = "Otsukai_ClassicBestDay";
 
     readonly Dictionary<string, float> incidentTimeLeft = new Dictionary<string, float>();
 
     bool running;        // a day is being played
-    bool active;         // classic mode is on (includes banners and breaks)
+    bool active;         // challenge mode is on (includes banners and breaks)
     float clock;         // in-game minutes since midnight
     float nextErrandAt;
     float nextIncidentCheckAt;
@@ -102,9 +106,9 @@ public class ClassicManager : MonoBehaviour
 
     // ---------- Start / stop ----------
 
-    public void StartClassic()
+    public void StartChallenge()
     {
-        SaveSystem.ResetProgress();   // clear errands, items and flags; classic never saves
+        SaveSystem.ResetProgress();   // clear errands, items and flags; challenge never saves
 
         TimeManager time = TimeManager.Instance;
         if (time != null) time.EnterFreeMode();   // make sure story mode is off
@@ -134,7 +138,11 @@ public class ClassicManager : MonoBehaviour
         nextIncidentCheckAt = clock + incidentCheckEvery;
         EndAllIncidents();
 
-        PeriodBanner.Show(Loc.F(dayTitleFormat, Day), "", bannerSeconds, () =>
+        string title = Day > 1 && !string.IsNullOrEmpty(nextDayTitle)
+            ? Loc.T(nextDayTitle)
+            : Loc.F(dayTitleFormat, Day);
+
+        PeriodBanner.Show(title, "", bannerSeconds, () =>
         {
             running = true;
         });
@@ -195,7 +203,7 @@ public class ClassicManager : MonoBehaviour
         });
     }
 
-    // Leaves classic mode without a result (e.g. back to the main menu)
+    // Leaves challenge mode without a result (e.g. back to the main menu)
     public void Stop()
     {
         running = false;
@@ -274,7 +282,7 @@ public class ClassicManager : MonoBehaviour
         QuestManager quest = QuestManager.Instance;
         if (quest == null)
         {
-            Debug.LogWarning("Classic: no QuestManager found.");
+            Debug.LogWarning("Challenge: no QuestManager found.");
             return;
         }
 
@@ -283,12 +291,12 @@ public class ClassicManager : MonoBehaviour
         ErrandData pick = PickErrand(quest);
         if (pick == null)
         {
-            Debug.LogWarning("Classic: no errand to hand out. Check the QuestManager's Errand Library, " +
-                             "and 'Allow In Classic' / 'Min Day' / 'Weight' on the ErrandData assets.");
+            Debug.LogWarning("Challenge: no errand to hand out. Check the QuestManager's Errand Library, " +
+                             "and 'Allow In Challenge' / 'Min Day' / 'Weight' on the ErrandData assets.");
             return;
         }
 
-        float minutes = pick.classicDeadlineMinutes * Mathf.Max(SpeedFactor(), minDeadlineShare);
+        float minutes = pick.challengeDeadlineMinutes * Mathf.Max(SpeedFactor(), minDeadlineShare);
         float seconds = minutes / gameMinutesPerSecond;
         string by = FormatClock(clock + minutes);
 
@@ -297,11 +305,11 @@ public class ClassicManager : MonoBehaviour
         {
             string name = pick.steps != null && pick.steps.Length > 0 ? pick.steps[0].shortText : pick.errandId;
             Toast.Show(Loc.F(newErrandFormat, Loc.T(name), by));
-            Debug.Log("Classic: new errand " + pick.errandId + " (by " + by + ")");
+            Debug.Log("Challenge: new errand " + pick.errandId + " (by " + by + ")");
         }
         else
         {
-            Debug.LogWarning("Classic: couldn't start errand " + pick.errandId + ".");
+            Debug.LogWarning("Challenge: couldn't start errand " + pick.errandId + ".");
         }
     }
 
@@ -314,7 +322,7 @@ public class ClassicManager : MonoBehaviour
 
         foreach (ErrandData e in quest.ErrandLibrary)
         {
-            if (e == null || !e.allowInClassic || e.minDay > Day || e.weight <= 0f) continue;
+            if (e == null || !e.allowInChallenge || e.minDay > Day || e.weight <= 0f) continue;
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;   // already running
             options.Add(e);
             total += e.weight;
@@ -337,7 +345,7 @@ public class ClassicManager : MonoBehaviour
         if (!active) return;
 
         float minutesLeft = errand.timeLeft * gameMinutesPerSecond;
-        int points = errand.data.classicScore + Mathf.RoundToInt(minutesLeft * bonusPerMinuteLeft);
+        int points = errand.data.challengeScore + Mathf.RoundToInt(minutesLeft * bonusPerMinuteLeft);
         Score += points;
         Toast.Show(Loc.F(scoreFormat, points));
     }
@@ -367,7 +375,7 @@ public class ClassicManager : MonoBehaviour
 
         foreach (IncidentData inc in incidentPool)
         {
-            if (inc == null || !inc.allowInClassic || inc.minDay > Day || inc.weight <= 0f) continue;
+            if (inc == null || !inc.allowInChallenge || inc.minDay > Day || inc.weight <= 0f) continue;
             if (IncidentManager.IsActive(inc.incidentId)) continue;
             options.Add(inc);
             total += inc.weight;
