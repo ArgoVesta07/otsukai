@@ -59,6 +59,7 @@
     <Compile Include="Assets\Scripts\Toast.cs" />
     <Compile Include="Assets\Scripts\ErrandSpot.cs" />
     <Compile Include="Assets\Scripts\GameFlags.cs" />
+    <Compile Include="Assets\Scripts\LanguageToggle.cs" />
     <Compile Include="Assets\Scripts\InventoryRow.cs" />
     <Compile Include="Assets\Scripts\StoryData.cs" />
     <Compile Include="Assets\Scripts\ClassicManager.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Assets\Scripts\IncidentManager.cs" />
     <Compile Include="Assets\Scripts\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\SaveSystem.cs" />
+    <Compile Include="Assets\Scripts\LanguageSetting.cs" />
     <Compile Include="Assets\Scripts\SaveData.cs" />
     <Compile Include="Assets\Scripts\NPC.cs" />
     <Compile Include="Assets\Scripts\IncidentData.cs" />

@@ -77,6 +77,7 @@ public class ClassicManager : MonoBehaviour
     public int StrikesAllowed => strikesAllowed;
     public bool Running => running;
     public static int BestScore => PlayerPrefs.GetInt(BestScoreKey, 0);
+    public static int BestDay => PlayerPrefs.GetInt(BestDayKey, 0);
 
     public string ClockText => FormatClock(clock);
     public float MinutesLeftInDay => endHour * 60f - clock;
