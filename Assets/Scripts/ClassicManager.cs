@@ -46,7 +46,7 @@ public class ClassicManager : MonoBehaviour
     [SerializeField] int maxIncidents = 2;
 
     [Header("Text")]
-    [GameText] [SerializeField] string dayTitleFormat = "Classic · Day {0}";
+    [GameText] [SerializeField] string dayTitleFormat = "Challenge · Day {0}";
     [GameText] [SerializeField] string dayDoneFormat = "Day {0} survived";
     [GameText] [SerializeField] string daySummaryFormat = "Score {0}   Strikes {1}/{2}";
     [GameText] [SerializeField] string gameOverTitle = "Game over";

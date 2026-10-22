@@ -35,11 +35,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2483626930176
-    m_Localized: "Classic best: {0} \xB7 Day {1}"
+    m_Localized: "Challenge best: {0} \xB7 Day {1}"
     m_Metadata:
       m_Items: []
   - m_Id: 2546159808512
-    m_Localized: 'Classic best: none yet'
+    m_Localized: 'Challenge best: none yet'
     m_Metadata:
       m_Items: []
   - m_Id: 81282146201600
@@ -53,7 +53,7 @@ MonoBehaviour:
   - m_Id: 81329197903872
     m_Localized: 'Finish your errands before time runs out!
 
-      
+
 
       Move: WASD / Arrow keys
 
@@ -65,7 +65,7 @@ MonoBehaviour:
 
       Pause: Esc
 
-      
+
 
       Find the mode spot in town to start:
 

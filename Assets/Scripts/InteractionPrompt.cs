@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 [DefaultExecutionOrder(100)]   // runs after CameraFollow to prevent shaking
@@ -15,6 +16,11 @@ public class InteractionPrompt : MonoBehaviour
     [SerializeField] float switchMargin = 0.2f;    // higher values make switching harder (prevents flickering)
     [SerializeField] float screenMargin = 20f;     // minimum distance from the edge of the screen (pixels)
 
+    [Header("Name label style (ShowLabel: objects with nothing to do)")]
+    [SerializeField] Color labelTextColor = new Color(1f, 1f, 1f, 0.85f);
+    [SerializeField, Range(0f, 1f)] float labelPanelAlpha = 0.6f;
+    [SerializeField] float labelFontScale = 0.85f;
+
     static readonly Vector2[] sides =
     {
         Vector2.up, Vector2.down, Vector2.left, Vector2.right
@@ -29,6 +35,12 @@ public class InteractionPrompt : MonoBehaviour
     Vector2 offsetNow;
     int currentSide;
 
+    // The normal look, remembered so ShowLabel can be undone
+    Graphic panelGraphic;
+    Color normalPanelColor;
+    Color normalTextColor;
+    float normalFontSize;
+
     void Awake()
     {
         if (instance != null && instance != this)
@@ -42,6 +54,12 @@ public class InteractionPrompt : MonoBehaviour
 
         panelRect = panel.GetComponent<RectTransform>();
         defaultAnchoredPos = panelRect.anchoredPosition;
+
+        panelGraphic = panel.GetComponent<Graphic>();
+        if (panelGraphic != null) normalPanelColor = panelGraphic.color;
+        normalTextColor = label.color;
+        normalFontSize = label.fontSize;
+
         panel.SetActive(false);
     }
 
@@ -49,8 +67,20 @@ public class InteractionPrompt : MonoBehaviour
     // The offset parameter is no longer used; the distance is calculated automatically.
     public static void Show(string text, Transform target = null, Vector2 offset = default)
     {
+        Open(text, target, false);
+    }
+
+    // A quieter version for just naming an object ("Postbox"). Style is set in the Inspector.
+    public static void ShowLabel(string text, Transform target = null)
+    {
+        Open(text, target, true);
+    }
+
+    static void Open(string text, Transform target, bool asLabel)
+    {
         if (instance == null) return;
 
+        instance.ApplyStyle(asLabel);
         instance.label.text = Loc.T(text);   // prompt texts come straight from the Inspector
         instance.target = target;
         instance.panel.SetActive(true);
@@ -64,6 +94,19 @@ public class InteractionPrompt : MonoBehaviour
         }
 
         instance.UpdatePosition();
+    }
+
+    void ApplyStyle(bool asLabel)
+    {
+        label.color = asLabel ? labelTextColor : normalTextColor;
+        label.fontSize = asLabel ? normalFontSize * labelFontScale : normalFontSize;
+
+        if (panelGraphic != null)
+        {
+            Color c = normalPanelColor;
+            if (asLabel) c.a *= labelPanelAlpha;
+            panelGraphic.color = c;
+        }
     }
 
     public static void Hide()

@@ -329,6 +329,26 @@ MonoBehaviour:
     m_Key: '[E] Take eggs'
     m_Metadata:
       m_Items: []
+  - m_Id: 18738098434048
+    m_Key: "Challenge \xB7 Day {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18738140377088
+    m_Key: Challenge mode is coming soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18738140377089
+    m_Key: Challenge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21449925685248
+    m_Key: postbox
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23076313198592
+    m_Key: Postbox
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

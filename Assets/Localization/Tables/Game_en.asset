@@ -135,7 +135,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804483100
-    m_Localized: "Classic \xB7 Day {0}"
+    m_Localized: "Challenge \xB7 Day {0}"
     m_Metadata:
       m_Items: []
   - m_Id: 804483101
@@ -201,7 +201,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804483116
-    m_Localized: Classic mode is coming soon
+    m_Localized: Challenge mode is coming soon
     m_Metadata:
       m_Items: []
   - m_Id: 804483117
@@ -229,7 +229,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804483123
-    m_Localized: Classic
+    m_Localized: Challenge
     m_Metadata:
       m_Items: []
   - m_Id: 804483124
@@ -330,6 +330,26 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 804483148
     m_Localized: '[E] Take eggs'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18738098434048
+    m_Localized: "Challenge \xB7 Day {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18738140377088
+    m_Localized: Challenge mode is coming soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18738140377089
+    m_Localized: Challenge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21449925685248
+    m_Localized: postbox
+    m_Metadata:
+      m_Items: []
+  - m_Id: 23076313198592
+    m_Localized: Postbox
     m_Metadata:
       m_Items: []
   references:

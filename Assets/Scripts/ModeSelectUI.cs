@@ -25,7 +25,7 @@ public class ModeSelectUI : MonoBehaviour
     [Header("Text")]
     [GameText] [SerializeField] string continueFormat = "Continue  ({0})";   // {0} = "Day 2 · Afternoon"
     [GameText] [SerializeField] string storyCompleteText = "You finished the story.";
-    [GameText] [SerializeField] string classicComingSoonText = "Classic mode is coming soon";
+    [GameText] [SerializeField] string classicComingSoonText = "Challenge mode is coming soon";
 
     [SerializeField] string gameSceneName = "MainScene";
 

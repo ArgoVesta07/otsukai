@@ -5940,7 +5940,7 @@ MonoBehaviour:
   storyInfoText: {fileID: 404740161}
   continueFormat: Continue  ({0})
   storyCompleteText: You finished the story.
-  classicComingSoonText: Classic mode is coming soon
+  classicComingSoonText: Challenge mode is coming soon
   gameSceneName: MainScene
 --- !u!1 &850774054
 GameObject:
@@ -8977,7 +8977,7 @@ MonoBehaviour:
   incidentChanceDay1: 0.25
   incidentChancePerDay: 0.1
   maxIncidents: 2
-  dayTitleFormat: "Classic \xB7 Day {0}"
+  dayTitleFormat: "Challenge \xB7 Day {0}"
   dayDoneFormat: Day {0} survived
   daySummaryFormat: Score {0}   Strikes {1}/{2}
   gameOverTitle: Game over
@@ -10185,7 +10185,7 @@ GameObject:
   - component: {fileID: 1546393981}
   - component: {fileID: 1546393983}
   m_Layer: 5
-  m_Name: Classic
+  m_Name: Challenge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10230,7 +10230,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Classic
+  m_text: Challenge
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e623039af81fe004cad4e105b500e890, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -10761,6 +10761,9 @@ MonoBehaviour:
   targetId: Mailbox
   promptText: '[E] Post letter'
   onlyWhenNeeded: 1
+  idleLabel: Postbox
+  inspectLines: []
+  secondsPerInspectLine: 2.5
 --- !u!61 &1661511000
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -11154,7 +11157,7 @@ GameObject:
   - component: {fileID: 1687953179}
   - component: {fileID: 1687953178}
   m_Layer: 5
-  m_Name: ClassicButton
+  m_Name: ChallengeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11776,6 +11779,9 @@ MonoBehaviour:
   moveSpeed: 12
   switchMargin: 0.2
   screenMargin: 20
+  labelTextColor: {r: 1, g: 1, b: 1, a: 0.85}
+  labelPanelAlpha: 0.6
+  labelFontScale: 0.85
 --- !u!1 &1749188141
 GameObject:
   m_ObjectHideFlags: 0
