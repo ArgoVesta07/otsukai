@@ -270,10 +270,21 @@ public class ClassicManager : MonoBehaviour
     void TrySpawnErrand()
     {
         QuestManager quest = QuestManager.Instance;
-        if (quest == null || quest.Active.Count >= MaxErrands()) return;
+        if (quest == null)
+        {
+            Debug.LogWarning("Classic: no QuestManager found.");
+            return;
+        }
+
+        if (quest.Active.Count >= MaxErrands()) return;   // already busy enough
 
         ErrandData pick = PickErrand(quest);
-        if (pick == null) return;
+        if (pick == null)
+        {
+            Debug.LogWarning("Classic: no errand to hand out. Check the QuestManager's Errand Library, " +
+                             "and 'Allow In Classic' / 'Min Day' / 'Weight' on the ErrandData assets.");
+            return;
+        }
 
         float minutes = pick.classicDeadlineMinutes * Mathf.Max(SpeedFactor(), minDeadlineShare);
         float seconds = minutes / gameMinutesPerSecond;
@@ -284,6 +295,11 @@ public class ClassicManager : MonoBehaviour
         {
             string name = pick.steps != null && pick.steps.Length > 0 ? pick.steps[0].shortText : pick.errandId;
             Toast.Show(string.Format(newErrandFormat, name, by));
+            Debug.Log("Classic: new errand " + pick.errandId + " (by " + by + ")");
+        }
+        else
+        {
+            Debug.LogWarning("Classic: couldn't start errand " + pick.errandId + ".");
         }
     }
 
