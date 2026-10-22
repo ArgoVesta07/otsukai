@@ -24,7 +24,7 @@ MonoBehaviour:
     requiredAmount: 0
     consumeRequiredItem: 0
     rewardItem: Letter
-    rewardAmount: 0
+    rewardAmount: 1
   - note: 
     shortText: Post the letter
     detailText: Put the letter in the mailbox.
@@ -32,9 +32,9 @@ MonoBehaviour:
     navTargetId: Mailbox
     requiredItem: Letter
     requiredAmount: 0
-    consumeRequiredItem: 0
+    consumeRequiredItem: 1
     rewardItem: 
-    rewardAmount: 0
+    rewardAmount: 1
   flagsOnComplete: []
   flagsOnFail: []
   takeBackRewardsOnFail: 1

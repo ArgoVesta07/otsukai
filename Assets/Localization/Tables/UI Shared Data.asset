@@ -39,6 +39,18 @@ MonoBehaviour:
     m_Key: menu.norecord
     m_Metadata:
       m_Items: []
+  - m_Id: 81282146201600
+    m_Key: howto.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81329197903872
+    m_Key: howto.body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 81359447224320
+    m_Key: howto.close
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
