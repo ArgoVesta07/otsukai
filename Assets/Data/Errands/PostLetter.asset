@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950534ad8bb4a4e44b451f1e65b16fd4, type: 3}
+  m_Name: PostLetter
+  m_EditorClassIdentifier: Assembly-CSharp::ErrandData
+  errandId: PostLetter
+  timeLimit: 0
+  steps:
+  - note: 
+    shortText: Get the letter
+    detailText: Take the letter from the desk at home.
+    targetId: LetterDesk
+    navTargetId: Home
+    requiredItem: 
+    requiredAmount: 0
+    consumeRequiredItem: 0
+    rewardItem: Letter
+    rewardAmount: 0
+  - note: 
+    shortText: Post the letter
+    detailText: Put the letter in the mailbox.
+    targetId: Mailbox
+    navTargetId: Mailbox
+    requiredItem: Letter
+    requiredAmount: 0
+    consumeRequiredItem: 0
+    rewardItem: 
+    rewardAmount: 0
+  flagsOnComplete: []
+  flagsOnFail: []
+  takeBackRewardsOnFail: 1
+  allowInClassic: 1
+  weight: 1
+  minDay: 1
+  classicDeadlineMinutes: 60
+  classicScore: 100
