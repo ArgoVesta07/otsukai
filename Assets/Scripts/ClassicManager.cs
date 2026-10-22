@@ -46,14 +46,15 @@ public class ClassicManager : MonoBehaviour
     [SerializeField] int maxIncidents = 2;
 
     [Header("Text")]
-    [SerializeField] string dayTitleFormat = "Classic · Day {0}";
-    [SerializeField] string dayDoneFormat = "Day {0} survived";
-    [SerializeField] string daySummaryFormat = "Score {0}   Strikes {1}/{2}";
-    [SerializeField] string gameOverTitle = "Game over";
-    [SerializeField] string gameOverFormat = "Score {0} · Reached day {1} · Best {2}";
-    [SerializeField] string newErrandFormat = "New errand: {0} (by {1})";
-    [SerializeField] string strikeFormat = "Too late! Strike {0}/{1}";
-    [SerializeField] string scoreFormat = "+{0}";
+    [GameText] [SerializeField] string dayTitleFormat = "Classic · Day {0}";
+    [GameText] [SerializeField] string dayDoneFormat = "Day {0} survived";
+    [GameText] [SerializeField] string daySummaryFormat = "Score {0}   Strikes {1}/{2}";
+    [GameText] [SerializeField] string gameOverTitle = "Game over";
+    [GameText] [SerializeField] string gameOverFormat = "Score {0} · Reached day {1} · Best {2}";
+    [GameText] [SerializeField] string newErrandFormat = "New errand: {0} (by {1})";
+    [GameText] [SerializeField] string strikeFormat = "Too late! Strike {0}/{1}";
+    [GameText] [SerializeField] string scoreFormat = "+{0}";
+    [GameText] [SerializeField] string deadlineFormat = "by {0}";   // shown after the errand name on the HUD
     [SerializeField] float bannerSeconds = 2.5f;
     [SerializeField] float breakSeconds = 3f;
 
@@ -133,7 +134,7 @@ public class ClassicManager : MonoBehaviour
         nextIncidentCheckAt = clock + incidentCheckEvery;
         EndAllIncidents();
 
-        PeriodBanner.Show(string.Format(dayTitleFormat, Day), "", bannerSeconds, () =>
+        PeriodBanner.Show(Loc.F(dayTitleFormat, Day), "", bannerSeconds, () =>
         {
             running = true;
         });
@@ -155,8 +156,8 @@ public class ClassicManager : MonoBehaviour
 
         if (!active) return;   // the last strike already ended the run
 
-        string subtitle = string.Format(daySummaryFormat, Score, Strikes, strikesAllowed);
-        PeriodBanner.Show(string.Format(dayDoneFormat, Day), subtitle, bannerSeconds, () =>
+        string subtitle = Loc.F(daySummaryFormat, Score, Strikes, strikesAllowed);
+        PeriodBanner.Show(Loc.F(dayDoneFormat, Day), subtitle, bannerSeconds, () =>
         {
             onBreak = true;
             breakLeft = breakSeconds;
@@ -186,8 +187,8 @@ public class ClassicManager : MonoBehaviour
         if (Day > PlayerPrefs.GetInt(BestDayKey, 0)) PlayerPrefs.SetInt(BestDayKey, Day);
         PlayerPrefs.Save();
 
-        string subtitle = string.Format(gameOverFormat, Score, Day, best);
-        PeriodBanner.Show(gameOverTitle, subtitle, bannerSeconds + 1f, () =>
+        string subtitle = Loc.F(gameOverFormat, Score, Day, best);
+        PeriodBanner.Show(Loc.T(gameOverTitle), subtitle, bannerSeconds + 1f, () =>
         {
             TimeManager time = TimeManager.Instance;
             if (time != null) time.EnterFreeMode();
@@ -292,10 +293,10 @@ public class ClassicManager : MonoBehaviour
         string by = FormatClock(clock + minutes);
 
         quest.ForgetErrand(pick.errandId);   // the same errand can come back later
-        if (quest.StartErrand(pick, seconds, "by " + by, true))
+        if (quest.StartErrand(pick, seconds, Loc.F(deadlineFormat, by), true))
         {
             string name = pick.steps != null && pick.steps.Length > 0 ? pick.steps[0].shortText : pick.errandId;
-            Toast.Show(string.Format(newErrandFormat, name, by));
+            Toast.Show(Loc.F(newErrandFormat, Loc.T(name), by));
             Debug.Log("Classic: new errand " + pick.errandId + " (by " + by + ")");
         }
         else
@@ -338,7 +339,7 @@ public class ClassicManager : MonoBehaviour
         float minutesLeft = errand.timeLeft * gameMinutesPerSecond;
         int points = errand.data.classicScore + Mathf.RoundToInt(minutesLeft * bonusPerMinuteLeft);
         Score += points;
-        Toast.Show(string.Format(scoreFormat, points));
+        Toast.Show(Loc.F(scoreFormat, points));
     }
 
     void OnErrandFailed(ActiveErrand errand)
@@ -346,7 +347,7 @@ public class ClassicManager : MonoBehaviour
         if (!active) return;
 
         Strikes++;
-        Toast.Show(string.Format(strikeFormat, Strikes, strikesAllowed));
+        Toast.Show(Loc.F(strikeFormat, Strikes, strikesAllowed));
 
         if (Strikes >= strikesAllowed)
             GameOver();

@@ -8,7 +8,7 @@ public class ErrandSpot : MonoBehaviour
     [Tooltip("Must match the Target Id of the errand step that uses this spot.")]
     public string targetId = "EggShelf";
 
-    public string promptText = "[E] Interact";
+    [GameText] public string promptText = "[E] Interact";
 
     [Tooltip("Ticked = the prompt only shows when an active errand needs this spot.")]
     public bool onlyWhenNeeded = true;

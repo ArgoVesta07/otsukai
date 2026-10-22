@@ -51,7 +51,7 @@ public class InteractionPrompt : MonoBehaviour
     {
         if (instance == null) return;
 
-        instance.label.text = text;
+        instance.label.text = Loc.T(text);   // prompt texts come straight from the Inspector
         instance.target = target;
         instance.panel.SetActive(true);
 

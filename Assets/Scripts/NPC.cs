@@ -42,7 +42,7 @@ public class DialogueEntry
 
     [Header("What")]
     public DialogueStyle style = DialogueStyle.Box;
-    [TextArea(2, 4)] public string[] lines;
+    [GameText] [TextArea(2, 4)] public string[] lines;
 
     [Header("After")]
     public NpcAction afterDialogue = NpcAction.None;
@@ -53,10 +53,10 @@ public class DialogueEntry
 public class NPC : MonoBehaviour
 {
     [Header("Name and prompt")]
-    public string npcName = "NPC";
+    [GameText] public string npcName = "NPC";
     [Tooltip("Used by errand steps that target this NPC (e.g. 'Mom').")]
     public string targetId = "NPC";
-    public string promptText = "[E] Talk";
+    [GameText] public string promptText = "[E] Talk";
 
     [Header("Dialogue: the first entry whose conditions match is used")]
     public DialogueEntry[] dialogues;

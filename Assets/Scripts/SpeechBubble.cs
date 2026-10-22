@@ -73,7 +73,7 @@ public class SpeechBubble : MonoBehaviour
         }
 
         instance.target = target;
-        instance.lines = newLines;
+        instance.lines = Loc.T(newLines);   // dialogue comes straight from the Inspector
         instance.index = 0;
         instance.secondsPerLine = secondsPerLine;
         instance.onFinished = finished;

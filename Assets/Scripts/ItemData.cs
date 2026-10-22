@@ -10,10 +10,10 @@ public class ItemData : ScriptableObject
     public string itemId = "NewItem";
 
     [Tooltip("Name shown in the inventory.")]
-    public string displayName = "New item";
+    [GameText] public string displayName = "New item";
 
     [Tooltip("Optional. When empty, the first letter of the name is shown instead.")]
     public Sprite icon;
 
-    [TextArea(2, 4)] public string description;
+    [GameText] [TextArea(2, 4)] public string description;
 }

@@ -13,7 +13,7 @@ public class InventoryRow : MonoBehaviour
     public void Setup(string itemId, ItemData data, int count)
     {
         string displayName = data != null && !string.IsNullOrEmpty(data.displayName)
-            ? data.displayName
+            ? Loc.T(data.displayName)
             : itemId;
 
         bool hasIcon = data != null && data.icon != null;

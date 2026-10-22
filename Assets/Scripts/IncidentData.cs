@@ -13,8 +13,8 @@ public class IncidentData : ScriptableObject
     public float duration = 20f;
 
     [Header("Messages (pop-up, empty = none)")]
-    public string startMessage = "Something happened!";
-    public string endMessage = "";
+    [GameText] public string startMessage = "Something happened!";
+    [GameText] public string endMessage = "";
 
     [Header("Classic mode (random days)")]
     [Tooltip("Can the classic mode pick this incident at random?")]

@@ -23,9 +23,9 @@ public class ModeSelectUI : MonoBehaviour
     [SerializeField] TMP_Text storyInfoText;      // optional
 
     [Header("Text")]
-    [SerializeField] string continueFormat = "Continue  ({0})";   // {0} = "Day 2 · Afternoon"
-    [SerializeField] string storyCompleteText = "You finished the story.";
-    [SerializeField] string classicComingSoonText = "Classic mode is coming soon";
+    [GameText] [SerializeField] string continueFormat = "Continue  ({0})";   // {0} = "Day 2 · Afternoon"
+    [GameText] [SerializeField] string storyCompleteText = "You finished the story.";
+    [GameText] [SerializeField] string classicComingSoonText = "Classic mode is coming soon";
 
     [SerializeField] string gameSceneName = "MainScene";
 
@@ -110,11 +110,11 @@ public class ModeSelectUI : MonoBehaviour
             string label = TimeManager.Instance != null
                 ? TimeManager.Instance.LabelFor(peek.dayIndex, peek.periodIndex)
                 : "";
-            continueLabel.text = string.Format(continueFormat, label);
+            continueLabel.text = Loc.F(continueFormat, label);
         }
 
         if (storyInfoText != null)
-            storyInfoText.text = canContinue ? "" : storyCompleteText;
+            storyInfoText.text = canContinue ? "" : Loc.T(storyCompleteText);
 
         ShowOnly(storyPanel);
     }
@@ -123,7 +123,7 @@ public class ModeSelectUI : MonoBehaviour
     {
         if (ClassicManager.Instance == null)
         {
-            Toast.Show(classicComingSoonText);
+            Toast.Show(Loc.T(classicComingSoonText));
             return;
         }
 

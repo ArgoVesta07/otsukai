@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 // Needs a Collider2D with Is Trigger ticked.
 public class ModeSelectPoint : MonoBehaviour
 {
-    public string promptText = "[E] Choose mode";
+    [GameText] public string promptText = "[E] Choose mode";
 
     bool playerNear;
     bool promptShown;

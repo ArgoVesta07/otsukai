@@ -5,10 +5,10 @@ using UnityEngine.InputSystem;
 // Needs a Collider2D with Is Trigger ticked. Results are shown with a Toast pop-up.
 public class SavePoint : MonoBehaviour
 {
-    public string promptText = "[E] Save";
-    public string savedText = "Game saved";
-    public string blockedText = "Can't save during an errand";
-    public string failedText = "Save failed";
+    [GameText] public string promptText = "[E] Save";
+    [GameText] public string savedText = "Game saved";
+    [GameText] public string blockedText = "Can't save during an errand";
+    [GameText] public string failedText = "Save failed";
 
     [Tooltip("Off = saving is only allowed when no errand is running.")]
     public bool allowDuringErrand = false;
@@ -50,11 +50,11 @@ public class SavePoint : MonoBehaviour
 
         if (errandRunning && !allowDuringErrand)
         {
-            Toast.Show(blockedText);
+            Toast.Show(Loc.T(blockedText));
             return;
         }
 
-        Toast.Show(SaveSystem.Save() ? savedText : failedText);
+        Toast.Show(Loc.T(SaveSystem.Save() ? savedText : failedText));
     }
 
     // Only touches the shared prompt when our own state changes

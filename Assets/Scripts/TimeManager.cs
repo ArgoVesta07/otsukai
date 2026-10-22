@@ -32,13 +32,14 @@ public class TimeManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float perfectTimeShare = 0.25f;
 
     [Header("Text")]
-    [SerializeField] string dayFormat = "Day {0}";
-    [SerializeField] string[] periodNames = { "Morning", "Afternoon", "Night" };
-    [SerializeField] string[] ratingNames = { "", "Failed", "Partly done", "Good", "Perfect!" };
-    [SerializeField] string resultFormat = "{0}  {1}/{2} errands";   // rating, done, total
-    [SerializeField] string dayCompleteFormat = "Day {0} complete";   // day number
-    [SerializeField] string dayRecapFormat = "{0}/{1} errands";        // done, total
-    [SerializeField] string storyEndTitle = "The End";
+    [GameText] [SerializeField] string dayFormat = "Day {0}";
+    [GameText] [SerializeField] string[] periodNames = { "Morning", "Afternoon", "Night" };
+    [GameText] [SerializeField] string[] ratingNames = { "", "Failed", "Partly done", "Good", "Perfect!" };
+    [GameText] [SerializeField] string resultFormat = "{0}  {1}/{2} errands";   // rating, done, total
+    [GameText] [SerializeField] string dayCompleteFormat = "Day {0} complete";   // day number
+    [GameText] [SerializeField] string dayRecapFormat = "{0}/{1} errands";        // done, total
+    [GameText] [SerializeField] string storyEndTitle = "The End";
+    [GameText] [SerializeField] string autoSavedText = "Saved";
     [SerializeField] float bannerSeconds = 2f;
 
     [Tooltip("Show a result card after every round. Off = only the day recap after the last round.")]
@@ -93,7 +94,7 @@ public class TimeManager : MonoBehaviour
         {
             PeriodData period = CurrentPeriod;
             if (period == null) return "";
-            return string.Format(dayFormat, DayNumber) + " · " + PeriodName(period.period);
+            return Loc.F(dayFormat, DayNumber) + " · " + PeriodName(period.period);
         }
     }
 
@@ -244,7 +245,7 @@ public class TimeManager : MonoBehaviour
             if (autoSaveAtPeriodStart)
             {
                 SaveSystem.Save();
-                Toast.Show("Saved");
+                Toast.Show(Loc.T(autoSavedText));
             }
 
             Debug.Log("Round started: " + CurrentLabel);
@@ -280,8 +281,8 @@ public class TimeManager : MonoBehaviour
                 total += r.total;
             }
 
-            title = string.Format(dayCompleteFormat, DayNumber);
-            subtitle = string.Format(dayRecapFormat, done, total);
+            title = Loc.F(dayCompleteFormat, DayNumber);
+            subtitle = Loc.F(dayRecapFormat, done, total);
         }
         else if (!showRoundResults || result.total == 0)
         {
@@ -293,7 +294,7 @@ public class TimeManager : MonoBehaviour
         else
         {
             title = CurrentLabel;
-            subtitle = string.Format(resultFormat, RatingName(result.rating), result.completed, result.total);
+            subtitle = Loc.F(resultFormat, RatingName(result.rating), result.completed, result.total);
         }
 
         PeriodBanner.Show(title, subtitle, bannerSeconds, () =>
@@ -357,7 +358,7 @@ public class TimeManager : MonoBehaviour
         Debug.Log("Story finished.");
 
         // After the end card, back to free mode
-        PeriodBanner.Show(storyEndTitle, "", bannerSeconds, EnterFreeMode);
+        PeriodBanner.Show(Loc.T(storyEndTitle), "", bannerSeconds, EnterFreeMode);
     }
 
     // ---------- Incidents ----------
@@ -483,19 +484,19 @@ public class TimeManager : MonoBehaviour
         DayData day = story.days[dayIndex];
         if (day == null || day.periods == null || periodIndex < 0 || periodIndex >= day.periods.Length) return "";
 
-        return string.Format(dayFormat, dayIndex + 1) + " · " + PeriodName(day.periods[periodIndex].period);
+        return Loc.F(dayFormat, dayIndex + 1) + " · " + PeriodName(day.periods[periodIndex].period);
     }
 
     string PeriodName(DayPeriod period)
     {
         int i = (int)period;
-        return periodNames != null && i < periodNames.Length ? periodNames[i] : period.ToString();
+        return periodNames != null && i < periodNames.Length ? Loc.T(periodNames[i]) : period.ToString();
     }
 
     string RatingName(PeriodRating rating)
     {
         int i = (int)rating;
-        return ratingNames != null && i < ratingNames.Length ? ratingNames[i] : rating.ToString();
+        return ratingNames != null && i < ratingNames.Length ? Loc.T(ratingNames[i]) : rating.ToString();
     }
 
     // ---------- Debug ----------

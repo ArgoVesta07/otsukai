@@ -27,7 +27,7 @@ public static class IncidentManager
 
         active[data.incidentId] = data;
         if (showMessage && !string.IsNullOrEmpty(data.startMessage))
-            Toast.Show(data.startMessage);
+            Toast.Show(Loc.T(data.startMessage));
 
         Changed?.Invoke();
     }
@@ -47,7 +47,7 @@ public static class IncidentManager
 
         active.Remove(incidentId);
         if (showMessage && data != null && !string.IsNullOrEmpty(data.endMessage))
-            Toast.Show(data.endMessage);
+            Toast.Show(Loc.T(data.endMessage));
 
         Changed?.Invoke();
     }

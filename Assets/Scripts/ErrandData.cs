@@ -49,8 +49,8 @@ public class ErrandStep
     public string note;                          // free note for yourself, not used by the game
 
     [Header("HUD text")]
-    public string shortText = "Do something";
-    [TextArea(2, 4)] public string detailText;
+    [GameText] public string shortText = "Do something";
+    [GameText] [TextArea(2, 4)] public string detailText;
 
     [Header("Where")]
     [Tooltip("Id of the ErrandSpot or NPC that completes this step.")]

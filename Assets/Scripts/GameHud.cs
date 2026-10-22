@@ -36,13 +36,13 @@ public class GameHud : MonoBehaviour
     [SerializeField] Key switchKey = Key.Q;
 
     [Header("Classic mode")]
-    [SerializeField] string classicLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
+    [GameText] [SerializeField] string classicLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
     [Tooltip("The clock turns to the warning color when this many in-game minutes are left in the day.")]
     [SerializeField] float classicWarningMinutes = 60f;
 
     [Header("Failed errand text")]
-    [SerializeField] string failedShortText = "Time's up";
-    [SerializeField, TextArea(2, 4)] string failedDetailText = "You ran out of time.";
+    [GameText] [SerializeField] string failedShortText = "Time's up";
+    [GameText] [SerializeField, TextArea(2, 4)] string failedDetailText = "You ran out of time.";
 
     [Header("Navigation")]
     [SerializeField] RectTransform navArrow;
@@ -156,7 +156,7 @@ public class GameHud : MonoBehaviour
             timerText.color = classic.MinutesLeftInDay <= classicWarningMinutes ? timerWarningColor : timerNormalColor;
 
             if (periodText != null)
-                periodText.text = string.Format(classicLabelFormat,
+                periodText.text = Loc.F(classicLabelFormat,
                     classic.Day, classic.Score, classic.Strikes, classic.StrikesAllowed);
             return;
         }
@@ -193,15 +193,15 @@ public class GameHud : MonoBehaviour
 
         if (tracked != null && tracked.CurrentStep != null)
         {
-            shortText = tracked.CurrentStep.shortText;
+            shortText = Loc.T(tracked.CurrentStep.shortText);
             if (!string.IsNullOrEmpty(tracked.deadlineLabel))
                 shortText += "  " + tracked.deadlineLabel;
-            detailText = tracked.CurrentStep.detailText;
+            detailText = Loc.T(tracked.CurrentStep.detailText);
         }
         else if (showFailed)
         {
-            shortText = failedShortText;
-            detailText = failedDetailText;
+            shortText = Loc.T(failedShortText);
+            detailText = Loc.T(failedDetailText);
         }
 
         bool show = !string.IsNullOrEmpty(shortText);
@@ -248,7 +248,7 @@ public class GameHud : MonoBehaviour
             ActiveErrand e = quest.Active[i];
             if (e == tracked) continue;
 
-            string text = e.CurrentStep != null ? e.CurrentStep.shortText : e.data.errandId;
+            string text = e.CurrentStep != null ? Loc.T(e.CurrentStep.shortText) : e.data.errandId;
             if (!string.IsNullOrEmpty(e.deadlineLabel))
             {
                 text += "  " + e.deadlineLabel;

@@ -1,0 +1,342 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Game Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Game
+  m_TableCollectionNameGuidString: c2ee44550d4b2a746b94ee908e7717f1
+  m_Entries:
+  - m_Id: 766734336
+    m_Key: Buy eggs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483072
+    m_Key: Buy eggs at the supermarket.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483073
+    m_Key: Bring eggs home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483074
+    m_Key: Bring the eggs back to Mom.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483075
+    m_Key: Get the letter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483076
+    m_Key: Take the letter from the desk at home.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483077
+    m_Key: Post the letter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483078
+    m_Key: Put the letter in the mailbox.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483079
+    m_Key: Road closed ahead!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483080
+    m_Key: The road is open again.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483081
+    m_Key: Egg
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483082
+    m_Key: Letter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483083
+    m_Key: '[E] Exit'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483084
+    m_Key: '[E] Save'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483085
+    m_Key: Saved
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483086
+    m_Key: Can't save during an errand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483087
+    m_Key: Save failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483088
+    m_Key: '[E] Take letter'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483089
+    m_Key: '[E] Enter'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483090
+    m_Key: Mom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483091
+    m_Key: '[E] Interact'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483092
+    m_Key: "Oh, it\u2019s you! Could you buy some eggs at the supermarket?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483093
+    m_Key: Be quick, it closes soon!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483094
+    m_Key: Did you forget? I need eggs from the supermarket.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483095
+    m_Key: You got the eggs! Thank you, dear.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483096
+    m_Key: Thanks again for your help today!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483097
+    m_Key: "Oh no, the store\u2019s already closed..."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483098
+    m_Key: "Let\u2019s try again. Hurry this time!"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483099
+    m_Key: "Take a break, you\u2019ve earned it"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483100
+    m_Key: "Classic \xB7 Day {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483101
+    m_Key: Day {0} survived
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483102
+    m_Key: Score {0}   Strikes {1}/{2}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483103
+    m_Key: Game over
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483104
+    m_Key: "Score {0} \xB7 Reached day {1} \xB7 Best {2}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483105
+    m_Key: 'New errand: {0} (by {1})'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483106
+    m_Key: Too late! Strike {0}/{1}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483107
+    m_Key: +{0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483108
+    m_Key: by {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483109
+    m_Key: 'Loading...
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483110
+    m_Key: '[E] Next'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483111
+    m_Key: Day {0}   Score {1}   Strikes {2}/{3}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483112
+    m_Key: Time's up
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483113
+    m_Key: You ran out of time.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483114
+    m_Key: Continue  ({0})
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483115
+    m_Key: You finished the story.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483116
+    m_Key: Classic mode is coming soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483117
+    m_Key: '[Q] Switch errand'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483118
+    m_Key: Bag
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483119
+    m_Key: EmptyText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483120
+    m_Key: '[i] Bag'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483121
+    m_Key: Choose a mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483122
+    m_Key: Story
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483123
+    m_Key: Classic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483124
+    m_Key: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483125
+    m_Key: New story
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483126
+    m_Key: Back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483127
+    m_Key: Your saved story will be overwritten. Start a new story?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483128
+    m_Key: Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483129
+    m_Key: No
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483130
+    m_Key: Day {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483131
+    m_Key: Morning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483132
+    m_Key: Afternoon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483133
+    m_Key: Night
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483134
+    m_Key: Failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483135
+    m_Key: Partly done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483136
+    m_Key: Good
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483137
+    m_Key: Perfect!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483138
+    m_Key: '{0}  {1}/{2} errands'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483139
+    m_Key: Day {0} complete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483140
+    m_Key: '{0}/{1} errands'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483141
+    m_Key: The End
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483142
+    m_Key: Paused
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483143
+    m_Key: Resume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483144
+    m_Key: Main Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483145
+    m_Key: Unsaved progress will be lost. Go to main menu?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483146
+    m_Key: '[E] Choose mode'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483147
+    m_Key: '[E] Post letter'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804483148
+    m_Key: '[E] Take eggs'
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 4184712068038394148
+  references:
+    version: 2
+    RefIds:
+    - rid: 4184712068038394148
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1792672483796

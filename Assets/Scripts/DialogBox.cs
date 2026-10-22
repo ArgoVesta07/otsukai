@@ -39,8 +39,8 @@ public class DialogBox : MonoBehaviour
             return;
         }
 
-        instance.nameText.text = speaker;
-        instance.lines = newLines;
+        instance.nameText.text = Loc.T(speaker);
+        instance.lines = Loc.T(newLines);   // dialogue comes straight from the Inspector
         instance.index = 0;
         instance.onFinished = finished;
         instance.panel.SetActive(true);   // must be active before measuring the text

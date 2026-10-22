@@ -6,7 +6,7 @@ public class Door : MonoBehaviour
     public string sceneToLoad;
     public Vector3 spawnPosition;
     public Vector2 promptOffset = new Vector2(0f, 1.2f); // how far above the object
-    public string promptText = "[E] Enter";   // NEW
+    [GameText] public string promptText = "[E] Enter";   // NEW
 
     private bool playerNear;
 
