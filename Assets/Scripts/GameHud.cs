@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,6 +8,7 @@ using UnityEngine.UI;
 // Layout, colors and sizes live on the UI objects; this script only fills them in.
 // The errand text and arrow target come from the tracked errand's current step (ErrandData asset).
 // The timer shows the story round time when a round is running, otherwise the errand's own timer.
+// In classic mode it shows the clock, and the other running errands are listed under the card.
 [DefaultExecutionOrder(100)]   // runs after the player and camera have moved
 public class GameHud : MonoBehaviour
 {
@@ -27,6 +29,17 @@ public class GameHud : MonoBehaviour
     [SerializeField] TMP_Text errandDetailText;
     [SerializeField] float autoCollapseSeconds = 1f;   // 0 = stays open until toggled again
 
+    [Header("Other errands (when more than one is running)")]
+    [SerializeField] Transform otherErrandsParent;     // rows are created under this
+    [SerializeField] TMP_Text otherErrandRowPrefab;    // one line of text per errand
+    [SerializeField] GameObject switchHint;            // optional "[Q] Switch", shown when 2+ errands run
+    [SerializeField] Key switchKey = Key.Q;
+
+    [Header("Classic mode")]
+    [SerializeField] string classicLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
+    [Tooltip("The clock turns to the warning color when this many in-game minutes are left in the day.")]
+    [SerializeField] float classicWarningMinutes = 60f;
+
     [Header("Failed errand text")]
     [SerializeField] string failedShortText = "Time's up";
     [SerializeField, TextArea(2, 4)] string failedDetailText = "You ran out of time.";
@@ -46,6 +59,7 @@ public class GameHud : MonoBehaviour
     bool expanded;
     float collapseTimer;
     string shownShort;   // what the card currently shows, to avoid rebuilding every frame
+    readonly List<TMP_Text> otherRows = new List<TMP_Text>();
 
     void Awake()
     {
@@ -80,6 +94,12 @@ public class GameHud : MonoBehaviour
         if (k.tabKey.wasPressedThisFrame)
             ToggleDetail();
 
+        if (k[switchKey].wasPressedThisFrame && QuestManager.Instance != null)
+        {
+            QuestManager.Instance.CycleTracked();
+            SetExpanded(false);
+        }
+
         if (debugIncidentKey && k.f9Key.wasPressedThisFrame)
         {
             if (IncidentManager.IsActive("Test"))
@@ -98,6 +118,7 @@ public class GameHud : MonoBehaviour
         UpdateTimer(tracked, showFailed);
         UpdateErrand(tracked, showFailed);
         UpdateArrow(tracked);
+        UpdateOtherErrands(quest, tracked);
 
         if (incidentCard != null)
             SetActive(incidentCard, IncidentManager.HasActive);
@@ -126,6 +147,20 @@ public class GameHud : MonoBehaviour
 
     void UpdateTimer(ActiveErrand tracked, bool showFailed)
     {
+        // Classic mode: the card shows the clock
+        if (ClassicManager.IsActive)
+        {
+            ClassicManager classic = ClassicManager.Instance;
+            SetActive(timerCard, true);
+            timerText.text = classic.ClockText;
+            timerText.color = classic.MinutesLeftInDay <= classicWarningMinutes ? timerWarningColor : timerNormalColor;
+
+            if (periodText != null)
+                periodText.text = string.Format(classicLabelFormat,
+                    classic.Day, classic.Score, classic.Strikes, classic.StrikesAllowed);
+            return;
+        }
+
         TimeManager time = TimeManager.Instance;
         bool inRound = time != null && time.Running;
         bool roundTimer = time != null && time.HasTimer;
@@ -159,6 +194,8 @@ public class GameHud : MonoBehaviour
         if (tracked != null && tracked.CurrentStep != null)
         {
             shortText = tracked.CurrentStep.shortText;
+            if (!string.IsNullOrEmpty(tracked.deadlineLabel))
+                shortText += "  " + tracked.deadlineLabel;
             detailText = tracked.CurrentStep.detailText;
         }
         else if (showFailed)
@@ -177,6 +214,53 @@ public class GameHud : MonoBehaviour
             errandShortText.text = shortText;
             errandDetailText.text = detailText;
             RebuildLayout();
+        }
+    }
+
+    // Lists the running errands that aren't the tracked one
+    void UpdateOtherErrands(QuestManager quest, ActiveErrand tracked)
+    {
+        int count = quest != null ? quest.Active.Count : 0;
+
+        if (switchHint != null)
+            SetActive(switchHint, count > 1);
+
+        if (otherErrandsParent == null || otherErrandRowPrefab == null) return;
+
+        int others = Mathf.Max(0, count - (tracked != null ? 1 : 0));
+
+        // Make the number of rows match
+        while (otherRows.Count < others)
+        {
+            otherRows.Add(Instantiate(otherErrandRowPrefab, otherErrandsParent));
+            RebuildLayout();
+        }
+        while (otherRows.Count > others)
+        {
+            Destroy(otherRows[otherRows.Count - 1].gameObject);
+            otherRows.RemoveAt(otherRows.Count - 1);
+            RebuildLayout();
+        }
+
+        int row = 0;
+        for (int i = 0; i < count && row < otherRows.Count; i++)
+        {
+            ActiveErrand e = quest.Active[i];
+            if (e == tracked) continue;
+
+            string text = e.CurrentStep != null ? e.CurrentStep.shortText : e.data.errandId;
+            if (!string.IsNullOrEmpty(e.deadlineLabel))
+            {
+                text += "  " + e.deadlineLabel;
+            }
+            else if (e.HasTimer)
+            {
+                int s = Mathf.CeilToInt(e.timeLeft);
+                text += string.Format("  {0:00}:{1:00}", s / 60, s % 60);
+            }
+
+            if (otherRows[row].text != text) otherRows[row].text = text;
+            row++;
         }
     }
 

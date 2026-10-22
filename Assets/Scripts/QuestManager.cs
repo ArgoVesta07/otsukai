@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,9 +16,11 @@ public class ActiveErrand
 {
     public ErrandData data;
     public int stepIndex;
+    public float timeLimit;      // seconds this errand got when it started (0 = no timer)
     public float timeLeft;
+    public string deadlineLabel; // optional text for the HUD, e.g. "by 10:30" (classic mode)
 
-    public bool HasTimer => data.timeLimit > 0f;
+    public bool HasTimer => timeLimit > 0f;
     public ErrandStep CurrentStep =>
         data.steps != null && stepIndex < data.steps.Length ? data.steps[stepIndex] : null;
 }
@@ -43,8 +46,29 @@ public class QuestManager : MonoBehaviour
 
     InventoryManager inventory;
 
-    // The errand shown on the HUD (the oldest active one)
-    public ActiveErrand Tracked => active.Count > 0 ? active[0] : null;
+    // The errand shown on the HUD with the arrow. Change it with CycleTracked().
+    public ActiveErrand Tracked
+    {
+        get
+        {
+            if (active.Count == 0) return null;
+            if (trackedIndex >= active.Count) trackedIndex = 0;
+            return active[trackedIndex];
+        }
+    }
+
+    int trackedIndex;
+
+    // Fired when an errand finishes (classic mode uses these for score and strikes)
+    public event Action<ActiveErrand> ErrandCompleted;
+    public event Action<ActiveErrand> ErrandFailed;
+
+    // Switch which active errand the HUD card and arrow follow
+    public void CycleTracked()
+    {
+        if (active.Count <= 1) return;
+        trackedIndex = (trackedIndex + 1) % active.Count;
+    }
 
     // The last errand that failed, so the HUD can show "Time's up". Cleared when a new errand starts.
     public ErrandData LastFailed { get; private set; }
@@ -94,6 +118,13 @@ public class QuestManager : MonoBehaviour
 
     public bool StartErrand(ErrandData data)
     {
+        return StartErrand(data, -1f, null, false);
+    }
+
+    // timeLimitOverride < 0 = use the asset's Time Limit. ignoreRound = start even if it isn't part of
+    // the current story round (classic mode hands out errands itself).
+    public bool StartErrand(ErrandData data, float timeLimitOverride, string deadlineLabel, bool ignoreRound)
+    {
         if (data == null)
         {
             Debug.LogWarning("StartErrand: no ErrandData assigned.");
@@ -104,7 +135,7 @@ public class QuestManager : MonoBehaviour
         if (state == ErrandState.Active || state == ErrandState.Completed)
             return false;
 
-        if (state == ErrandState.Unavailable)
+        if (state == ErrandState.Unavailable && !ignoreRound)
         {
             Debug.Log("Errand '" + data.errandId + "' isn't part of this round.");
             return false;
@@ -119,11 +150,15 @@ public class QuestManager : MonoBehaviour
         failed.Remove(data.errandId);   // a failed errand can be retried
         LastFailed = null;
 
+        float limit = timeLimitOverride >= 0f ? timeLimitOverride : data.timeLimit;
+
         active.Add(new ActiveErrand
         {
             data = data,
             stepIndex = 0,
-            timeLeft = data.timeLimit
+            timeLimit = limit,
+            timeLeft = limit,
+            deadlineLabel = deadlineLabel
         });
 
         Debug.Log("Errand started: " + data.errandId);
@@ -223,6 +258,7 @@ public class QuestManager : MonoBehaviour
         SetFlags(errand.data.flagsOnComplete);
 
         Debug.Log("ERRAND COMPLETE: " + errand.data.errandId);
+        ErrandCompleted?.Invoke(errand);
     }
 
     void Fail(ActiveErrand errand)
@@ -236,6 +272,7 @@ public class QuestManager : MonoBehaviour
             TakeBackRewards(errand);
 
         Debug.Log("ERRAND FAILED: " + errand.data.errandId + " (time ran out)");
+        ErrandFailed?.Invoke(errand);
     }
 
     // Removes the items this errand gave the player in the steps already done,
@@ -401,6 +438,7 @@ public class QuestManager : MonoBehaviour
             {
                 data = data,
                 stepIndex = Mathf.Clamp(saved.stepIndex, 0, Mathf.Max(lastStep, 0)),
+                timeLimit = data.timeLimit,
                 timeLeft = saved.timeLeft
             });
         }

@@ -121,7 +121,14 @@ public class ModeSelectUI : MonoBehaviour
 
     public void ChooseClassic()
     {
-        Toast.Show(classicComingSoonText);
+        if (ClassicManager.Instance == null)
+        {
+            Toast.Show(classicComingSoonText);
+            return;
+        }
+
+        Close();
+        ClassicManager.Instance.StartClassic();
     }
 
     // ---------- Story panel ----------

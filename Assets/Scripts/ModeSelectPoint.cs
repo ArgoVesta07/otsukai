@@ -10,7 +10,8 @@ public class ModeSelectPoint : MonoBehaviour
     bool playerNear;
     bool promptShown;
 
-    static bool InFreeMode => TimeManager.Instance == null || !TimeManager.Instance.InStory;
+    static bool InFreeMode =>
+        (TimeManager.Instance == null || !TimeManager.Instance.InStory) && !ClassicManager.IsActive;
 
     void OnTriggerEnter2D(Collider2D other)
     {

@@ -25,6 +25,22 @@ public class ErrandData : ScriptableObject
     [Header("On fail")]
     [Tooltip("Take back the reward items this errand already gave the player when it fails.")]
     public bool takeBackRewardsOnFail = true;
+
+    [Header("Classic mode (random days)")]
+    [Tooltip("Can the classic mode hand out this errand?")]
+    public bool allowInClassic = true;
+
+    [Tooltip("Higher = picked more often.")]
+    public float weight = 1f;
+
+    [Tooltip("Earliest day it may appear in classic mode.")]
+    public int minDay = 1;
+
+    [Tooltip("In-game minutes the player gets on Day 1 (gets shorter on later days).")]
+    public float classicDeadlineMinutes = 60f;
+
+    [Tooltip("Points for finishing it in classic mode (plus a bonus for time left).")]
+    public int classicScore = 100;
 }
 
 [Serializable]
