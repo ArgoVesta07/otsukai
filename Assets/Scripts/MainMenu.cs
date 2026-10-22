@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization;
 using UnityEngine.SceneManagement;
 
 // Main menu: Start (enters town in free mode), How to Play, Quit, the classic best score
@@ -14,25 +15,62 @@ public class MainMenu : MonoBehaviour
 
     [Header("Classic best score")]
     [SerializeField] TMP_Text bestScoreText;
-    [SerializeField] string bestScoreFormat = "Classic best: {0} · Day {1}";
-    [SerializeField] string noRecordText = "Classic best: none yet";
+    [Tooltip("Entry text uses {0} = score, {1} = day. Example: Classic best: {0} · Day {1}")]
+    [SerializeField] LocalizedString bestScoreFormat;
+    [Tooltip("Shown when there is no classic record yet.")]
+    [SerializeField] LocalizedString noRecordText;
+
+    LocalizedString shownText;   // the one currently feeding bestScoreText
 
     void Start()
     {
         if (howToPlayPanel != null)
             howToPlayPanel.SetActive(false);
+    }
 
+    void OnEnable()
+    {
         ShowBestScore();
+    }
+
+    void OnDisable()
+    {
+        StopListening();
     }
 
     void ShowBestScore()
     {
+        StopListening();
         if (bestScoreText == null) return;
 
         int best = ClassicManager.BestScore;
-        bestScoreText.text = best > 0
-            ? string.Format(bestScoreFormat, best, ClassicManager.BestDay)
-            : noRecordText;
+        LocalizedString next = best > 0 ? bestScoreFormat : noRecordText;
+
+        if (next == null || next.IsEmpty)
+        {
+            Debug.LogWarning("MainMenu: best score text is not set to a table entry.");
+            bestScoreText.text = "";
+            return;
+        }
+
+        if (best > 0)
+            next.Arguments = new object[] { best, ClassicManager.BestDay };
+
+        shownText = next;
+        shownText.StringChanged += SetBestScoreText;   // runs now and again on every language change
+    }
+
+    void StopListening()
+    {
+        if (shownText != null)
+            shownText.StringChanged -= SetBestScoreText;
+        shownText = null;
+    }
+
+    void SetBestScoreText(string value)
+    {
+        if (bestScoreText != null)
+            bestScoreText.text = value;
     }
 
     public void StartGame()
