@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 // EN | JP switch. Hook the two buttons' OnClick to ChooseEnglish / ChooseJapanese.
-// The chosen button is highlighted. Swapping the actual text comes in a later step.
+// The chosen button is highlighted. The language itself is changed through the Localization package.
 public class LanguageToggle : MonoBehaviour
 {
     [SerializeField] Image englishBackground;
@@ -12,13 +14,13 @@ public class LanguageToggle : MonoBehaviour
 
     void OnEnable()
     {
-        LanguageSetting.Changed += Refresh;
+        LocalizationSettings.SelectedLocaleChanged += OnLocaleChanged;
         Refresh();
     }
 
     void OnDisable()
     {
-        LanguageSetting.Changed -= Refresh;
+        LocalizationSettings.SelectedLocaleChanged -= OnLocaleChanged;
     }
 
     public void ChooseEnglish()
@@ -29,6 +31,11 @@ public class LanguageToggle : MonoBehaviour
     public void ChooseJapanese()
     {
         LanguageSetting.Set(GameLanguage.Japanese);
+    }
+
+    void OnLocaleChanged(Locale locale)
+    {
+        Refresh();
     }
 
     void Refresh()

@@ -18,4 +18,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Supermarket.unity
     guid: c4babd8c3cca0494cb0dff1312c1c803
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: f27b1b35861e0844f89b2368c0ea8010, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: 98f58ef0473cfed49880c16a8ae33f65, type: 2}
