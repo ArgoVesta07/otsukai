@@ -62,9 +62,31 @@ public class NPC : MonoBehaviour
     public DialogueEntry[] dialogues;
     public float secondsPerBubbleLine = 3f;
 
+    [Header("Classic mode (random errands)")]
+    [Tooltip("Can this NPC be picked to give random errands in classic mode?")]
+    public bool givesClassicErrands = true;
+
+    [Tooltip("Shown while this NPC has an errand to give (e.g. a \"!\" above the head). Hidden otherwise.")]
+    public GameObject offerMarker;
+
+    [Tooltip("Said when giving an errand whose ErrandData has no Offer Lines.")]
+    [GameText] [TextArea(2, 4)] public string[] offerLines = { "Could you help me with something?" };
+
+    [Tooltip("Said when the player finishes an errand step here (e.g. brings the item back).")]
+    [GameText] [TextArea(2, 4)] public string[] thanksLines = { "Thank you so much!" };
+
+    [Tooltip("Said in classic mode when there's nothing to do here. Empty = use the normal dialogues above.")]
+    [GameText] [TextArea(2, 4)] public string[] classicIdleLines;
+
     bool playerNear;
     bool inDialogue;     // bottom box is open (player locked)
     bool bubbleActive;   // speech bubble is showing (player free)
+
+    void OnEnable()
+    {
+        if (givesClassicErrands)
+            ClassicManager.RegisterGiver(targetId, npcName);
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -102,6 +124,8 @@ public class NPC : MonoBehaviour
 
     void Update()
     {
+        UpdateOfferMarker();
+
         var k = Keyboard.current;
         if (k == null) return;
         if (!k.eKey.wasPressedThisFrame) return;
@@ -161,8 +185,19 @@ public class NPC : MonoBehaviour
         }
     }
 
+    void UpdateOfferMarker()
+    {
+        if (offerMarker == null) return;
+
+        bool show = ClassicManager.IsActive && ClassicManager.Instance.HasOffer(targetId);
+        if (offerMarker.activeSelf != show) offerMarker.SetActive(show);
+    }
+
     void StartTalk()
     {
+        // Classic mode: finishing an errand step here, or taking an offered errand, comes first
+        if (ClassicManager.IsActive && TryClassicTalk()) return;
+
         DialogueEntry entry = FindEntry();
 
         if (entry == null)
@@ -178,20 +213,83 @@ public class NPC : MonoBehaviour
             return;
         }
 
-        InteractionPrompt.Hide();
-
-        if (entry.style == DialogueStyle.Bubble)
-            StartBubble(entry);
-        else
-            StartBox(entry);
+        Say(entry.lines, entry.style, () => Finish(entry));
     }
 
-    void StartBox(DialogueEntry entry)
+    // Returns true if classic mode handled the talk
+    bool TryClassicTalk()
+    {
+        QuestManager quest = QuestManager.Instance;
+        ClassicManager classic = ClassicManager.Instance;
+        if (quest == null || classic == null) return false;
+
+        // 1. An errand step happens here (e.g. bringing the eggs back)
+        ActiveErrand waiting = quest.FindWaitingFor(targetId);
+        if (waiting != null)
+        {
+            if (!quest.HasItemsFor(waiting))
+            {
+                Toast.Show(classic.MissingItemText);
+                return true;
+            }
+
+            Say(thanksLines, DialogueStyle.Box, () => quest.TryCompleteStep(targetId));
+            return true;
+        }
+
+        // 2. This NPC has an errand to give
+        ErrandData offer = classic.OfferFor(targetId);
+        if (offer != null)
+        {
+            if (!classic.CanTakeMore)
+            {
+                Toast.Show(classic.TooManyErrandsText);
+                return true;
+            }
+
+            string[] lines = offer.offerLines != null && offer.offerLines.Length > 0 ? offer.offerLines : offerLines;
+            Say(lines, DialogueStyle.Box, () =>
+            {
+                // Show the offer card; without one in the scene, accept right away
+                if (!ErrandOfferPanel.Show(offer, npcName, () => classic.AcceptOffer(targetId)))
+                    classic.AcceptOffer(targetId);
+            });
+            return true;
+        }
+
+        // 3. Nothing to do: small talk for classic mode, if set
+        if (classicIdleLines != null && classicIdleLines.Length > 0)
+        {
+            Say(classicIdleLines, DialogueStyle.Bubble, null);
+            return true;
+        }
+
+        return false;
+    }
+
+    // Shows lines in the dialogue box or a speech bubble, then runs 'after'
+    void Say(string[] lines, DialogueStyle style, System.Action after)
+    {
+        if (lines == null || lines.Length == 0)
+        {
+            after?.Invoke();
+            return;
+        }
+
+        InteractionPrompt.Hide();
+
+        if (style == DialogueStyle.Bubble)
+            StartBubble(lines, after);
+        else
+            StartBox(lines, after);
+    }
+
+    void StartBox(string[] lines, System.Action after)
     {
         inDialogue = true;
         InteractionState.IsInteracting = true;   // locks the player's movement
 
-        DialogBox.Open(npcName, entry.lines, () =>
+        DialogBox.Open(npcName, lines, () =>
         {
             inDialogue = false;
             InteractionState.IsInteracting = false;
@@ -199,22 +297,22 @@ public class NPC : MonoBehaviour
             if (playerNear)
                 InteractionPrompt.Show(promptText, transform);
 
-            Finish(entry);
+            after?.Invoke();
         });
     }
 
-    void StartBubble(DialogueEntry entry)
+    void StartBubble(string[] lines, System.Action after)
     {
         bubbleActive = true;   // the player is NOT locked
 
-        SpeechBubble.Show(transform, entry.lines, secondsPerBubbleLine, () =>
+        SpeechBubble.Show(transform, lines, secondsPerBubbleLine, () =>
         {
             bubbleActive = false;
 
             if (playerNear)
                 InteractionPrompt.Show(promptText, transform);
 
-            Finish(entry);
+            after?.Invoke();
         });
     }
 

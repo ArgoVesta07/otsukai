@@ -27,6 +27,17 @@ public class ErrandData : ScriptableObject
     [Tooltip("Take back the reward items this errand already gave the player when it fails.")]
     public bool takeBackRewardsOnFail = true;
 
+    [Header("Classic mode (NPC errands)")]
+    [Tooltip("Can NPCs offer this errand in classic mode? Tip: a step with Target Id \"Giver\" sends the player " +
+             "back to whoever asked, and \"{giver}\" in a text becomes that NPC's name.")]
+    public bool offerInClassic = false;
+
+    [Tooltip("Higher = offered more often in classic mode.")]
+    public float classicWeight = 1f;
+
+    [Tooltip("What the NPC says when giving this errand. Empty = the NPC's own Offer Lines.")]
+    [GameText] [TextArea(2, 4)] public string[] offerLines;
+
     [Header("Challenge mode (random days)")]
     [Tooltip("Can the challenge mode hand out this errand?")]
     [FormerlySerializedAs("allowInClassic")] public bool allowInChallenge = true;

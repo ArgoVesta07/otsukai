@@ -421,6 +421,66 @@ MonoBehaviour:
     m_Key: '[E] Free mode'
     m_Metadata:
       m_Items: []
+  - m_Id: 219011630723072
+    m_Key: Bring eggs to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723073
+    m_Key: Bring the eggs to {giver}.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723074
+    m_Key: Could you buy some eggs for me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723075
+    m_Key: Could you help me with something?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723076
+    m_Key: Thank you so much!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723077
+    m_Key: GrandMother
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723078
+    m_Key: Oh, hello dear. Nice weather today.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723079
+    m_Key: Come visit me again soon.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723080
+    m_Key: Oh, hello dear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723081
+    m_Key: 'New errand: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723082
+    m_Key: You have enough errands for now.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 219011630723083
+    m_Key: You don't have what's needed yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 225461945987072
+    m_Key: Errand from {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 226131549843456
+    m_Key: Accept
+    m_Metadata:
+      m_Items: []
+  - m_Id: 226131549843457
+    m_Key: Later
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

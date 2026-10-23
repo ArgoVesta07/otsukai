@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\IncidentManager.cs" />
     <Compile Include="Assets\Scripts\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\SaveSystem.cs" />
+    <Compile Include="Assets\Scripts\ErrandOfferPanel.cs" />
     <Compile Include="Assets\Scripts\LanguageSetting.cs" />
     <Compile Include="Assets\Scripts\SaveData.cs" />
     <Compile Include="Assets\Scripts\NPC.cs" />

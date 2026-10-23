@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -7,7 +8,8 @@ using UnityEngine;
 // Every new phase: a short message and an auto-save. When Night starts, running errands fail.
 // A new day only starts when the player sleeps in a Bed. The save only remembers the day phase
 // (and how many errands were done), not running errands or items.
-// Errands come from NPCs (added in a later step).
+// Errands come from NPCs: every phase (not at night) some random NPCs get a random errand to offer
+// (ErrandData with Offer In Classic ticked). Talking to them accepts it.
 // Put this on its own object in the game scene (e.g. next to the ChallengeManager).
 public class ClassicManager : MonoBehaviour
 {
@@ -27,6 +29,14 @@ public class ClassicManager : MonoBehaviour
     [Tooltip("Ticked = the bed only works at night.")]
     [SerializeField] bool sleepOnlyAtNight = true;
 
+    [Header("NPC errands")]
+    [Tooltip("How many NPCs get an errand to offer at the start of each phase.")]
+    [SerializeField] int offersPerPhase = 2;
+    [Tooltip("The player can't take more errands than this at once.")]
+    [SerializeField] int maxActiveErrands = 3;
+    [Tooltip("Seconds to finish an NPC errand. 0 = no timer (it still fails when night starts).")]
+    [SerializeField] float errandTimeLimit = 0f;
+
     [Header("Text")]
     [Tooltip("Banner when classic mode starts. {0} = day phase.")]
     [GameText] [SerializeField] string startTitle = "Classic";
@@ -36,6 +46,10 @@ public class ClassicManager : MonoBehaviour
     [Tooltip("Pop-up when night starts with errands still running. {0} = how many.")]
     [GameText] [SerializeField] string errandsExpiredFormat = "{0} errand(s) expired";
     [GameText] [SerializeField] string notSleepyText = "Not sleepy yet...";
+    [Tooltip("Pop-up when an errand is accepted. {0} = what to do first.")]
+    [GameText] [SerializeField] string newErrandFormat = "New errand: {0}";
+    [GameText] [SerializeField] string tooManyErrandsText = "You have enough errands for now.";
+    [GameText] [SerializeField] string missingItemText = "You don't have what's needed yet.";
     [Tooltip("Ticked = a new phase uses the big banner instead of a small pop-up.")]
     [SerializeField] bool phaseUsesBanner = false;
     [SerializeField] float bannerSeconds = 2f;
@@ -49,6 +63,17 @@ public class ClassicManager : MonoBehaviour
         public int phaseIndex;
         public int completed;
     }
+
+    // NPCs that can give errands (id -> name). Filled by NPCs as they appear, kept across scenes.
+    static readonly Dictionary<string, string> givers = new Dictionary<string, string>();
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetStatics()
+    {
+        givers.Clear();
+    }
+
+    readonly Dictionary<string, ErrandData> offers = new Dictionary<string, ErrandData>();   // NPC id -> errand
 
     bool active;      // classic mode is on
     bool running;     // the clock is moving (not during banners)
@@ -67,6 +92,17 @@ public class ClassicManager : MonoBehaviour
     public string PhaseName => CurrentPhase != null ? Loc.T(CurrentPhase.name) : "";
     public bool IsNight => CurrentPhase != null && CurrentPhase.isNight;
     public bool CanSleep => active && running && (!sleepOnlyAtNight || IsNight);
+    public string TooManyErrandsText => Loc.T(tooManyErrandsText);
+    public string MissingItemText => Loc.T(missingItemText);
+
+    public bool CanTakeMore
+    {
+        get
+        {
+            QuestManager quest = QuestManager.Instance;
+            return quest != null && quest.Active.Count < maxActiveErrands;
+        }
+    }
 
     // Fired when a new phase starts (also after waking up). Used later for NPC errands.
     public event Action PhaseChanged;
@@ -135,6 +171,7 @@ public class ClassicManager : MonoBehaviour
         {
             running = true;
             Save();
+            RefreshOffers();
             PhaseChanged?.Invoke();
         });
     }
@@ -144,6 +181,7 @@ public class ClassicManager : MonoBehaviour
     {
         active = false;
         running = false;
+        offers.Clear();
         Unhook();
     }
 
@@ -194,6 +232,7 @@ public class ClassicManager : MonoBehaviour
             Toast.Show(message);
         }
 
+        RefreshOffers();
         PhaseChanged?.Invoke();
     }
 
@@ -236,10 +275,143 @@ public class ClassicManager : MonoBehaviour
             running = true;
             Save();
             Toast.Show(Loc.F(phaseMessageFormat, PhaseName));
+            RefreshOffers();
             PhaseChanged?.Invoke();
         });
 
         return true;
+    }
+
+    // ---------- NPC errands ----------
+
+    // NPCs call this when they appear, so they can be picked to give errands
+    public static void RegisterGiver(string npcId, string npcName)
+    {
+        if (string.IsNullOrEmpty(npcId)) return;
+        givers[npcId] = npcName;
+    }
+
+    public bool HasOffer(string npcId)
+    {
+        return active && !string.IsNullOrEmpty(npcId) && offers.ContainsKey(npcId);
+    }
+
+    public ErrandData OfferFor(string npcId)
+    {
+        return HasOffer(npcId) ? offers[npcId] : null;
+    }
+
+    // The player talked to an NPC with an offer: start the errand, with that NPC as the giver
+    public bool AcceptOffer(string npcId)
+    {
+        ErrandData data = OfferFor(npcId);
+        QuestManager quest = QuestManager.Instance;
+        if (data == null || quest == null) return false;
+
+        if (!CanTakeMore)
+        {
+            Toast.Show(TooManyErrandsText);
+            return false;
+        }
+
+        offers.Remove(npcId);
+        givers.TryGetValue(npcId, out string npcName);
+
+        quest.ForgetErrand(data.errandId);   // classic errands can be done again later
+        if (!quest.StartErrand(data, errandTimeLimit, null, true, npcId, npcName))
+            return false;
+
+        ActiveErrand started = FindActive(quest, data);
+        string first = started != null && started.CurrentStep != null
+            ? started.Fill(Loc.T(started.CurrentStep.shortText))
+            : data.errandId;
+        Toast.Show(Loc.F(newErrandFormat, first));
+        return true;
+    }
+
+    static ActiveErrand FindActive(QuestManager quest, ErrandData data)
+    {
+        foreach (ActiveErrand e in quest.Active)
+        {
+            if (e.data == data) return e;
+        }
+        return null;
+    }
+
+    // New random offers for this phase (none at night)
+    void RefreshOffers()
+    {
+        offers.Clear();
+        if (!active || IsNight) return;
+
+        QuestManager quest = QuestManager.Instance;
+        if (quest == null || quest.ErrandLibrary == null) return;
+
+        // NPCs that are free: not already waiting for an errand they gave
+        List<string> freeGivers = new List<string>();
+        foreach (string id in givers.Keys)
+        {
+            if (!IsGiverBusy(quest, id)) freeGivers.Add(id);
+        }
+        Shuffle(freeGivers);
+
+        // Errands that may be offered and aren't running
+        List<ErrandData> pool = new List<ErrandData>();
+        foreach (ErrandData e in quest.ErrandLibrary)
+        {
+            if (e == null || !e.offerInClassic || e.classicWeight <= 0f) continue;
+            if (quest.GetState(e.errandId) == ErrandState.Active) continue;
+            pool.Add(e);
+        }
+
+        int count = Mathf.Min(offersPerPhase, freeGivers.Count);
+        for (int i = 0; i < count && pool.Count > 0; i++)
+        {
+            ErrandData pick = PickWeighted(pool);
+            pool.Remove(pick);   // one NPC per errand
+            offers[freeGivers[i]] = pick;
+        }
+
+        if (offers.Count > 0)
+            Debug.Log("Classic: " + offers.Count + " NPC(s) have an errand (" + string.Join(", ", offers.Keys) + ")");
+        else if (givers.Count == 0)
+            Debug.Log("Classic: no NPC can give errands yet (tick Gives Classic Errands on NPCs).");
+        else if (pool.Count == 0 && count > 0)
+            Debug.Log("Classic: no errand to offer. Tick 'Offer In Classic' on ErrandData assets in the Errand Library.");
+    }
+
+    static bool IsGiverBusy(QuestManager quest, string npcId)
+    {
+        foreach (ActiveErrand e in quest.Active)
+        {
+            if (e.giverId == npcId) return true;
+        }
+        return false;
+    }
+
+    static ErrandData PickWeighted(List<ErrandData> pool)
+    {
+        float total = 0f;
+        foreach (ErrandData e in pool) total += e.classicWeight;
+
+        float roll = UnityEngine.Random.value * total;
+        foreach (ErrandData e in pool)
+        {
+            roll -= e.classicWeight;
+            if (roll <= 0f) return e;
+        }
+        return pool[pool.Count - 1];
+    }
+
+    static void Shuffle(List<string> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            string tmp = list[i];
+            list[i] = list[j];
+            list[j] = tmp;
+        }
     }
 
     // ---------- Save ----------

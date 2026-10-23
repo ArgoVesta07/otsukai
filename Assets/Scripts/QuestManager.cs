@@ -18,17 +18,38 @@ public class ActiveErrand
     public int stepIndex;
     public float timeLimit;      // seconds this errand got when it started (0 = no timer)
     public float timeLeft;
-    public string deadlineLabel; // optional text for the HUD, e.g. "by 10:30" (classic mode)
+    public string deadlineLabel; // optional text for the HUD, e.g. "by 10:30" (challenge mode)
+    public string giverId;       // NPC that gave this errand (classic mode). Steps with Target Id "Giver" go there.
+    public string giverName;     // that NPC's name, for "{giver}" in errand texts
 
     public bool HasTimer => timeLimit > 0f;
     public ErrandStep CurrentStep =>
         data.steps != null && stepIndex < data.steps.Length ? data.steps[stepIndex] : null;
+
+    // Target and arrow id of the current step, with "Giver" replaced by the real NPC id
+    public string CurrentTargetId => CurrentStep != null ? Resolve(CurrentStep.targetId) : null;
+    public string CurrentNavId => CurrentStep != null ? Resolve(CurrentStep.NavId) : null;
+
+    string Resolve(string id)
+    {
+        return id == QuestManager.GiverTarget && !string.IsNullOrEmpty(giverId) ? giverId : id;
+    }
+
+    // Puts the giver's name into a (translated) text: "Bring it back to {giver}"
+    public string Fill(string text)
+    {
+        if (string.IsNullOrEmpty(text) || !text.Contains("{giver}")) return text;
+        return text.Replace("{giver}", string.IsNullOrEmpty(giverName) ? "" : Loc.T(giverName));
+    }
 }
 
 // Runs errands from ErrandData assets. Knows nothing about eggs or Mom: all of that lives in the assets.
 public class QuestManager : MonoBehaviour
 {
     public static QuestManager Instance;
+
+    // Step Target Id meaning "the NPC who gave this errand" (classic mode)
+    public const string GiverTarget = "Giver";
 
     [Tooltip("Stop errand timers while the player is locked (dialogue box, loading screen).")]
     [SerializeField] bool pauseTimerWhileInteracting = true;
@@ -125,6 +146,13 @@ public class QuestManager : MonoBehaviour
     // the current story round (classic mode hands out errands itself).
     public bool StartErrand(ErrandData data, float timeLimitOverride, string deadlineLabel, bool ignoreRound)
     {
+        return StartErrand(data, timeLimitOverride, deadlineLabel, ignoreRound, null, null);
+    }
+
+    // giverId / giverName: the NPC that handed it out (classic mode), used by steps that target "Giver"
+    public bool StartErrand(ErrandData data, float timeLimitOverride, string deadlineLabel, bool ignoreRound,
+                            string giverId, string giverName)
+    {
         if (data == null)
         {
             Debug.LogWarning("StartErrand: no ErrandData assigned.");
@@ -158,7 +186,9 @@ public class QuestManager : MonoBehaviour
             stepIndex = 0,
             timeLimit = limit,
             timeLeft = limit,
-            deadlineLabel = deadlineLabel
+            deadlineLabel = deadlineLabel,
+            giverId = giverId,
+            giverName = giverName
         });
 
         Debug.Log("Errand started: " + data.errandId);
@@ -176,7 +206,7 @@ public class QuestManager : MonoBehaviour
         foreach (ActiveErrand errand in active)
         {
             ErrandStep step = errand.CurrentStep;
-            if (step == null || step.targetId != targetId) continue;
+            if (step == null || errand.CurrentTargetId != targetId) continue;
 
             // Check the required item
             if (!string.IsNullOrEmpty(step.requiredItem))
@@ -212,13 +242,28 @@ public class QuestManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(targetId)) return false;
 
+        return FindWaitingFor(targetId) != null;
+    }
+
+    // The first active errand whose current step happens at this target, or null
+    public ActiveErrand FindWaitingFor(string targetId)
+    {
+        if (string.IsNullOrEmpty(targetId)) return null;
+
         foreach (ActiveErrand errand in active)
         {
-            ErrandStep step = errand.CurrentStep;
-            if (step != null && step.targetId == targetId) return true;
+            if (errand.CurrentStep != null && errand.CurrentTargetId == targetId) return errand;
         }
 
-        return false;
+        return null;
+    }
+
+    // True if the player carries what the current step of this errand needs
+    public bool HasItemsFor(ActiveErrand errand)
+    {
+        ErrandStep step = errand != null ? errand.CurrentStep : null;
+        if (step == null || string.IsNullOrEmpty(step.requiredItem)) return true;
+        return inventory != null && inventory.HasItem(step.requiredItem, step.requiredAmount);
     }
 
     // ---------- Queries ----------

@@ -211,10 +211,10 @@ public class GameHud : MonoBehaviour
 
         if (tracked != null && tracked.CurrentStep != null)
         {
-            shortText = Loc.T(tracked.CurrentStep.shortText);
+            shortText = tracked.Fill(Loc.T(tracked.CurrentStep.shortText));
             if (!string.IsNullOrEmpty(tracked.deadlineLabel))
                 shortText += "  " + tracked.deadlineLabel;
-            detailText = Loc.T(tracked.CurrentStep.detailText);
+            detailText = tracked.Fill(Loc.T(tracked.CurrentStep.detailText));
         }
         else if (showFailed)
         {
@@ -266,7 +266,7 @@ public class GameHud : MonoBehaviour
             ActiveErrand e = quest.Active[i];
             if (e == tracked) continue;
 
-            string text = e.CurrentStep != null ? Loc.T(e.CurrentStep.shortText) : e.data.errandId;
+            string text = e.CurrentStep != null ? e.Fill(Loc.T(e.CurrentStep.shortText)) : e.data.errandId;
             if (!string.IsNullOrEmpty(e.deadlineLabel))
             {
                 text += "  " + e.deadlineLabel;
@@ -293,11 +293,11 @@ public class GameHud : MonoBehaviour
         }
 
         NavTarget target = null;
-        ErrandStep step = tracked != null ? tracked.CurrentStep : null;
+        string navId = tracked != null ? tracked.CurrentNavId : null;
 
-        if (step != null && !string.IsNullOrEmpty(step.NavId))
+        if (!string.IsNullOrEmpty(navId))
         {
-            target = NavTarget.Find(step.NavId);
+            target = NavTarget.Find(navId);
             if (target == null) target = NavTarget.Find(fallbackTargetId);
         }
 
