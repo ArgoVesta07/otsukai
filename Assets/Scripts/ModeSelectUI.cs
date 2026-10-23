@@ -1,12 +1,14 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 
 // The mode menu opened by a ModeSelectPoint.
-//   Main panel:    Story / Classic / Challenge / Close
+//   Main panel:    Story / Classic / Challenge / Close   (free mode only)
 //   Story panel:   Continue (Day 2 · Afternoon) / New story / Back   (only when a story save exists)
-//   Confirm panel: "Your saved story will be overwritten" Yes / No
+//   Confirm panel: a question with Yes / No (overwrite the story, or go back to free mode)
+// Modes are only chosen in free mode. While a mode runs, opening the menu asks "Back to free mode?".
 // Put this on a root canvas (e.g. HudCanvas). Hook the buttons to the public methods below.
 [DefaultExecutionOrder(100)]   // after PauseMenu, so Esc closing this menu doesn't also open the pause menu
 public class ModeSelectUI : MonoBehaviour
@@ -18,6 +20,10 @@ public class ModeSelectUI : MonoBehaviour
     [SerializeField] GameObject storyPanel;
     [SerializeField] GameObject confirmPanel;
 
+    [Header("Confirm panel")]
+    [Tooltip("The question text on the confirm panel (filled by script).")]
+    [SerializeField] TMP_Text confirmText;
+
     [Header("Story panel")]
     [SerializeField] GameObject continueButton;
     [SerializeField] TMP_Text continueLabel;
@@ -28,9 +34,20 @@ public class ModeSelectUI : MonoBehaviour
     [GameText] [SerializeField] string storyCompleteText = "You finished the story.";
     [GameText] [SerializeField, FormerlySerializedAs("classicComingSoonText")] string challengeComingSoonText = "Challenge mode is coming soon";
 
+    [GameText] [SerializeField] string overwriteStoryText = "Your saved story will be overwritten. Start a new story?";
+    [GameText] [SerializeField] string backToFreeText = "Go back to free mode?";
+    [GameText] [SerializeField] string leaveStoryText = "Unsaved story progress will be lost. Continue?";
+    [GameText] [SerializeField] string leaveChallengeText = "Your challenge run will end. Continue?";
+    [GameText] [SerializeField] string freeModeText = "Free mode";
+
     [SerializeField] string gameSceneName = "MainScene";
 
-    SaveData peek;   // the story save, read when the story panel opens
+    SaveData peek;           // the story save, read when the story panel opens
+    Action pendingAction;    // runs when Yes is pressed on the confirm panel
+    GameObject backPanel;    // shown again when No is pressed
+
+    static bool InStory => TimeManager.Instance != null && TimeManager.Instance.InStory;
+    static bool ModeRunning => InStory || ChallengeManager.IsActive || ClassicManager.IsActive;
 
     bool IsOpen =>
         (mainPanel != null && mainPanel.activeSelf) ||
@@ -58,7 +75,7 @@ public class ModeSelectUI : MonoBehaviour
         var k = Keyboard.current;
         if (k == null || !k.escapeKey.wasPressedThisFrame) return;
 
-        if (confirmPanel != null && confirmPanel.activeSelf) CancelNewStory();
+        if (confirmPanel != null && confirmPanel.activeSelf) ConfirmNo();
         else if (storyPanel != null && storyPanel.activeSelf) BackToMain();
         else Close();
     }
@@ -74,6 +91,15 @@ public class ModeSelectUI : MonoBehaviour
         }
 
         InteractionState.IsInteracting = true;   // lock the player while the menu is open
+
+        // Inside a mode: only offer the way back to free mode
+        if (ModeRunning && instance.confirmPanel != null)
+        {
+            string question = instance.LeaveQuestion() ?? instance.backToFreeText;
+            instance.AskConfirm(question, instance.GoToFreeMode, null);
+            return;
+        }
+
         instance.ShowOnly(instance.mainPanel);
     }
 
@@ -128,8 +154,7 @@ public class ModeSelectUI : MonoBehaviour
             return;
         }
 
-        Close();
-        ClassicManager.Instance.StartClassic();
+        SwitchMode(() => ClassicManager.Instance.StartClassic());
     }
 
     public void ChooseChallenge()
@@ -140,31 +165,98 @@ public class ModeSelectUI : MonoBehaviour
             return;
         }
 
+        SwitchMode(() => ChallengeManager.Instance.StartChallenge());
+    }
+
+    // Leaves the running mode and goes back to free mode (walk around, nothing running)
+    public void ChooseFreeMode()
+    {
+        SwitchMode(EnterFreeMode);
+    }
+
+    // Used by the confirm panel (the question was already asked)
+    void GoToFreeMode()
+    {
         Close();
-        ChallengeManager.Instance.StartChallenge();
+        LeaveCurrentMode();
+        EnterFreeMode();
+    }
+
+    void EnterFreeMode()
+    {
+        SaveSystem.ResetProgress();   // drop errands, items and flags from the mode
+        Toast.Show(Loc.T(freeModeText));
+    }
+
+    // ---------- Switching modes ----------
+
+    // Leaves the running mode (asking first if progress would be lost), then runs 'start'
+    void SwitchMode(Action start)
+    {
+        Action go = () =>
+        {
+            Close();
+            LeaveCurrentMode();
+            start?.Invoke();
+        };
+
+        string question = LeaveQuestion();
+        if (question != null && confirmPanel != null)
+            AskConfirm(question, go, mainPanel);
+        else
+            go();
+    }
+
+    // What to ask before leaving the running mode, or null when nothing would be lost
+    string LeaveQuestion()
+    {
+        if (ChallengeManager.IsActive) return leaveChallengeText;
+        if (InStory && SaveSystem.HasUnsavedProgress()) return leaveStoryText;
+        return null;   // classic mode saves by itself; free mode has nothing to lose
+    }
+
+    static void LeaveCurrentMode()
+    {
+        if (ChallengeManager.Instance != null && ChallengeManager.IsActive) ChallengeManager.Instance.Stop();
+        if (ClassicManager.Instance != null && ClassicManager.IsActive) ClassicManager.Instance.Stop();
+        if (TimeManager.Instance != null) TimeManager.Instance.EnterFreeMode();   // also ends story mode
     }
 
     // ---------- Story panel ----------
 
     public void ContinueStory()
     {
-        Close();
-        SaveSystem.LoadGame(gameSceneName);
+        SwitchMode(() => SaveSystem.LoadGame(gameSceneName));
     }
 
     public void AskNewStory()
     {
-        // Only ask when an unfinished story would be overwritten
+        // Ask when an unfinished story would be overwritten (that also covers leaving the running mode)
         if (confirmPanel != null && peek != null && !peek.storyFinished)
-            ShowOnly(confirmPanel);
+        {
+            AskConfirm(overwriteStoryText, () =>
+            {
+                Close();
+                LeaveCurrentMode();
+                BeginNewStory();
+            }, storyPanel);
+        }
         else
-            StartNewStory();
+        {
+            SwitchMode(BeginNewStory);
+        }
     }
 
+    // Kept for old button links: starts a new story without asking
     public void StartNewStory()
     {
         Close();
+        LeaveCurrentMode();
+        BeginNewStory();
+    }
 
+    static void BeginNewStory()
+    {
         SaveSystem.ResetProgress();   // clear errands, items and flags from earlier play
 
         if (TimeManager.Instance != null)
@@ -178,8 +270,32 @@ public class ModeSelectUI : MonoBehaviour
 
     // ---------- Confirm panel ----------
 
+    void AskConfirm(string question, Action yes, GameObject back)
+    {
+        pendingAction = yes;
+        backPanel = back;
+        if (confirmText != null) confirmText.text = Loc.T(question);
+        ShowOnly(confirmPanel);
+    }
+
+    public void ConfirmYes()
+    {
+        Action action = pendingAction;
+        pendingAction = null;
+        action?.Invoke();
+    }
+
+    public void ConfirmNo()
+    {
+        pendingAction = null;
+
+        if (backPanel != null) ShowOnly(backPanel);
+        else Close();   // asked straight from the world (back to free mode?): just close
+    }
+
+    // Kept for old button links
     public void CancelNewStory()
     {
-        ShowOnly(storyPanel);
+        ConfirmNo();
     }
 }

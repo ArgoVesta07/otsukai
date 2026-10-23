@@ -389,6 +389,38 @@ MonoBehaviour:
     m_Key: Bed
     m_Metadata:
       m_Items: []
+  - m_Id: 206000274763776
+    m_Key: Unsaved story progress will be lost. Continue?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206000274763777
+    m_Key: Your challenge run will end. Continue?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206000274763778
+    m_Key: Free mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 206000274763779
+    m_Key: Classic Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 208463090380800
+    m_Key: Free Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210662579204096
+    m_Key: Go back to free mode?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 210662583398400
+    m_Key: '[E] Back to free mode'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 212076529414144
+    m_Key: '[E] Free mode'
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
