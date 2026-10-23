@@ -2601,7 +2601,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 838116587}
         m_TargetAssemblyTypeName: ModeSelectUI, Assembly-CSharp
-        m_MethodName: StartNewStory
+        m_MethodName: ConfirmYes
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5936,12 +5936,18 @@ MonoBehaviour:
   mainPanel: {fileID: 1069804713}
   storyPanel: {fileID: 1499815322}
   confirmPanel: {fileID: 330775651}
+  confirmText: {fileID: 1679655005}
   continueButton: {fileID: 996772137}
   continueLabel: {fileID: 909283690}
   storyInfoText: {fileID: 404740161}
   continueFormat: Continue  ({0})
   storyCompleteText: You finished the story.
   challengeComingSoonText: Challenge mode is coming soon
+  overwriteStoryText: Your saved story will be overwritten. Start a new story?
+  backToFreeText: Go back to free mode?
+  leaveStoryText: Unsaved story progress will be lost. Continue?
+  leaveChallengeText: Your challenge run will end. Continue?
+  freeModeText: Free mode
   gameSceneName: MainScene
 --- !u!1 &850774054
 GameObject:
@@ -6655,6 +6661,8 @@ GameObject:
   - component: {fileID: 939311833}
   - component: {fileID: 939311835}
   - component: {fileID: 939311834}
+  - component: {fileID: 939311837}
+  - component: {fileID: 939311836}
   m_Layer: 5
   m_Name: PromptPanel
   m_TagString: Untagged
@@ -6680,7 +6688,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 15}
-  m_SizeDelta: {x: 135, y: 45}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &939311834
 MonoBehaviour:
@@ -6720,6 +6728,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 939311832}
   m_CullTransparentMesh: 1
+--- !u!114 &939311836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939311832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
+  m_HorizontalFit: 2
+  m_VerticalFit: 2
+--- !u!114 &939311837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939311832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
+  m_Padding:
+    m_Left: 12
+    m_Right: 12
+    m_Top: 6
+    m_Bottom: 6
+  m_ChildAlignment: 4
+  m_Spacing: 0
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &947498392
 GameObject:
   m_ObjectHideFlags: 0
@@ -8808,7 +8856,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 838116587}
         m_TargetAssemblyTypeName: ModeSelectUI, Assembly-CSharp
-        m_MethodName: CancelNewStory
+        m_MethodName: ConfirmNo
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10063,6 +10111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ModeSelectPoint
   promptText: '[E] Choose mode'
+  promptTextInMode: '[E] Free mode'
 --- !u!61 &1460496774
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10712,10 +10761,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 939311833}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1598789424
 MonoBehaviour:
@@ -10768,8 +10817,8 @@ MonoBehaviour:
   m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMin: 16
+  m_fontSizeMax: 18
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -10781,7 +10830,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
@@ -11293,7 +11342,6 @@ GameObject:
   - component: {fileID: 1679655004}
   - component: {fileID: 1679655006}
   - component: {fileID: 1679655005}
-  - component: {fileID: 1679655007}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -11420,19 +11468,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1679655003}
   m_CullTransparentMesh: 1
---- !u!114 &1679655007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1679655003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 310c80270de60d54fa956b1aa45866f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LocalizeText
-  key: 
 --- !u!1 &1687953176
 GameObject:
   m_ObjectHideFlags: 0
