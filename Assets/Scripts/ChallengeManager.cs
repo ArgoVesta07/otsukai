@@ -4,9 +4,9 @@ using UnityEngine;
 // Challenge mode: endless random days on the shared WorldClock.
 // At the start of every day phase (not night), some random NPCs secretly get an errand ("!" above them).
 // The HUD shows how many there are and points to the nearest one. Talking to the NPC starts the errand,
-// and its deadline starts counting from then. Errands not picked up before the phase ends, late errands,
-// and errands still open when night starts are strikes; too many strikes = game over.
-// Night may have a few errands too (Allow At Night); errands not done before sleeping are strikes.
+// and its deadline starts counting from then. An errand only lasts for its phase: late errands, errands
+// still running when the phase ends and errands nobody picked up are strikes; too many = game over.
+// Night may have a few errands too (Allow At Night); the player can't sleep until they're done.
 // Each day gets harder (more errands, shorter deadlines). Then the player sleeps for the next day.
 // Only the best score is kept (no save).
 // Put this on its own object in the game scene (e.g. next to the WorldClock).
@@ -184,10 +184,14 @@ public class ChallengeManager : MonoBehaviour
         EndAllIncidents();
     }
 
-    // New phase: errands nobody picked up are strikes, then new errands go to random NPCs (not at night)
+    // New phase: errands from the last phase that are still running or were never picked up are strikes,
+    // then new errands go to random NPCs
     void OnPhaseChanged()
     {
         if (!active) return;
+
+        FailRunningErrands();
+        if (!active) return;   // the strikes ended the run
 
         MissLeftoverOffers();
         if (!active) return;   // the strikes ended the run
@@ -199,35 +203,35 @@ public class ChallengeManager : MonoBehaviour
         GiveOutErrands();
     }
 
-    // Going to sleep: night errands not picked up or not finished are strikes
+    // Going to sleep (only possible once night errands are done): anything left over is a strike
     void OnDayEnded(int day)
     {
         if (!active) return;
 
-        MissLeftoverOffers();
+        FailRunningErrands();
         if (!active) return;
 
-        QuestManager quest = QuestManager.Instance;
-        if (quest == null) return;
-
-        List<ActiveErrand> open = new List<ActiveErrand>(quest.Active);
-        foreach (ActiveErrand e in open)
-            quest.ForceFail(e.data);   // fires OnErrandFailed -> strikes (may end the run)
+        MissLeftoverOffers();
     }
 
     // Night: no new errands; the ones still open count as late
     void OnNightStarted()
     {
         if (!active) return;
+        EndAllIncidents();   // running errands are handled in OnPhaseChanged
+    }
 
-        EndAllIncidents();
-
+    void FailRunningErrands()
+    {
         QuestManager quest = QuestManager.Instance;
         if (quest == null) return;
 
         List<ActiveErrand> open = new List<ActiveErrand>(quest.Active);
         foreach (ActiveErrand e in open)
+        {
+            if (!active) return;
             quest.ForceFail(e.data);   // fires OnErrandFailed -> strikes (may end the run)
+        }
     }
 
     void GameOver()

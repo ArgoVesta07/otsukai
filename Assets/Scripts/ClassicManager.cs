@@ -5,8 +5,9 @@ using UnityEngine;
 
 // Classic mode: a relaxed mode with no score and no time pressure.
 // Uses the shared WorldClock (Morning -> ... -> Night, sleep in a Bed for the next day).
-// Every new phase is auto-saved. When night starts, running errands fail. At night some NPCs may
-// offer night errands (Allow At Night); those fail if the player goes to sleep first.
+// Every new phase is auto-saved. An errand only lasts for the phase it was taken in: when the phase
+// ends (e.g. morning -> afternoon) it fails. At night some NPCs may offer night errands (Allow At Night);
+// the player can't sleep while one is running.
 // The save only remembers the day and phase (and how many errands were done), not running errands or items.
 // Errands come from NPCs: every phase (not at night) some random NPCs get a random errand to offer
 // (ErrandData with Offer In Classic ticked). Talking to them accepts it.
@@ -26,7 +27,7 @@ public class ClassicManager : MonoBehaviour
     [SerializeField] int offersPerPhase = 2;
     [Tooltip("The player can't take more errands than this at once.")]
     [SerializeField] int maxActiveErrands = 3;
-    [Tooltip("Seconds to finish an NPC errand. 0 = no timer (it still fails when night starts).")]
+    [Tooltip("Seconds to finish an NPC errand. 0 = no timer (it still fails when the phase ends).")]
     [SerializeField] float errandTimeLimit = 0f;
 
     [Header("Night errands")]
@@ -154,7 +155,6 @@ public class ClassicManager : MonoBehaviour
         if (Clock != null)
         {
             Clock.PhaseChanged += OnPhaseChanged;
-            Clock.NightStarted += ExpireErrands;
             Clock.DayEnded += OnDayEnded;
         }
     }
@@ -167,7 +167,6 @@ public class ClassicManager : MonoBehaviour
         if (Clock != null)
         {
             Clock.PhaseChanged -= OnPhaseChanged;
-            Clock.NightStarted -= ExpireErrands;
             Clock.DayEnded -= OnDayEnded;
         }
     }
@@ -180,6 +179,7 @@ public class ClassicManager : MonoBehaviour
     void OnPhaseChanged()
     {
         if (!active) return;
+        ExpireErrands();   // errands from the phase that just ended
         Save();
         RefreshOffers();
     }
@@ -191,7 +191,7 @@ public class ClassicManager : MonoBehaviour
         offers.Clear();
     }
 
-    // Every running errand fails (night starts, or going to sleep)
+    // Every running errand fails (the phase ended, or going to sleep)
     void ExpireErrands()
     {
         if (!active) return;

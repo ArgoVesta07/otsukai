@@ -509,6 +509,10 @@ MonoBehaviour:
     m_Key: Story mode is coming soon
     m_Metadata:
       m_Items: []
+  - m_Id: 330297085489152
+    m_Key: Finish what you were asked first.
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

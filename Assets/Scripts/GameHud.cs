@@ -51,6 +51,8 @@ public class GameHud : MonoBehaviour
     [SerializeField] float challengeWarningMinutes = 60f;
 
     [Header("Failed errand text")]
+    [Tooltip("How long the failed card stays on screen (seconds).")]
+    [SerializeField] float failedCardSeconds = 3f;
     [GameText] [SerializeField] string failedShortText = "Time's up";
     [GameText] [SerializeField, TextArea(2, 4)] string failedDetailText = "You ran out of time.";
 
@@ -119,11 +121,21 @@ public class GameHud : MonoBehaviour
         }
     }
 
+    ErrandData seenFailed;
+    float failedAt;
+
     void LateUpdate()
     {
         QuestManager quest = QuestManager.Instance;
         ActiveErrand tracked = quest != null ? quest.Tracked : null;
-        bool showFailed = tracked == null && quest != null && quest.LastFailed != null;
+        // The failed card shows for a few seconds after an errand fails
+        ErrandData lastFailed = quest != null ? quest.LastFailed : null;
+        if (lastFailed != seenFailed)
+        {
+            seenFailed = lastFailed;
+            failedAt = Time.time;
+        }
+        bool showFailed = tracked == null && lastFailed != null && Time.time - failedAt < failedCardSeconds;
 
         UpdateTimer(tracked, showFailed);
         UpdateErrand(tracked, showFailed);

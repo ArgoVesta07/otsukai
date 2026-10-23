@@ -40,6 +40,8 @@ public class WorldClock : MonoBehaviour
     [Tooltip("Banner after sleeping (free mode, or when a mode gives none).")]
     [GameText] [SerializeField] string nextDayTitle = "Next day";
     [GameText] [SerializeField] string notSleepyText = "Not sleepy yet...";
+    [Tooltip("When trying to sleep with a request still running (or, in challenge mode, still waiting).")]
+    [GameText] [SerializeField] string busyText = "Finish what you were asked first.";
     [GameText] [SerializeField] string goToBedText = "Go to bed";
     [GameText] [SerializeField, TextArea(2, 4)] string goToBedDetail = "It's late. Go home and sleep.";
     [SerializeField] float bannerSeconds = 2f;
@@ -78,7 +80,18 @@ public class WorldClock : MonoBehaviour
     public TimeOfDayData.Phase CurrentPhase => timeOfDay != null ? timeOfDay.Get(phaseIndex) : null;
     public string PhaseName => CurrentPhase != null ? Loc.T(CurrentPhase.name) : "";
     public bool IsNight => CurrentPhase != null && CurrentPhase.isNight;
-    public bool CanSleep => IsActive && running && (!sleepOnlyAtNight || IsNight);
+    public bool CanSleep => IsActive && running && (!sleepOnlyAtNight || IsNight) && !HasUnfinishedWork;
+
+    // A request is running, or challenge errands are still waiting at NPCs: no sleeping yet
+    public bool HasUnfinishedWork
+    {
+        get
+        {
+            QuestManager quest = QuestManager.Instance;
+            if (quest != null && quest.Active.Count > 0) return true;
+            return ChallengeManager.IsActive && ChallengeManager.Instance.OffersLeft > 0;
+        }
+    }
     public string BedNavId => bedNavId;
     public string GoToBedText => Loc.T(goToBedText);
     public string GoToBedDetail => Loc.T(goToBedDetail);
@@ -221,7 +234,8 @@ public class WorldClock : MonoBehaviour
 
         if (!CanSleep)
         {
-            Toast.Show(Loc.T(notSleepyText));
+            bool sleepyTime = !sleepOnlyAtNight || IsNight;
+            Toast.Show(Loc.T(sleepyTime && HasUnfinishedWork ? busyText : notSleepyText));
             return false;
         }
 
