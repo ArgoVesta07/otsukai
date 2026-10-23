@@ -505,6 +505,10 @@ MonoBehaviour:
     m_Key: Score {1}   Strikes {2}/{3}   {4}   {5}/{6}
     m_Metadata:
       m_Items: []
+  - m_Id: 316296247078912
+    m_Key: Story mode is coming soon
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

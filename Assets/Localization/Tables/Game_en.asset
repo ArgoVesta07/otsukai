@@ -79,7 +79,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804483086
-    m_Localized: Can't save during an errand
+    m_Localized: Can't save while helping someone
     m_Metadata:
       m_Items: []
   - m_Id: 804483087
@@ -155,7 +155,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804483105
-    m_Localized: 'New errand: {0} (by {1})'
+    m_Localized: 'New request: {0} (by {1})'
     m_Metadata:
       m_Items: []
   - m_Id: 804483106
@@ -205,7 +205,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804483117
-    m_Localized: '[Q] Switch errand'
+    m_Localized: '[Q] Switch request'
     m_Metadata:
       m_Items: []
   - m_Id: 804483118
@@ -289,7 +289,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804483138
-    m_Localized: '{0}  {1}/{2} errands'
+    m_Localized: '{0}  {1}/{2} done'
     m_Metadata:
       m_Items: []
   - m_Id: 804483139
@@ -297,7 +297,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 804483140
-    m_Localized: '{0}/{1} errands'
+    m_Localized: '{0}/{1} done'
     m_Metadata:
       m_Items: []
   - m_Id: 804483141
@@ -377,7 +377,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 201736555032577
-    m_Localized: '{0} errand(s) expired'
+    m_Localized: '{0} request(s) expired'
     m_Metadata:
       m_Items: []
   - m_Id: 201736555032578
@@ -461,11 +461,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 219011630723081
-    m_Localized: 'New errand: {0}'
+    m_Localized: 'New request: {0}'
     m_Metadata:
       m_Items: []
   - m_Id: 219011630723082
-    m_Localized: You have enough errands for now.
+    m_Localized: You can't take more requests now.
     m_Metadata:
       m_Items: []
   - m_Id: 219011630723083
@@ -473,7 +473,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 225461945987072
-    m_Localized: Errand from {0}
+    m_Localized: Request from {0}
     m_Metadata:
       m_Items: []
   - m_Id: 226131549843456
@@ -501,11 +501,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 305798306820098
-    m_Localized: '{0} errand(s) missed!'
+    m_Localized: '{0} request(s) missed!'
     m_Metadata:
       m_Items: []
   - m_Id: 305798306820099
     m_Localized: Score {1}   Strikes {2}/{3}   {4}   {5}/{6}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 316296247078912
+    m_Localized: Story mode is coming soon
     m_Metadata:
       m_Items: []
   references:

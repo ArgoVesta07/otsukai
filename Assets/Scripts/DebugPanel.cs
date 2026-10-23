@@ -84,8 +84,36 @@ public class DebugPanel : MonoBehaviour
 
     // ---------- Tabs ----------
 
+    void DrawClock(WorldClock clock)
+    {
+        GUILayout.Label(clock.Mode + " mode   Day " + clock.Day + "   " + clock.ClockText + "   " + clock.PhaseName);
+        GUILayout.Label(clock.Running ? (clock.WantsBed ? "Running (go to bed)" : "Running") : "Banner / paused");
+
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("+30 min")) clock.DebugAddMinutes(30f);
+        if (GUILayout.Button("+1 hour")) clock.DebugAddMinutes(60f);
+        if (GUILayout.Button("To night")) clock.DebugJumpToNight();
+        GUILayout.EndHorizontal();
+
+        GUILayout.Label("Speed: x" + clock.DebugSpeed);
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("x1")) clock.DebugSpeed = 1f;
+        if (GUILayout.Button("x5")) clock.DebugSpeed = 5f;
+        if (GUILayout.Button("x20")) clock.DebugSpeed = 20f;
+        GUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Sleep now (needs night)")) clock.TrySleep();
+    }
+
     void DrawTime()
     {
+        // Free / classic / challenge mode: the shared clock
+        if (WorldClock.IsActive)
+        {
+            DrawClock(WorldClock.Instance);
+            return;
+        }
+
         TimeManager time = TimeManager.Instance;
         if (time == null || !time.HasStory)
         {
@@ -94,6 +122,7 @@ public class DebugPanel : MonoBehaviour
         }
 
         string state = time.StoryFinished ? "Story finished"
+                     : time.AwaitingSleep ? "Day over: go to bed"
                      : time.OnBreak ? "On break"
                      : time.Running ? "Running" : "Starting / banner";
         GUILayout.Label(time.CurrentLabel + "   " + state);

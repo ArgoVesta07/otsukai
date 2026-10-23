@@ -6,6 +6,7 @@ using UnityEngine;
 // The HUD shows how many there are and points to the nearest one. Talking to the NPC starts the errand,
 // and its deadline starts counting from then. Errands not picked up before the phase ends, late errands,
 // and errands still open when night starts are strikes; too many strikes = game over.
+// Night may have a few errands too (Allow At Night); errands not done before sleeping are strikes.
 // Each day gets harder (more errands, shorter deadlines). Then the player sleeps for the next day.
 // Only the best score is kept (no save).
 // Put this on its own object in the game scene (e.g. next to the WorldClock).
@@ -30,6 +31,9 @@ public class ChallengeManager : MonoBehaviour
     [SerializeField] int errandsPerPhaseCap = 4;
     [Tooltip("Every this many days, one more errand per phase.")]
     [SerializeField] int extraErrandEveryDays = 2;
+    [Tooltip("Chance that night has errands too (only errands with Allow At Night).")]
+    [SerializeField, Range(0f, 1f)] float nightErrandChance = 0.5f;
+    [SerializeField] int nightErrandsMax = 1;
     [Tooltip("Deadlines are multiplied by this for every day after Day 1 (0.9 = 10% shorter).")]
     [SerializeField, Range(0.5f, 1f)] float dailySpeedUp = 0.9f;
     [Tooltip("Deadlines never get shorter than this share of the original.")]
@@ -168,6 +172,7 @@ public class ChallengeManager : MonoBehaviour
             Clock.DayStarted += OnDayStarted;
             Clock.NightStarted += OnNightStarted;
             Clock.PhaseChanged += OnPhaseChanged;
+            Clock.DayEnded += OnDayEnded;
         }
     }
 
@@ -191,7 +196,23 @@ public class ChallengeManager : MonoBehaviour
         PhaseTotal = 0;
         PhaseDone = 0;
 
-        if (!Clock.IsNight) GiveOutErrands();
+        GiveOutErrands();
+    }
+
+    // Going to sleep: night errands not picked up or not finished are strikes
+    void OnDayEnded(int day)
+    {
+        if (!active) return;
+
+        MissLeftoverOffers();
+        if (!active) return;
+
+        QuestManager quest = QuestManager.Instance;
+        if (quest == null) return;
+
+        List<ActiveErrand> open = new List<ActiveErrand>(quest.Active);
+        foreach (ActiveErrand e in open)
+            quest.ForceFail(e.data);   // fires OnErrandFailed -> strikes (may end the run)
     }
 
     // Night: no new errands; the ones still open count as late
@@ -212,7 +233,10 @@ public class ChallengeManager : MonoBehaviour
     void GameOver()
     {
         active = false;
+        offers.Clear();
         EndAllIncidents();
+        int day = Day;
+        if (Clock != null) Clock.Stop();   // nothing else happens on the clock (e.g. the sleep banner)
 
         QuestManager quest = QuestManager.Instance;
         if (quest != null)
@@ -228,10 +252,10 @@ public class ChallengeManager : MonoBehaviour
             best = Score;
             PlayerPrefs.SetInt(BestScoreKey, Score);
         }
-        if (Day > PlayerPrefs.GetInt(BestDayKey, 0)) PlayerPrefs.SetInt(BestDayKey, Day);
+        if (day > PlayerPrefs.GetInt(BestDayKey, 0)) PlayerPrefs.SetInt(BestDayKey, day);
         PlayerPrefs.Save();
 
-        string subtitle = Loc.F(gameOverFormat, Score, Day, best);
+        string subtitle = Loc.F(gameOverFormat, Score, day, best);
         PeriodBanner.Show(Loc.T(gameOverTitle), subtitle, bannerSeconds + 1f, () =>
         {
             TimeManager time = TimeManager.Instance;
@@ -262,6 +286,7 @@ public class ChallengeManager : MonoBehaviour
             Clock.DayStarted -= OnDayStarted;
             Clock.NightStarted -= OnNightStarted;
             Clock.PhaseChanged -= OnPhaseChanged;
+            Clock.DayEnded -= OnDayEnded;
         }
     }
 
@@ -302,13 +327,23 @@ public class ChallengeManager : MonoBehaviour
         QuestManager quest = QuestManager.Instance;
         if (quest == null) return;
 
+        bool night = Clock != null && Clock.IsNight;
+        int wanted = night
+            ? (Random.value < nightErrandChance ? nightErrandsMax : 0)
+            : ErrandsThisPhase();
+        if (wanted <= 0)
+        {
+            PhaseTotal = 0;
+            return;   // e.g. a quiet night: straight to bed
+        }
+
         List<string> givers = NpcRegistry.FreeGiversShuffled();
         List<ErrandData> used = new List<ErrandData>();
-        int count = Mathf.Min(ErrandsThisPhase(), givers.Count);
+        int count = Mathf.Min(wanted, givers.Count);
 
         for (int i = 0; i < count; i++)
         {
-            ErrandData pick = PickErrand(quest, used);
+            ErrandData pick = PickErrand(quest, used, night);
             if (pick == null) break;
 
             used.Add(pick);
@@ -406,7 +441,7 @@ public class ChallengeManager : MonoBehaviour
         return best;
     }
 
-    ErrandData PickErrand(QuestManager quest, List<ErrandData> exclude)
+    ErrandData PickErrand(QuestManager quest, List<ErrandData> exclude, bool night)
     {
         if (quest.ErrandLibrary == null) return null;
 
@@ -418,6 +453,7 @@ public class ChallengeManager : MonoBehaviour
             if (e == null || !e.allowInChallenge || e.minDay > Day || e.weight <= 0f) continue;
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;   // already running
             if (exclude != null && exclude.Contains(e)) continue;             // already given out this phase
+            if (night && !e.allowAtNight) continue;
             options.Add(e);
             total += e.weight;
         }

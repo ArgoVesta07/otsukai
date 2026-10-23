@@ -24,6 +24,11 @@ public class ModeSelectUI : MonoBehaviour
     [Tooltip("The question text on the confirm panel (filled by script).")]
     [SerializeField] TMP_Text confirmText;
 
+    [Header("Story")]
+    [Tooltip("Off = the Story button only shows \"coming soon\" (while story mode is being made).")]
+    [SerializeField] bool storyAvailable = false;
+    [GameText] [SerializeField] string storyComingSoonText = "Story mode is coming soon";
+
     [Header("Story panel")]
     [SerializeField] GameObject continueButton;
     [SerializeField] TMP_Text continueLabel;
@@ -120,6 +125,12 @@ public class ModeSelectUI : MonoBehaviour
 
     public void ChooseStory()
     {
+        if (!storyAvailable)
+        {
+            Toast.Show(Loc.T(storyComingSoonText));
+            return;
+        }
+
         peek = SaveSystem.PeekSave();
 
         // No save yet: start right away

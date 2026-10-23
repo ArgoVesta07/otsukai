@@ -27,6 +27,10 @@ public class ErrandData : ScriptableObject
     [Tooltip("Take back the reward items this errand already gave the player when it fails.")]
     public bool takeBackRewardsOnFail = true;
 
+    [Header("Night")]
+    [Tooltip("Classic / challenge: can NPCs give this errand at night? (Errands running when night starts fail.)")]
+    public bool allowAtNight = false;
+
     [Header("Classic mode (NPC errands)")]
     [Tooltip("Can NPCs offer this errand in classic mode? Tip: a step with Target Id \"Giver\" sends the player " +
              "back to whoever asked, and \"{giver}\" in a text becomes that NPC's name.")]

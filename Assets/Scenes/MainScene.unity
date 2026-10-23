@@ -6608,6 +6608,8 @@ MonoBehaviour:
   storyPanel: {fileID: 1499815322}
   confirmPanel: {fileID: 330775651}
   confirmText: {fileID: 1679655005}
+  storyAvailable: 0
+  storyComingSoonText: Story mode is coming soon
   continueButton: {fileID: 996772137}
   continueLabel: {fileID: 909283690}
   storyInfoText: {fileID: 404740161}
@@ -9857,6 +9859,8 @@ MonoBehaviour:
   errandsPerPhaseDay1: 2
   errandsPerPhaseCap: 4
   extraErrandEveryDays: 2
+  nightErrandChance: 0.5
+  nightErrandsMax: 1
   dailySpeedUp: 0.9
   minDeadlineShare: 0.5
   incidentPool:
@@ -13541,6 +13545,8 @@ MonoBehaviour:
   offersPerPhase: 2
   maxActiveErrands: 3
   errandTimeLimit: 0
+  nightOfferChance: 0.5
+  nightOffersMax: 1
   startTitle: Classic Mode
   nextDayTitle: Next day
   errandsExpiredFormat: '{0} errand(s) expired'

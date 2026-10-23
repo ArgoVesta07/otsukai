@@ -44,6 +44,9 @@ public class WorldClock : MonoBehaviour
     [GameText] [SerializeField, TextArea(2, 4)] string goToBedDetail = "It's late. Go home and sleep.";
     [SerializeField] float bannerSeconds = 2f;
 
+    // Debug panel: makes the clock run faster (1 = normal)
+    [NonSerialized] public float DebugSpeed = 1f;
+
     ClockMode mode = ClockMode.None;
     bool running;
     float clock;            // in-game minutes since midnight
@@ -174,7 +177,7 @@ public class WorldClock : MonoBehaviour
         if (!IsActive || !running || timeOfDay == null) return;
         if (pauseWhileInteracting && InteractionState.IsInteracting) return;
 
-        clock = Mathf.Min(clock + Time.deltaTime * minutesPerSecond, latestHour * 60f);
+        clock = Mathf.Min(clock + Time.deltaTime * minutesPerSecond * DebugSpeed, latestHour * 60f);
 
         int index = timeOfDay.IndexAt(clock);
         if (index != phaseIndex)
@@ -257,5 +260,20 @@ public class WorldClock : MonoBehaviour
     public void DebugAddMinutes(float minutes)
     {
         clock = Mathf.Min(clock + minutes, latestHour * 60f);
+    }
+
+    // Debug: jump to a minute before the first night phase
+    public void DebugJumpToNight()
+    {
+        if (timeOfDay == null || timeOfDay.phases == null) return;
+
+        foreach (TimeOfDayData.Phase p in timeOfDay.phases)
+        {
+            if (p != null && p.isNight)
+            {
+                clock = Mathf.Max(clock, p.startHour * 60f - 1f);
+                return;
+            }
+        }
     }
 }

@@ -5,7 +5,8 @@ using UnityEngine;
 
 // Classic mode: a relaxed mode with no score and no time pressure.
 // Uses the shared WorldClock (Morning -> ... -> Night, sleep in a Bed for the next day).
-// Every new phase is auto-saved. When night starts, running errands fail.
+// Every new phase is auto-saved. When night starts, running errands fail. At night some NPCs may
+// offer night errands (Allow At Night); those fail if the player goes to sleep first.
 // The save only remembers the day and phase (and how many errands were done), not running errands or items.
 // Errands come from NPCs: every phase (not at night) some random NPCs get a random errand to offer
 // (ErrandData with Offer In Classic ticked). Talking to them accepts it.
@@ -27,6 +28,11 @@ public class ClassicManager : MonoBehaviour
     [SerializeField] int maxActiveErrands = 3;
     [Tooltip("Seconds to finish an NPC errand. 0 = no timer (it still fails when night starts).")]
     [SerializeField] float errandTimeLimit = 0f;
+
+    [Header("Night errands")]
+    [Tooltip("Chance that some NPCs offer an errand at night (only errands with Allow At Night).")]
+    [SerializeField, Range(0f, 1f)] float nightOfferChance = 0.5f;
+    [SerializeField] int nightOffersMax = 1;
 
     [Header("Text")]
     [Tooltip("Banner when classic mode starts. {0} = day phase.")]
@@ -251,11 +257,17 @@ public class ClassicManager : MonoBehaviour
         return null;
     }
 
-    // New random offers for this phase (none at night)
+    // New random offers for this phase (at night: maybe a few night errands)
     void RefreshOffers()
     {
         offers.Clear();
-        if (!active || Clock == null || Clock.IsNight) return;
+        if (!active || Clock == null) return;
+
+        bool night = Clock.IsNight;
+        int wanted = night
+            ? (UnityEngine.Random.value < nightOfferChance ? nightOffersMax : 0)
+            : offersPerPhase;
+        if (wanted <= 0) return;
 
         QuestManager quest = QuestManager.Instance;
         if (quest == null || quest.ErrandLibrary == null) return;
@@ -268,11 +280,12 @@ public class ClassicManager : MonoBehaviour
         foreach (ErrandData e in quest.ErrandLibrary)
         {
             if (e == null || !e.offerInClassic || e.classicWeight <= 0f) continue;
+            if (night && !e.allowAtNight) continue;
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;
             pool.Add(e);
         }
 
-        int count = Mathf.Min(offersPerPhase, freeGivers.Count);
+        int count = Mathf.Min(wanted, freeGivers.Count);
         for (int i = 0; i < count && pool.Count > 0; i++)
         {
             ErrandData pick = PickWeighted(pool);
