@@ -548,6 +548,9 @@ MonoBehaviour:
   targetId: EggShelf
   promptText: '[E] Take eggs'
   onlyWhenNeeded: 1
+  idleLabel: 
+  inspectLines: []
+  secondsPerInspectLine: 2.5
 --- !u!61 &511719557
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -607,6 +610,7 @@ GameObject:
   - component: {fileID: 583425848}
   - component: {fileID: 583425852}
   - component: {fileID: 583425851}
+  - component: {fileID: 583425853}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -649,15 +653,15 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.0010893246
     y: 0
-    width: 1
-    height: 1
+    width: 0.99782133
+    height: 0.99806577
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8.0625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -745,6 +749,30 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &583425853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 583425847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.PixelPerfectCamera
+  m_ComponentVersion: 1
+  m_AssetsPPU: 16
+  m_RefResolutionX: 384
+  m_RefResolutionY: 216
+  m_CropFrame: 0
+  m_GridSnapping: 2
+  m_FilterMode: 0
+  m_UpscaleRT: 0
+  m_PixelSnapping: 0
+  m_CropFrameX: 0
+  m_CropFrameY: 0
+  m_StretchFill: 0
 --- !u!1 &809333023
 GameObject:
   m_ObjectHideFlags: 0
@@ -809,7 +837,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -90
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.9568628, g: 0.6431373, b: 0.3764706, a: 1}
