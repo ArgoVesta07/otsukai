@@ -1788,6 +1788,65 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 308766453}
   m_CullTransparentMesh: 1
+--- !u!1 &315874578
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 315874579}
+  - component: {fileID: 315874580}
+  m_Layer: 0
+  m_Name: WorldClock
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &315874579
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 315874578}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -63.36533, y: 136.25117, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &315874580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 315874578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f74261db804ef404186f421b09e830b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldClock
+  timeOfDay: {fileID: 11400000, guid: acc26df07d4bcf643bc7a9f42b3e7e10, type: 2}
+  latestHour: 24
+  pauseWhileInteracting: 1
+  freeStartHour: 6
+  freeMinutesPerSecond: 1
+  sleepOnlyAtNight: 1
+  bedNavId: Bed
+  showPhaseMessage: 1
+  phaseUsesBanner: 0
+  phaseMessageFormat: '{0}'
+  nextDayTitle: Next day
+  notSleepyText: Not sleepy yet...
+  goToBedText: Go to bed
+  goToBedDetail: It's late. Go home and sleep.
+  bannerSeconds: 2
 --- !u!1 &330775651
 GameObject:
   m_ObjectHideFlags: 0
@@ -2195,12 +2254,14 @@ MonoBehaviour:
     afterDialogue: 0
     flagToSet: 
   secondsPerBubbleLine: 3
-  givesClassicErrands: 1
+  givesErrands: 1
   offerMarker: {fileID: 344572695}
   offerLines:
   - Could you help me with something?
   thanksLines:
   - Thank you so much!
+  needItemLines:
+  - Hmm, you don't have it yet.
   classicIdleLines: []
 --- !u!114 &345875280
 MonoBehaviour:
@@ -4228,6 +4289,7 @@ GameObject:
   - component: {fileID: 597520059}
   - component: {fileID: 597520058}
   - component: {fileID: 597520061}
+  - component: {fileID: 597520062}
   m_Layer: 0
   m_Name: door
   m_TagString: Untagged
@@ -4385,6 +4447,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NavTarget
   targetId: Home
+--- !u!114 &597520062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597520056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c9542e5a73e89343bb522c034c68ede, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NavTarget
+  targetId: Bed
 --- !u!1 &608221607
 GameObject:
   m_ObjectHideFlags: 0
@@ -5011,7 +5086,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &662573686
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6455,6 +6530,7 @@ MonoBehaviour:
   otherErrandRowPrefab: {fileID: 5661404450804088132, guid: 14fa2fd5e4849b54586085ebf779f9bf, type: 3}
   switchHint: {fileID: 569460986}
   switchKey: 31
+  freeLabelFormat: '{0}'
   classicLabelFormat: '{0}'
   challengeLabelFormat: Score {1}   Strikes {2}/{3}   {4}
   challengeWarningMinutes: 60
@@ -9774,17 +9850,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fb340591cf47c44294accad493e4170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClassicManager
-  timeOfDay: {fileID: 11400000, guid: acc26df07d4bcf643bc7a9f42b3e7e10, type: 2}
   startHour: 8
-  endHour: 20
   gameMinutesPerSecond: 2
-  pauseWhileInteracting: 1
   strikesAllowed: 3
   bonusPerMinuteLeft: 1
-  firstErrandAfter: 5
-  errandInterval: 60
-  maxErrandsDay1: 2
-  maxErrandsCap: 4
+  errandsPerPhaseDay1: 2
+  errandsPerPhaseCap: 4
   extraErrandEveryDays: 2
   dailySpeedUp: 0.9
   minDeadlineShare: 0.5
@@ -9797,7 +9868,6 @@ MonoBehaviour:
   dayTitleFormat: Challenge Mode
   nextDayTitle: Next day
   dayStartSubtitle: '{0}'
-  dayDoneFormat: Day {0} survived
   daySummaryFormat: Score {0}   Strikes {1}/{2}
   gameOverTitle: Game over
   gameOverFormat: "Score {0} \xB7 Reached day {1} \xB7 Best {2}"
@@ -9805,8 +9875,9 @@ MonoBehaviour:
   strikeFormat: Too late! Strike {0}/{1}
   scoreFormat: +{0}
   deadlineFormat: by {0}
+  findErrandsFormat: Find who needs help ({0} left)
+  missedErrandsFormat: '{0} errand(s) missed!'
   bannerSeconds: 2.5
-  breakSeconds: 3
 --- !u!4 &1255188122
 Transform:
   m_ObjectHideFlags: 0
@@ -9884,12 +9955,14 @@ MonoBehaviour:
     afterDialogue: 0
     flagToSet: 
   secondsPerBubbleLine: 3
-  givesClassicErrands: 1
+  givesErrands: 1
   offerMarker: {fileID: 574102479}
   offerLines:
   - Could you help me with something?
   thanksLines:
   - Thank you so much!
+  needItemLines:
+  - Hmm, you don't have it yet.
   classicIdleLines:
   - Oh, hello dear
 --- !u!58 &1265128871
@@ -11707,6 +11780,7 @@ MonoBehaviour:
   autoSavedText: Saved
   bannerSeconds: 2
   showRoundResults: 0
+  sleepToEndDay: 1
   breakSeconds: 5
 --- !u!4 &1589605086
 Transform:
@@ -13462,25 +13536,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1018928f348c3384493c349ed2261270, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClassicManager
-  timeOfDay: {fileID: 11400000, guid: acc26df07d4bcf643bc7a9f42b3e7e10, type: 2}
   dayStartHour: 6
-  latestHour: 24
   gameMinutesPerSecond: 1
-  pauseWhileInteracting: 1
-  sleepOnlyAtNight: 1
   offersPerPhase: 2
   maxActiveErrands: 3
   errandTimeLimit: 0
   startTitle: Classic Mode
   nextDayTitle: Next day
-  phaseMessageFormat: '{0}'
   errandsExpiredFormat: '{0} errand(s) expired'
-  notSleepyText: Not sleepy yet...
   newErrandFormat: 'New errand: {0}'
   tooManyErrandsText: You have enough errands for now.
-  missingItemText: You don't have what's needed yet.
-  phaseUsesBanner: 0
-  bannerSeconds: 2
 --- !u!4 &1817591629
 Transform:
   m_ObjectHideFlags: 0
@@ -15079,3 +15144,4 @@ SceneRoots:
   - {fileID: 1460496777}
   - {fileID: 1661511002}
   - {fileID: 1817591629}
+  - {fileID: 315874579}

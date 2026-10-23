@@ -35,12 +35,17 @@ public class GameHud : MonoBehaviour
     [SerializeField] GameObject switchHint;            // optional "[Q] Switch", shown when 2+ errands run
     [SerializeField] Key switchKey = Key.Q;
 
+    [Header("Free mode")]
+    [Tooltip("{0} = time of day (Morning...)")]
+    [GameText] [SerializeField] string freeLabelFormat = "{0}";
+
     [Header("Classic mode")]
     [Tooltip("{0} = time of day (Morning...), {1} = errands done")]
     [GameText] [SerializeField] string classicLabelFormat = "{0}";
 
     [Header("Challenge mode")]
-    [Tooltip("{0} = day, {1} = score, {2} = strikes, {3} = strikes allowed, {4} = time of day")]
+    [Tooltip("{0} = day, {1} = score, {2} = strikes, {3} = strikes allowed, {4} = time of day, " +
+             "{5} = errands done this phase, {6} = errands this phase")]
     [GameText] [SerializeField] string challengeLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
     [Tooltip("The clock turns to the warning color when this many in-game minutes are left in the day.")]
     [SerializeField] float challengeWarningMinutes = 60f;
@@ -129,6 +134,13 @@ public class GameHud : MonoBehaviour
             SetActive(incidentCard, IncidentManager.HasActive);
     }
 
+    // Time to sleep: night with nothing left to do, or the story day is over
+    static bool WantsBed()
+    {
+        if (WorldClock.IsActive && WorldClock.Instance.WantsBed) return true;
+        return TimeManager.Instance != null && TimeManager.Instance.AwaitingSleep;
+    }
+
     // Hook this to the errand card's Button OnClick so the mouse can expand it too.
     public void ToggleDetail()
     {
@@ -152,30 +164,35 @@ public class GameHud : MonoBehaviour
 
     void UpdateTimer(ActiveErrand tracked, bool showFailed)
     {
-        // Challenge mode: the card shows the clock
-        if (ChallengeManager.IsActive)
+        // Free, classic and challenge mode: the card shows the shared clock
+        if (WorldClock.IsActive)
         {
-            ChallengeManager challenge = ChallengeManager.Instance;
+            WorldClock clock = WorldClock.Instance;
             SetActive(timerCard, true);
-            timerText.text = challenge.ClockText;
-            timerText.color = challenge.MinutesLeftInDay <= challengeWarningMinutes ? timerWarningColor : timerNormalColor;
-
-            if (periodText != null)
-                periodText.text = Loc.F(challengeLabelFormat,
-                    challenge.Day, challenge.Score, challenge.Strikes, challenge.StrikesAllowed, challenge.PhaseName);
-            return;
-        }
-
-        // Classic mode: the card shows the clock, no warning color
-        if (ClassicManager.IsActive)
-        {
-            ClassicManager classic = ClassicManager.Instance;
-            SetActive(timerCard, true);
-            timerText.text = classic.ClockText;
+            timerText.text = clock.ClockText;
             timerText.color = timerNormalColor;
 
-            if (periodText != null)
-                periodText.text = Loc.F(classicLabelFormat, classic.PhaseName, classic.Completed);
+            string label;
+            if (ChallengeManager.IsActive)
+            {
+                ChallengeManager challenge = ChallengeManager.Instance;
+                if (!clock.IsNight && challenge.MinutesLeftInDay <= challengeWarningMinutes)
+                    timerText.color = timerWarningColor;
+
+                label = Loc.F(challengeLabelFormat,
+                    challenge.Day, challenge.Score, challenge.Strikes, challenge.StrikesAllowed, clock.PhaseName,
+                    challenge.PhaseDone, challenge.PhaseTotal);
+            }
+            else if (ClassicManager.IsActive)
+            {
+                label = Loc.F(classicLabelFormat, clock.PhaseName, ClassicManager.Instance.Completed);
+            }
+            else
+            {
+                label = Loc.F(freeLabelFormat, clock.PhaseName);
+            }
+
+            if (periodText != null) periodText.text = label;
             return;
         }
 
@@ -215,6 +232,18 @@ public class GameHud : MonoBehaviour
             if (!string.IsNullOrEmpty(tracked.deadlineLabel))
                 shortText += "  " + tracked.deadlineLabel;
             detailText = tracked.Fill(Loc.T(tracked.CurrentStep.detailText));
+        }
+        else if (ChallengeManager.IsActive && ChallengeManager.Instance.OffersLeft > 0)
+        {
+            // Challenge: errands are waiting at NPCs
+            shortText = ChallengeManager.Instance.FindErrandsText;
+            detailText = shortText;
+        }
+        else if (WantsBed() && WorldClock.Instance != null)
+        {
+            // Night and nothing left to do (or the story day is over)
+            shortText = WorldClock.Instance.GoToBedText;
+            detailText = WorldClock.Instance.GoToBedDetail;
         }
         else if (showFailed)
         {
@@ -294,6 +323,12 @@ public class GameHud : MonoBehaviour
 
         NavTarget target = null;
         string navId = tracked != null ? tracked.CurrentNavId : null;
+
+        if (navId == null && ChallengeManager.IsActive && player != null)
+            navId = ChallengeManager.Instance.NearestOfferNavId(player.position);
+
+        if (navId == null && WantsBed() && WorldClock.Instance != null)
+            navId = WorldClock.Instance.BedNavId;
 
         if (!string.IsNullOrEmpty(navId))
         {

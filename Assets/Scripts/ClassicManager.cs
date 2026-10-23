@@ -4,10 +4,9 @@ using System.IO;
 using UnityEngine;
 
 // Classic mode: a relaxed mode with no score and no time pressure.
-// A clock runs through the day (Morning -> Afternoon -> Evening -> Night, see TimeOfDayData).
-// Every new phase: a short message and an auto-save. When Night starts, running errands fail.
-// A new day only starts when the player sleeps in a Bed. The save only remembers the day phase
-// (and how many errands were done), not running errands or items.
+// Uses the shared WorldClock (Morning -> ... -> Night, sleep in a Bed for the next day).
+// Every new phase is auto-saved. When night starts, running errands fail.
+// The save only remembers the day and phase (and how many errands were done), not running errands or items.
 // Errands come from NPCs: every phase (not at night) some random NPCs get a random errand to offer
 // (ErrandData with Offer In Classic ticked). Talking to them accepts it.
 // Put this on its own object in the game scene (e.g. next to the ChallengeManager).
@@ -16,18 +15,10 @@ public class ClassicManager : MonoBehaviour
     public static ClassicManager Instance;
 
     [Header("Clock")]
-    [SerializeField] TimeOfDayData timeOfDay;
-    [Tooltip("Hour the clock starts at after sleeping.")]
+    [Tooltip("Hour the day starts at (new game and after sleeping).")]
     [SerializeField] float dayStartHour = 6f;
-    [Tooltip("The clock stops here until the player sleeps.")]
-    [SerializeField] float latestHour = 24f;
     [Tooltip("In-game minutes that pass per real second.")]
     [SerializeField] float gameMinutesPerSecond = 1f;
-    [SerializeField] bool pauseWhileInteracting = true;
-
-    [Header("Sleep")]
-    [Tooltip("Ticked = the bed only works at night.")]
-    [SerializeField] bool sleepOnlyAtNight = true;
 
     [Header("NPC errands")]
     [Tooltip("How many NPCs get an errand to offer at the start of each phase.")]
@@ -41,18 +32,11 @@ public class ClassicManager : MonoBehaviour
     [Tooltip("Banner when classic mode starts. {0} = day phase.")]
     [GameText] [SerializeField] string startTitle = "Classic";
     [GameText] [SerializeField] string nextDayTitle = "Next day";
-    [Tooltip("Pop-up when a new phase starts. {0} = phase name.")]
-    [GameText] [SerializeField] string phaseMessageFormat = "{0}";
     [Tooltip("Pop-up when night starts with errands still running. {0} = how many.")]
     [GameText] [SerializeField] string errandsExpiredFormat = "{0} errand(s) expired";
-    [GameText] [SerializeField] string notSleepyText = "Not sleepy yet...";
     [Tooltip("Pop-up when an errand is accepted. {0} = what to do first.")]
     [GameText] [SerializeField] string newErrandFormat = "New errand: {0}";
     [GameText] [SerializeField] string tooManyErrandsText = "You have enough errands for now.";
-    [GameText] [SerializeField] string missingItemText = "You don't have what's needed yet.";
-    [Tooltip("Ticked = a new phase uses the big banner instead of a small pop-up.")]
-    [SerializeField] bool phaseUsesBanner = false;
-    [SerializeField] float bannerSeconds = 2f;
 
     const string FileName = "classic.json";
 
@@ -64,36 +48,18 @@ public class ClassicManager : MonoBehaviour
         public int completed;
     }
 
-    // NPCs that can give errands (id -> name). Filled by NPCs as they appear, kept across scenes.
-    static readonly Dictionary<string, string> givers = new Dictionary<string, string>();
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void ResetStatics()
-    {
-        givers.Clear();
-    }
-
     readonly Dictionary<string, ErrandData> offers = new Dictionary<string, ErrandData>();   // NPC id -> errand
 
-    bool active;      // classic mode is on
-    bool running;     // the clock is moving (not during banners)
-    float clock;      // in-game minutes since midnight
-    int phaseIndex = -1;
+    bool active;   // classic mode is on
+
+    static WorldClock Clock => WorldClock.Instance;
 
     public static bool IsActive => Instance != null && Instance.active;
     public static string SavePath => Path.Combine(Application.persistentDataPath, FileName);
     public static bool HasSave => File.Exists(SavePath);
 
-    public int Day { get; private set; }            // counted, but not shown to the player
     public int Completed { get; private set; }      // errands finished in classic mode (all days)
-    public bool Running => running;
-    public string ClockText => FormatClock(clock);
-    public TimeOfDayData.Phase CurrentPhase => timeOfDay != null ? timeOfDay.Get(phaseIndex) : null;
-    public string PhaseName => CurrentPhase != null ? Loc.T(CurrentPhase.name) : "";
-    public bool IsNight => CurrentPhase != null && CurrentPhase.isNight;
-    public bool CanSleep => active && running && (!sleepOnlyAtNight || IsNight);
     public string TooManyErrandsText => Loc.T(tooManyErrandsText);
-    public string MissingItemText => Loc.T(missingItemText);
 
     public bool CanTakeMore
     {
@@ -103,9 +69,6 @@ public class ClassicManager : MonoBehaviour
             return quest != null && quest.Active.Count < maxActiveErrands;
         }
     }
-
-    // Fired when a new phase starts (also after waking up). Used later for NPC errands.
-    public event Action PhaseChanged;
 
     void Awake()
     {
@@ -128,9 +91,9 @@ public class ClassicManager : MonoBehaviour
 
     public void StartClassic()
     {
-        if (timeOfDay == null)
+        if (Clock == null || Clock.TimeOfDay == null)
         {
-            Debug.LogWarning("Classic: no Time Of Day asset on the ClassicManager.");
+            Debug.LogWarning("Classic: needs a WorldClock with a Time Of Day asset in the scene.");
             return;
         }
 
@@ -139,58 +102,68 @@ public class ClassicManager : MonoBehaviour
         TimeManager time = TimeManager.Instance;
         if (time != null) time.EnterFreeMode();   // make sure story mode is off
 
-        QuestManager quest = QuestManager.Instance;
-        if (quest != null)
-        {
-            Unhook();
-            quest.ErrandCompleted += OnErrandCompleted;
-        }
+        Unhook();
+        Hook();
+
+        int day = 1;
+        float start = dayStartHour * 60f;
+        Completed = 0;
 
         ClassicSave save = Load();
         if (save != null)
         {
-            Day = Mathf.Max(1, save.day);
+            day = save.day;
             Completed = save.completed;
-            TimeOfDayData.Phase phase = timeOfDay.Get(save.phaseIndex);
-            clock = (phase != null ? phase.startHour : dayStartHour) * 60f;
-        }
-        else
-        {
-            Day = 1;
-            Completed = 0;
-            clock = dayStartHour * 60f;
+            TimeOfDayData.Phase phase = Clock.TimeOfDay.Get(save.phaseIndex);
+            if (phase != null) start = phase.startHour * 60f;
         }
 
-        phaseIndex = timeOfDay.IndexAt(clock);
         active = true;
-        running = false;
+        offers.Clear();
 
-        Debug.Log("Classic: start (day " + Day + ", " + PhaseName + ")");
+        int phaseIndex = Clock.TimeOfDay.IndexAt(start);
+        TimeOfDayData.Phase startPhase = Clock.TimeOfDay.Get(phaseIndex);
+        string phaseName = startPhase != null ? Loc.T(startPhase.name) : "";
 
-        PeriodBanner.Show(Loc.F(startTitle, PhaseName), PhaseName, bannerSeconds, () =>
-        {
-            running = true;
-            Save();
-            RefreshOffers();
-            PhaseChanged?.Invoke();
-        });
+        Debug.Log("Classic: start (day " + day + ", " + phaseName + ")");
+
+        Clock.Begin(ClockMode.Classic, day, start, dayStartHour, gameMinutesPerSecond,
+                    Loc.F(startTitle, phaseName), phaseName,
+                    () => Loc.T(nextDayTitle), null);
     }
 
-    // Leaves classic mode (e.g. another mode is chosen)
+    // Leaves classic mode (e.g. back to free mode)
     public void Stop()
     {
         active = false;
-        running = false;
         offers.Clear();
         Unhook();
+    }
+
+    void Hook()
+    {
+        QuestManager quest = QuestManager.Instance;
+        if (quest != null) quest.ErrandCompleted += OnErrandCompleted;
+
+        if (Clock != null)
+        {
+            Clock.PhaseChanged += OnPhaseChanged;
+            Clock.NightStarted += ExpireErrands;
+            Clock.DayEnded += OnDayEnded;
+        }
     }
 
     void Unhook()
     {
         QuestManager quest = QuestManager.Instance;
-        if (quest == null) return;
+        if (quest != null) quest.ErrandCompleted -= OnErrandCompleted;
 
-        quest.ErrandCompleted -= OnErrandCompleted;
+        if (Clock != null)
+        {
+            Clock.PhaseChanged -= OnPhaseChanged;
+            Clock.NightStarted -= ExpireErrands;
+            Clock.DayEnded -= OnDayEnded;
+        }
     }
 
     void OnErrandCompleted(ActiveErrand errand)
@@ -198,47 +171,25 @@ public class ClassicManager : MonoBehaviour
         if (active) Completed++;
     }
 
-    // ---------- Update ----------
-
-    void Update()
+    void OnPhaseChanged()
     {
-        if (!active || !running) return;
-        if (pauseWhileInteracting && InteractionState.IsInteracting) return;
-
-        clock = Mathf.Min(clock + Time.deltaTime * gameMinutesPerSecond, latestHour * 60f);
-
-        int index = timeOfDay.IndexAt(clock);
-        if (index != phaseIndex)
-            EnterPhase(index);
-    }
-
-    void EnterPhase(int index)
-    {
-        phaseIndex = index;
-        Debug.Log("Classic: " + PhaseName);
-
-        if (IsNight) ExpireErrands();
-
+        if (!active) return;
         Save();
-
-        string message = Loc.F(phaseMessageFormat, PhaseName);
-        if (phaseUsesBanner)
-        {
-            running = false;
-            PeriodBanner.Show(message, "", bannerSeconds, () => running = true);
-        }
-        else
-        {
-            Toast.Show(message);
-        }
-
         RefreshOffers();
-        PhaseChanged?.Invoke();
     }
 
-    // Every running errand fails (night, or going to sleep)
+    void OnDayEnded(int day)
+    {
+        if (!active) return;
+        ExpireErrands();   // night errands that weren't finished before sleeping
+        offers.Clear();
+    }
+
+    // Every running errand fails (night starts, or going to sleep)
     void ExpireErrands()
     {
+        if (!active) return;
+
         QuestManager quest = QuestManager.Instance;
         if (quest == null || quest.Active.Count == 0) return;
 
@@ -251,45 +202,7 @@ public class ClassicManager : MonoBehaviour
         Toast.Show(Loc.F(errandsExpiredFormat, list.Length));
     }
 
-    // ---------- Sleep ----------
-
-    // Called by a Bed. Returns false when the player can't sleep yet.
-    public bool Sleep()
-    {
-        if (!active || !running) return false;
-
-        if (!CanSleep)
-        {
-            Toast.Show(Loc.T(notSleepyText));
-            return false;
-        }
-
-        ExpireErrands();
-        running = false;
-        Day++;
-
-        PeriodBanner.Show(Loc.T(nextDayTitle), "", bannerSeconds, () =>
-        {
-            clock = dayStartHour * 60f;
-            phaseIndex = timeOfDay.IndexAt(clock);
-            running = true;
-            Save();
-            Toast.Show(Loc.F(phaseMessageFormat, PhaseName));
-            RefreshOffers();
-            PhaseChanged?.Invoke();
-        });
-
-        return true;
-    }
-
     // ---------- NPC errands ----------
-
-    // NPCs call this when they appear, so they can be picked to give errands
-    public static void RegisterGiver(string npcId, string npcName)
-    {
-        if (string.IsNullOrEmpty(npcId)) return;
-        givers[npcId] = npcName;
-    }
 
     public bool HasOffer(string npcId)
     {
@@ -315,7 +228,7 @@ public class ClassicManager : MonoBehaviour
         }
 
         offers.Remove(npcId);
-        givers.TryGetValue(npcId, out string npcName);
+        string npcName = NpcRegistry.NameOf(npcId);
 
         quest.ForgetErrand(data.errandId);   // classic errands can be done again later
         if (!quest.StartErrand(data, errandTimeLimit, null, true, npcId, npcName))
@@ -342,18 +255,13 @@ public class ClassicManager : MonoBehaviour
     void RefreshOffers()
     {
         offers.Clear();
-        if (!active || IsNight) return;
+        if (!active || Clock == null || Clock.IsNight) return;
 
         QuestManager quest = QuestManager.Instance;
         if (quest == null || quest.ErrandLibrary == null) return;
 
         // NPCs that are free: not already waiting for an errand they gave
-        List<string> freeGivers = new List<string>();
-        foreach (string id in givers.Keys)
-        {
-            if (!IsGiverBusy(quest, id)) freeGivers.Add(id);
-        }
-        Shuffle(freeGivers);
+        List<string> freeGivers = NpcRegistry.FreeGiversShuffled();
 
         // Errands that may be offered and aren't running
         List<ErrandData> pool = new List<ErrandData>();
@@ -374,19 +282,10 @@ public class ClassicManager : MonoBehaviour
 
         if (offers.Count > 0)
             Debug.Log("Classic: " + offers.Count + " NPC(s) have an errand (" + string.Join(", ", offers.Keys) + ")");
-        else if (givers.Count == 0)
-            Debug.Log("Classic: no NPC can give errands yet (tick Gives Classic Errands on NPCs).");
+        else if (NpcRegistry.Count == 0)
+            Debug.Log("Classic: no NPC can give errands yet (tick Gives Errands on NPCs).");
         else if (pool.Count == 0 && count > 0)
             Debug.Log("Classic: no errand to offer. Tick 'Offer In Classic' on ErrandData assets in the Errand Library.");
-    }
-
-    static bool IsGiverBusy(QuestManager quest, string npcId)
-    {
-        foreach (ActiveErrand e in quest.Active)
-        {
-            if (e.giverId == npcId) return true;
-        }
-        return false;
     }
 
     static ErrandData PickWeighted(List<ErrandData> pool)
@@ -403,22 +302,13 @@ public class ClassicManager : MonoBehaviour
         return pool[pool.Count - 1];
     }
 
-    static void Shuffle(List<string> list)
-    {
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            int j = UnityEngine.Random.Range(0, i + 1);
-            string tmp = list[i];
-            list[i] = list[j];
-            list[j] = tmp;
-        }
-    }
-
     // ---------- Save ----------
 
     void Save()
     {
-        ClassicSave save = new ClassicSave { day = Day, phaseIndex = phaseIndex, completed = Completed };
+        if (Clock == null) return;
+
+        ClassicSave save = new ClassicSave { day = Clock.Day, phaseIndex = Clock.PhaseIndex, completed = Completed };
 
         try
         {
@@ -448,21 +338,5 @@ public class ClassicManager : MonoBehaviour
     public static void DeleteSave()
     {
         if (HasSave) File.Delete(SavePath);
-    }
-
-    // ---------- Helpers ----------
-
-    static string FormatClock(float minutes)
-    {
-        int total = Mathf.FloorToInt(minutes);
-        int h = (total / 60) % 24;
-        int m = total % 60;
-        return h.ToString("00") + ":" + m.ToString("00");
-    }
-
-    // Debug: jump the clock forward
-    public void DebugAddMinutes(float minutes)
-    {
-        clock = Mathf.Min(clock + minutes, latestHour * 60f);
     }
 }

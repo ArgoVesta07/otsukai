@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\LocalizeText.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
+    <Compile Include="Assets\Scripts\NpcRegistry.cs" />
     <Compile Include="Assets\Scripts\PeriodBanner.cs" />
     <Compile Include="Assets\Scripts\TimeOfDayData.cs" />
     <Compile Include="Assets\Scripts\NavTarget.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Assets\Scripts\ItemData.cs" />
     <Compile Include="Assets\Scripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\InteractionState.cs" />
+    <Compile Include="Assets\Scripts\WorldClock.cs" />
     <Compile Include="Assets\Scripts\SceneTransition.cs" />
     <Compile Include="Assets\Scripts\SavePoint.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />

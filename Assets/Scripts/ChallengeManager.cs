@@ -1,23 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Challenge mode: endless random days.
-// A clock runs from the start hour to the end hour. Errands appear at random with a deadline,
-// incidents happen at random, and each day gets harder. A late errand is a strike;
-// too many strikes = game over. Only the best score is kept (no save).
-// Put this on its own object in the game scene (e.g. next to the TimeManager).
+// Challenge mode: endless random days on the shared WorldClock.
+// At the start of every day phase (not night), some random NPCs secretly get an errand ("!" above them).
+// The HUD shows how many there are and points to the nearest one. Talking to the NPC starts the errand,
+// and its deadline starts counting from then. Errands not picked up before the phase ends, late errands,
+// and errands still open when night starts are strikes; too many strikes = game over.
+// Each day gets harder (more errands, shorter deadlines). Then the player sleeps for the next day.
+// Only the best score is kept (no save).
+// Put this on its own object in the game scene (e.g. next to the WorldClock).
 public class ChallengeManager : MonoBehaviour
 {
     public static ChallengeManager Instance;
 
     [Header("Clock")]
-    [Tooltip("Names the time of day (Morning, Afternoon, ...) for the HUD. Optional.")]
-    [SerializeField] TimeOfDayData timeOfDay;
+    [Tooltip("Hour each day starts at.")]
     [SerializeField] int startHour = 8;
-    [SerializeField] int endHour = 20;
     [Tooltip("In-game minutes that pass per real second.")]
     [SerializeField] float gameMinutesPerSecond = 2f;
-    [SerializeField] bool pauseWhileInteracting = true;
 
     [Header("Rules")]
     [SerializeField] int strikesAllowed = 3;
@@ -25,15 +25,12 @@ public class ChallengeManager : MonoBehaviour
     [SerializeField] float bonusPerMinuteLeft = 1f;
 
     [Header("Errands")]
-    [Tooltip("In-game minutes before the first errand of a day.")]
-    [SerializeField] float firstErrandAfter = 5f;
-    [Tooltip("In-game minutes between new errands on Day 1.")]
-    [SerializeField] float errandInterval = 60f;
-    [SerializeField] int maxErrandsDay1 = 2;
-    [SerializeField] int maxErrandsCap = 4;
-    [Tooltip("Every this many days, one more errand can be active at once.")]
+    [Tooltip("Errands given out at the start of each day phase on Day 1.")]
+    [SerializeField] int errandsPerPhaseDay1 = 2;
+    [SerializeField] int errandsPerPhaseCap = 4;
+    [Tooltip("Every this many days, one more errand per phase.")]
     [SerializeField] int extraErrandEveryDays = 2;
-    [Tooltip("Deadlines and intervals are multiplied by this for every day after Day 1 (0.9 = 10% shorter).")]
+    [Tooltip("Deadlines are multiplied by this for every day after Day 1 (0.9 = 10% shorter).")]
     [SerializeField, Range(0.5f, 1f)] float dailySpeedUp = 0.9f;
     [Tooltip("Deadlines never get shorter than this share of the original.")]
     [SerializeField, Range(0.1f, 1f)] float minDeadlineShare = 0.5f;
@@ -50,11 +47,11 @@ public class ChallengeManager : MonoBehaviour
     [Header("Text")]
     [Tooltip("Banner on the first day. {0} = day number (optional).")]
     [GameText] [SerializeField] string dayTitleFormat = "Challenge · Day {0}";
-    [Tooltip("Banner on every later day. Empty = use Day Title Format.")]
+    [Tooltip("Banner after sleeping.")]
     [GameText] [SerializeField] string nextDayTitle = "Next day";
     [Tooltip("Small text under the day banner. {0} = time of day (needs Time Of Day). Empty = none.")]
     [GameText] [SerializeField] string dayStartSubtitle = "{0}";
-    [GameText] [SerializeField] string dayDoneFormat = "Day {0} survived";
+    [Tooltip("Under the banner after sleeping. {0} = score, {1} = strikes, {2} = strikes allowed")]
     [GameText] [SerializeField] string daySummaryFormat = "Score {0}   Strikes {1}/{2}";
     [GameText] [SerializeField] string gameOverTitle = "Game over";
     [GameText] [SerializeField] string gameOverFormat = "Score {0} · Reached day {1} · Best {2}";
@@ -62,8 +59,11 @@ public class ChallengeManager : MonoBehaviour
     [GameText] [SerializeField] string strikeFormat = "Too late! Strike {0}/{1}";
     [GameText] [SerializeField] string scoreFormat = "+{0}";
     [GameText] [SerializeField] string deadlineFormat = "by {0}";   // shown after the errand name on the HUD
+    [Tooltip("Errand card while no errand is running. {0} = errands waiting at NPCs")]
+    [GameText] [SerializeField] string findErrandsFormat = "Find who needs help ({0} left)";
+    [Tooltip("Pop-up when errands weren't picked up in time. {0} = how many")]
+    [GameText] [SerializeField] string missedErrandsFormat = "{0} errand(s) missed!";
     [SerializeField] float bannerSeconds = 2.5f;
-    [SerializeField] float breakSeconds = 3f;
 
     // Old key names are kept so earlier best scores aren't lost
     const string BestScoreKey = "Otsukai_ClassicBestScore";
@@ -71,26 +71,29 @@ public class ChallengeManager : MonoBehaviour
 
     readonly Dictionary<string, float> incidentTimeLeft = new Dictionary<string, float>();
 
-    bool running;        // a day is being played
-    bool active;         // challenge mode is on (includes banners and breaks)
-    float clock;         // in-game minutes since midnight
-    float nextErrandAt;
-    float nextIncidentCheckAt;
-    float breakLeft;
-    bool onBreak;
+    bool active;         // challenge mode is on
+    float nextIncidentCheckAt;   // clock minutes
+
+    readonly Dictionary<string, ErrandData> offers = new Dictionary<string, ErrandData>();   // NPC id -> errand
+    readonly HashSet<string> phaseErrands = new HashSet<string>();   // errand ids given out this phase
+
+    static WorldClock Clock => WorldClock.Instance;
+    float Now => Clock != null ? Clock.Clock : 0f;
 
     public static bool IsActive => Instance != null && Instance.active;
-    public int Day { get; private set; }
+    public int Day => Clock != null ? Clock.Day : 1;
     public int Score { get; private set; }
     public int Strikes { get; private set; }
     public int StrikesAllowed => strikesAllowed;
-    public bool Running => running;
+    public int PhaseTotal { get; private set; }   // errands given out this phase
+    public int PhaseDone { get; private set; }    // ...and finished
+    public int OffersLeft => offers.Count;
+    public string FindErrandsText => Loc.F(findErrandsFormat, offers.Count);
+    public bool Running => active && WorldClock.IsActive && Clock.Running;
     public static int BestScore => PlayerPrefs.GetInt(BestScoreKey, 0);
     public static int BestDay => PlayerPrefs.GetInt(BestDayKey, 0);
 
-    public string ClockText => FormatClock(clock);
-    public string PhaseName => timeOfDay != null ? timeOfDay.NameAt(clock) : "";
-    public float MinutesLeftInDay => endHour * 60f - clock;
+    public float MinutesLeftInDay => Clock != null ? Clock.MinutesUntilNight : 0f;
 
     void Awake()
     {
@@ -113,6 +116,12 @@ public class ChallengeManager : MonoBehaviour
 
     public void StartChallenge()
     {
+        if (Clock == null || Clock.TimeOfDay == null)
+        {
+            Debug.LogWarning("Challenge: needs a WorldClock with a Time Of Day asset in the scene.");
+            return;
+        }
+
         SaveSystem.ResetProgress();   // clear errands, items and flags; challenge never saves
 
         TimeManager time = TimeManager.Instance;
@@ -120,68 +129,88 @@ public class ChallengeManager : MonoBehaviour
 
         QuestManager quest = QuestManager.Instance;
         if (quest != null)
-        {
             quest.SetAvailableErrands(new string[0]);   // NPCs can't hand out errands; this manager does
-            Unhook();
+
+        Unhook();
+        Hook();
+
+        active = true;
+        Score = 0;
+        Strikes = 0;
+        offers.Clear();
+        phaseErrands.Clear();
+        PhaseTotal = 0;
+        PhaseDone = 0;
+        EndAllIncidents();
+
+        float start = startHour * 60f;
+        TimeOfDayData.Phase phase = Clock.TimeOfDay.Get(Clock.TimeOfDay.IndexAt(start));
+        string phaseName = phase != null ? Loc.T(phase.name) : "";
+        string subtitle = string.IsNullOrEmpty(dayStartSubtitle) ? "" : Loc.F(dayStartSubtitle, phaseName);
+
+        Clock.Begin(ClockMode.Challenge, 1, start, startHour, gameMinutesPerSecond,
+                    Loc.F(dayTitleFormat, 1), subtitle,
+                    () => Loc.T(nextDayTitle),
+                    () => Loc.F(daySummaryFormat, Score, Strikes, strikesAllowed));
+    }
+
+    void Hook()
+    {
+        QuestManager quest = QuestManager.Instance;
+        if (quest != null)
+        {
             quest.ErrandCompleted += OnErrandCompleted;
             quest.ErrandFailed += OnErrandFailed;
         }
 
-        active = true;
-        Day = 1;
-        Score = 0;
-        Strikes = 0;
-        StartDay();
-    }
-
-    void StartDay()
-    {
-        running = false;
-        onBreak = false;
-        clock = startHour * 60f;
-        nextErrandAt = clock + firstErrandAfter;
-        nextIncidentCheckAt = clock + incidentCheckEvery;
-        EndAllIncidents();
-
-        string title = Day > 1 && !string.IsNullOrEmpty(nextDayTitle)
-            ? Loc.T(nextDayTitle)
-            : Loc.F(dayTitleFormat, Day);
-
-        string subtitle = string.IsNullOrEmpty(dayStartSubtitle) ? "" : Loc.F(dayStartSubtitle, PhaseName);
-
-        PeriodBanner.Show(title, subtitle, bannerSeconds, () =>
+        if (Clock != null)
         {
-            running = true;
-        });
-    }
-
-    void EndDay()
-    {
-        running = false;
-        EndAllIncidents();
-
-        // Errands still open at closing time count as late
-        QuestManager quest = QuestManager.Instance;
-        if (quest != null)
-        {
-            List<ActiveErrand> open = new List<ActiveErrand>(quest.Active);
-            foreach (ActiveErrand e in open)
-                quest.ForceFail(e.data);   // fires OnErrandFailed -> strikes
+            Clock.DayStarted += OnDayStarted;
+            Clock.NightStarted += OnNightStarted;
+            Clock.PhaseChanged += OnPhaseChanged;
         }
+    }
 
-        if (!active) return;   // the last strike already ended the run
+    void OnDayStarted()
+    {
+        if (!active) return;
 
-        string subtitle = Loc.F(daySummaryFormat, Score, Strikes, strikesAllowed);
-        PeriodBanner.Show(Loc.F(dayDoneFormat, Day), subtitle, bannerSeconds, () =>
-        {
-            onBreak = true;
-            breakLeft = breakSeconds;
-        });
+        nextIncidentCheckAt = Now + incidentCheckEvery;
+        EndAllIncidents();
+    }
+
+    // New phase: errands nobody picked up are strikes, then new errands go to random NPCs (not at night)
+    void OnPhaseChanged()
+    {
+        if (!active) return;
+
+        MissLeftoverOffers();
+        if (!active) return;   // the strikes ended the run
+
+        phaseErrands.Clear();
+        PhaseTotal = 0;
+        PhaseDone = 0;
+
+        if (!Clock.IsNight) GiveOutErrands();
+    }
+
+    // Night: no new errands; the ones still open count as late
+    void OnNightStarted()
+    {
+        if (!active) return;
+
+        EndAllIncidents();
+
+        QuestManager quest = QuestManager.Instance;
+        if (quest == null) return;
+
+        List<ActiveErrand> open = new List<ActiveErrand>(quest.Active);
+        foreach (ActiveErrand e in open)
+            quest.ForceFail(e.data);   // fires OnErrandFailed -> strikes (may end the run)
     }
 
     void GameOver()
     {
-        running = false;
         active = false;
         EndAllIncidents();
 
@@ -213,9 +242,8 @@ public class ChallengeManager : MonoBehaviour
     // Leaves challenge mode without a result (e.g. back to the main menu)
     public void Stop()
     {
-        running = false;
         active = false;
-        onBreak = false;
+        offers.Clear();
         EndAllIncidents();
         Unhook();
     }
@@ -223,52 +251,34 @@ public class ChallengeManager : MonoBehaviour
     void Unhook()
     {
         QuestManager quest = QuestManager.Instance;
-        if (quest == null) return;
+        if (quest != null)
+        {
+            quest.ErrandCompleted -= OnErrandCompleted;
+            quest.ErrandFailed -= OnErrandFailed;
+        }
 
-        quest.ErrandCompleted -= OnErrandCompleted;
-        quest.ErrandFailed -= OnErrandFailed;
+        if (Clock != null)
+        {
+            Clock.DayStarted -= OnDayStarted;
+            Clock.NightStarted -= OnNightStarted;
+            Clock.PhaseChanged -= OnPhaseChanged;
+        }
     }
 
     // ---------- Update ----------
 
     void Update()
     {
-        if (!active) return;
+        if (!Running || Clock.IsNight) return;
+        if (InteractionState.IsInteracting) return;   // the clock is paused too
 
-        if (onBreak)
-        {
-            breakLeft -= Time.deltaTime;
-            if (breakLeft <= 0f)
-            {
-                onBreak = false;
-                Day++;
-                StartDay();
-            }
-            return;
-        }
+        TickIncidents(Time.deltaTime);
 
-        if (!running) return;
-        if (pauseWhileInteracting && InteractionState.IsInteracting) return;
-
-        float dt = Time.deltaTime;
-        clock += dt * gameMinutesPerSecond;
-
-        TickIncidents(dt);
-
-        if (clock >= nextErrandAt)
-        {
-            TrySpawnErrand();
-            nextErrandAt = clock + errandInterval * SpeedFactor();
-        }
-
-        if (clock >= nextIncidentCheckAt)
+        if (Now >= nextIncidentCheckAt)
         {
             TryStartIncident();
-            nextIncidentCheckAt = clock + incidentCheckEvery;
+            nextIncidentCheckAt = Now + incidentCheckEvery;
         }
-
-        if (clock >= endHour * 60f)
-            EndDay();
     }
 
     // ---------- Errands ----------
@@ -278,49 +288,125 @@ public class ChallengeManager : MonoBehaviour
         return Mathf.Pow(dailySpeedUp, Day - 1);
     }
 
-    int MaxErrands()
+    int ErrandsThisPhase()
     {
         int extra = extraErrandEveryDays > 0 ? (Day - 1) / extraErrandEveryDays : 0;
-        return Mathf.Min(maxErrandsDay1 + extra, maxErrandsCap);
+        return Mathf.Min(errandsPerPhaseDay1 + extra, errandsPerPhaseCap);
     }
 
-    void TrySpawnErrand()
+    // Hands this phase's errands to random free NPCs (secret until the player talks to them)
+    void GiveOutErrands()
     {
+        offers.Clear();
+
         QuestManager quest = QuestManager.Instance;
-        if (quest == null)
+        if (quest == null) return;
+
+        List<string> givers = NpcRegistry.FreeGiversShuffled();
+        List<ErrandData> used = new List<ErrandData>();
+        int count = Mathf.Min(ErrandsThisPhase(), givers.Count);
+
+        for (int i = 0; i < count; i++)
         {
-            Debug.LogWarning("Challenge: no QuestManager found.");
-            return;
+            ErrandData pick = PickErrand(quest, used);
+            if (pick == null) break;
+
+            used.Add(pick);
+            offers[givers[i]] = pick;
+            phaseErrands.Add(pick.errandId);
         }
 
-        if (quest.Active.Count >= MaxErrands()) return;   // already busy enough
+        PhaseTotal = offers.Count;
 
-        ErrandData pick = PickErrand(quest);
-        if (pick == null)
-        {
+        if (offers.Count > 0)
+            Debug.Log("Challenge: " + offers.Count + " errand(s) at " + string.Join(", ", offers.Keys));
+        else if (NpcRegistry.Count == 0)
+            Debug.LogWarning("Challenge: no NPC can give errands (tick Gives Errands on NPCs).");
+        else
             Debug.LogWarning("Challenge: no errand to hand out. Check the QuestManager's Errand Library, " +
                              "and 'Allow In Challenge' / 'Min Day' / 'Weight' on the ErrandData assets.");
-            return;
-        }
+    }
+
+    // Offers nobody picked up before the phase ended: one strike each
+    void MissLeftoverOffers()
+    {
+        int missed = offers.Count;
+        offers.Clear();
+        if (missed == 0) return;
+
+        Toast.Show(Loc.F(missedErrandsFormat, missed));
+        for (int i = 0; i < missed && active; i++)
+            AddStrike();
+    }
+
+    public bool HasOffer(string npcId)
+    {
+        return active && !string.IsNullOrEmpty(npcId) && offers.ContainsKey(npcId);
+    }
+
+    // The player talked to an NPC with an errand: start it now, the deadline counts from here
+    public bool AcceptOffer(string npcId)
+    {
+        QuestManager quest = QuestManager.Instance;
+        if (quest == null || !HasOffer(npcId)) return false;
+
+        ErrandData pick = offers[npcId];
+        offers.Remove(npcId);
 
         float minutes = pick.challengeDeadlineMinutes * Mathf.Max(SpeedFactor(), minDeadlineShare);
         float seconds = minutes / gameMinutesPerSecond;
-        string by = FormatClock(clock + minutes);
+        string by = FormatClock(Now + minutes);
 
         quest.ForgetErrand(pick.errandId);   // the same errand can come back later
-        if (quest.StartErrand(pick, seconds, Loc.F(deadlineFormat, by), true))
-        {
-            string name = pick.steps != null && pick.steps.Length > 0 ? pick.steps[0].shortText : pick.errandId;
-            Toast.Show(Loc.F(newErrandFormat, Loc.T(name), by));
-            Debug.Log("Challenge: new errand " + pick.errandId + " (by " + by + ")");
-        }
-        else
+        if (!quest.StartErrand(pick, seconds, Loc.F(deadlineFormat, by), true, npcId, NpcRegistry.NameOf(npcId)))
         {
             Debug.LogWarning("Challenge: couldn't start errand " + pick.errandId + ".");
+            return false;
         }
+
+        ActiveErrand started = null;
+        foreach (ActiveErrand e in quest.Active)
+        {
+            if (e.data == pick) started = e;
+        }
+
+        string name = started != null && started.CurrentStep != null
+            ? started.Fill(Loc.T(started.CurrentStep.shortText))
+            : pick.errandId;
+        Toast.Show(Loc.F(newErrandFormat, name, by));
+        Debug.Log("Challenge: errand " + pick.errandId + " from " + npcId + " (by " + by + ")");
+        return true;
     }
 
-    ErrandData PickErrand(QuestManager quest)
+    // NavTarget id of the closest NPC with an errand (in this scene), or null
+    public string NearestOfferNavId(Vector3 from)
+    {
+        string best = null;
+        float bestDistance = float.MaxValue;
+
+        foreach (string id in offers.Keys)
+        {
+            NavTarget target = NavTarget.Find(id);
+            if (target == null) continue;
+
+            float d = (target.transform.position - from).sqrMagnitude;
+            if (d < bestDistance)
+            {
+                bestDistance = d;
+                best = id;
+            }
+        }
+
+        // None in this scene (e.g. inside a house): any id, so the arrow falls back to the exit
+        if (best == null)
+        {
+            foreach (string id in offers.Keys) return id;
+        }
+
+        return best;
+    }
+
+    ErrandData PickErrand(QuestManager quest, List<ErrandData> exclude)
     {
         if (quest.ErrandLibrary == null) return null;
 
@@ -331,6 +417,7 @@ public class ChallengeManager : MonoBehaviour
         {
             if (e == null || !e.allowInChallenge || e.minDay > Day || e.weight <= 0f) continue;
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;   // already running
+            if (exclude != null && exclude.Contains(e)) continue;             // already given out this phase
             options.Add(e);
             total += e.weight;
         }
@@ -354,13 +441,18 @@ public class ChallengeManager : MonoBehaviour
         float minutesLeft = errand.timeLeft * gameMinutesPerSecond;
         int points = errand.data.challengeScore + Mathf.RoundToInt(minutesLeft * bonusPerMinuteLeft);
         Score += points;
+        if (phaseErrands.Contains(errand.data.errandId)) PhaseDone++;
         Toast.Show(Loc.F(scoreFormat, points));
     }
 
     void OnErrandFailed(ActiveErrand errand)
     {
         if (!active) return;
+        AddStrike();
+    }
 
+    void AddStrike()
+    {
         Strikes++;
         Toast.Show(Loc.F(strikeFormat, Strikes, strikesAllowed));
 
@@ -442,6 +534,6 @@ public class ChallengeManager : MonoBehaviour
     // Debug: jump the clock forward
     public void DebugAddMinutes(float minutes)
     {
-        clock += minutes;
+        if (Clock != null) Clock.DebugAddMinutes(minutes);
     }
 }

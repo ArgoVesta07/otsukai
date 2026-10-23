@@ -14,7 +14,8 @@ public enum PeriodRating
 // Each period is one round with its own timer. The round ends when all its errands are done,
 // or when time runs out (the rest count as failed and the story moves on).
 // After each round: a short break, then the next round (a result card is optional).
-// After the last round of a day: a day recap card.
+// After the last round of a day the player goes to bed (HUD "Go to bed"); sleeping shows the day recap
+// and starts the next day.
 public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance;
@@ -45,6 +46,10 @@ public class TimeManager : MonoBehaviour
     [Tooltip("Show a result card after every round. Off = only the day recap after the last round.")]
     [SerializeField] bool showRoundResults = false;
 
+    [Header("Sleep")]
+    [Tooltip("Ticked = after the last round of a day, the player must sleep in a Bed to start the next day.")]
+    [SerializeField] bool sleepToEndDay = true;
+
     [Header("Break")]
     [Tooltip("Free time between rounds (seconds). The timer is stopped and nothing happens.")]
     [SerializeField] float breakSeconds = 5f;
@@ -55,6 +60,7 @@ public class TimeManager : MonoBehaviour
     bool inStory;         // false = free mode (walk around, no timer, no errands)
     readonly HashSet<string> debugControlled = new HashSet<string>();   // incidents the debug panel took over
     bool onBreak;         // free time after a round, before the next one starts
+    bool awaitingSleep;   // the day's rounds are over; waiting for the player to go to bed
     float breakLeft;
 
     public int DayIndex { get; private set; }
@@ -65,6 +71,7 @@ public class TimeManager : MonoBehaviour
     public bool StoryFinished { get; private set; }
     public bool InStory => inStory;
     public bool OnBreak => onBreak;
+    public bool AwaitingSleep => inStory && awaitingSleep;
 
     public int DayNumber => DayIndex + 1;
     public StoryData Story => story;
@@ -176,17 +183,23 @@ public class TimeManager : MonoBehaviour
         }
 
         inStory = true;
+        awaitingSleep = false;
         results.Clear();
         StoryFinished = false;
+        if (WorldClock.Instance != null) WorldClock.Instance.Stop();   // story mode runs its own rounds
         StartPeriod(0, 0);
     }
 
-    // Free mode: walk around town, no timer, no errands. The game starts here.
+    // Free mode: walk around town, no errands. The game starts here.
+    // The shared WorldClock runs (morning to night, sleep for the next day).
     public void EnterFreeMode()
     {
+        if (WorldClock.Instance != null) WorldClock.Instance.StartFree();
+
         inStory = false;
         Running = false;
         onBreak = false;
+        awaitingSleep = false;
         transitioning = false;
         IncidentManager.EndAll();
 
@@ -269,20 +282,18 @@ public class TimeManager : MonoBehaviour
         string title;
         string subtitle;
 
+        if (IsLastPeriodOfDay() && sleepToEndDay)
+        {
+            // The day is over: walk home and sleep (the recap shows when sleeping)
+            transitioning = false;
+            awaitingSleep = true;
+            Debug.Log("Day " + DayNumber + " over: go to bed.");
+            return;
+        }
+
         if (IsLastPeriodOfDay())
         {
-            // Day recap: errands done across the whole day
-            int done = 0;
-            int total = 0;
-            foreach (PeriodResult r in results)
-            {
-                if (r.day != DayNumber) continue;
-                done += r.completed;
-                total += r.total;
-            }
-
-            title = Loc.F(dayCompleteFormat, DayNumber);
-            subtitle = Loc.F(dayRecapFormat, done, total);
+            DayRecap(out title, out subtitle);
         }
         else if (!showRoundResults || result.total == 0)
         {
@@ -302,6 +313,40 @@ public class TimeManager : MonoBehaviour
             transitioning = false;
             StartBreak();
         });
+    }
+
+    // Day recap: errands done across the whole day
+    void DayRecap(out string title, out string subtitle)
+    {
+        int done = 0;
+        int total = 0;
+        foreach (PeriodResult r in results)
+        {
+            if (r.day != DayNumber) continue;
+            done += r.completed;
+            total += r.total;
+        }
+
+        title = Loc.F(dayCompleteFormat, DayNumber);
+        subtitle = Loc.F(dayRecapFormat, done, total);
+    }
+
+    // Called by a Bed. Returns false when there's nothing to sleep for.
+    public bool Sleep()
+    {
+        if (!AwaitingSleep) return false;
+
+        awaitingSleep = false;
+        transitioning = true;
+        DayRecap(out string title, out string subtitle);
+
+        PeriodBanner.Show(title, subtitle, bannerSeconds, () =>
+        {
+            transitioning = false;
+            NextPeriod();
+        });
+
+        return true;
     }
 
     void StartBreak()
@@ -610,6 +655,7 @@ public class TimeManager : MonoBehaviour
         StoryFinished = false;
         transitioning = false;
         onBreak = false;
+        awaitingSleep = false;
         restoredFromSave = false;
         DayIndex = 0;
         PeriodIndex = 0;

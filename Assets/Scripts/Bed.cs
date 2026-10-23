@@ -1,13 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// A bed. In classic mode the player sleeps here to start the next day.
-// In other modes it only shows its name (or nothing). Needs a Collider2D with Is Trigger ticked.
+// A bed. Free, classic and challenge mode: sleep here at night to start the next day (see WorldClock).
+// Story mode: sleep here after the day's last round (shows the day recap, then the next day).
+// Needs a Collider2D with Is Trigger ticked.
+// Tip: add a NavTarget with the id "Bed" to this object (and to the house door outside) so the arrow finds it.
 public class Bed : MonoBehaviour
 {
     [GameText] public string promptText = "[E] Sleep";
 
-    [Tooltip("Shown when sleeping isn't possible here (other modes). Empty = nothing.")]
+    [Tooltip("Shown when sleeping isn't possible (story mode during the day). Empty = nothing.")]
     [GameText] public string idleLabel = "Bed";
 
     bool playerNear;
@@ -40,19 +42,21 @@ public class Bed : MonoBehaviour
         if (!playerNear) return;
 
         bool busy = InteractionState.IsInteracting;
-        bool classic = ClassicManager.IsActive;
+        bool story = TimeManager.Instance != null && TimeManager.Instance.AwaitingSleep;
+        bool clock = WorldClock.IsActive;
+        bool usable = story || clock;
 
         if (busy) SetPrompt(null, false);
-        else if (classic) SetPrompt(promptText, false);
+        else if (usable) SetPrompt(promptText, false);
         else SetPrompt(idleLabel, true);
 
-        if (busy || !classic) return;
+        if (busy || !usable) return;
 
         var k = Keyboard.current;
         if (k != null && k.eKey.wasPressedThisFrame)
         {
-            if (ClassicManager.Instance.Sleep())
-                SetPrompt(null, false);
+            bool slept = story ? TimeManager.Instance.Sleep() : WorldClock.Instance.TrySleep();
+            if (slept) SetPrompt(null, false);
         }
     }
 

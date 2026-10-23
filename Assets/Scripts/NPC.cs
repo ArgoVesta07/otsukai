@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 
 public enum DialogueStyle
@@ -62,9 +63,9 @@ public class NPC : MonoBehaviour
     public DialogueEntry[] dialogues;
     public float secondsPerBubbleLine = 3f;
 
-    [Header("Classic mode (random errands)")]
-    [Tooltip("Can this NPC be picked to give random errands in classic mode?")]
-    public bool givesClassicErrands = true;
+    [Header("Classic & challenge mode (random errands)")]
+    [Tooltip("Can this NPC be picked to give random errands in classic and challenge mode?")]
+    [FormerlySerializedAs("givesClassicErrands")] public bool givesErrands = true;
 
     [Tooltip("Shown while this NPC has an errand to give (e.g. a \"!\" above the head). Hidden otherwise.")]
     public GameObject offerMarker;
@@ -75,6 +76,9 @@ public class NPC : MonoBehaviour
     [Tooltip("Said when the player finishes an errand step here (e.g. brings the item back).")]
     [GameText] [TextArea(2, 4)] public string[] thanksLines = { "Thank you so much!" };
 
+    [Tooltip("Said when the player comes back without the needed item.")]
+    [GameText] [TextArea(2, 4)] public string[] needItemLines = { "Hmm, you don't have it yet." };
+
     [Tooltip("Said in classic mode when there's nothing to do here. Empty = use the normal dialogues above.")]
     [GameText] [TextArea(2, 4)] public string[] classicIdleLines;
 
@@ -84,8 +88,8 @@ public class NPC : MonoBehaviour
 
     void OnEnable()
     {
-        if (givesClassicErrands)
-            ClassicManager.RegisterGiver(targetId, npcName);
+        if (givesErrands)
+            NpcRegistry.Register(targetId, npcName);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -189,14 +193,15 @@ public class NPC : MonoBehaviour
     {
         if (offerMarker == null) return;
 
-        bool show = ClassicManager.IsActive && ClassicManager.Instance.HasOffer(targetId);
+        bool show = (ClassicManager.IsActive && ClassicManager.Instance.HasOffer(targetId)) ||
+                    (ChallengeManager.IsActive && ChallengeManager.Instance.HasOffer(targetId));
         if (offerMarker.activeSelf != show) offerMarker.SetActive(show);
     }
 
     void StartTalk()
     {
-        // Classic mode: finishing an errand step here, or taking an offered errand, comes first
-        if (ClassicManager.IsActive && TryClassicTalk()) return;
+        // Classic / challenge mode: finishing an errand step here, or taking an errand, comes first
+        if ((ClassicManager.IsActive || ChallengeManager.IsActive) && TryErrandTalk()) return;
 
         DialogueEntry entry = FindEntry();
 
@@ -216,28 +221,35 @@ public class NPC : MonoBehaviour
         Say(entry.lines, entry.style, () => Finish(entry));
     }
 
-    // Returns true if classic mode handled the talk
-    bool TryClassicTalk()
+    // Classic and challenge mode. Returns true if the talk was handled here.
+    bool TryErrandTalk()
     {
         QuestManager quest = QuestManager.Instance;
-        ClassicManager classic = ClassicManager.Instance;
-        if (quest == null || classic == null) return false;
+        if (quest == null) return false;
 
         // 1. An errand step happens here (e.g. bringing the eggs back)
         ActiveErrand waiting = quest.FindWaitingFor(targetId);
         if (waiting != null)
         {
             if (!quest.HasItemsFor(waiting))
-            {
-                Toast.Show(classic.MissingItemText);
-                return true;
-            }
-
-            Say(thanksLines, DialogueStyle.Box, () => quest.TryCompleteStep(targetId));
+                Say(needItemLines, DialogueStyle.Bubble, null);
+            else
+                Say(thanksLines, DialogueStyle.Box, () => quest.TryCompleteStep(targetId));
             return true;
         }
 
-        // 2. This NPC has an errand to give
+        // 2. Challenge: this NPC has a secret errand. Talking takes it right away.
+        ChallengeManager challenge = ChallengeManager.IsActive ? ChallengeManager.Instance : null;
+        if (challenge != null && challenge.HasOffer(targetId))
+        {
+            Say(offerLines, DialogueStyle.Box, () => challenge.AcceptOffer(targetId));
+            return true;
+        }
+
+        ClassicManager classic = ClassicManager.IsActive ? ClassicManager.Instance : null;
+        if (classic == null) return false;
+
+        // 3. Classic: this NPC has an errand to offer (shown on a card: Accept / Later)
         ErrandData offer = classic.OfferFor(targetId);
         if (offer != null)
         {
@@ -257,7 +269,7 @@ public class NPC : MonoBehaviour
             return true;
         }
 
-        // 3. Nothing to do: small talk for classic mode, if set
+        // 4. Nothing to do: small talk for classic mode, if set
         if (classicIdleLines != null && classicIdleLines.Length > 0)
         {
             Say(classicIdleLines, DialogueStyle.Bubble, null);
