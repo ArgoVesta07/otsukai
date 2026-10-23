@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -36,10 +35,15 @@ public class GameHud : MonoBehaviour
     [SerializeField] GameObject switchHint;            // optional "[Q] Switch", shown when 2+ errands run
     [SerializeField] Key switchKey = Key.Q;
 
+    [Header("Classic mode")]
+    [Tooltip("{0} = time of day (Morning...), {1} = errands done")]
+    [GameText] [SerializeField] string classicLabelFormat = "{0}";
+
     [Header("Challenge mode")]
-    [GameText] [SerializeField, FormerlySerializedAs("classicLabelFormat")] string challengeLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
+    [Tooltip("{0} = day, {1} = score, {2} = strikes, {3} = strikes allowed, {4} = time of day")]
+    [GameText] [SerializeField] string challengeLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
     [Tooltip("The clock turns to the warning color when this many in-game minutes are left in the day.")]
-    [SerializeField, FormerlySerializedAs("classicWarningMinutes")] float challengeWarningMinutes = 60f;
+    [SerializeField] float challengeWarningMinutes = 60f;
 
     [Header("Failed errand text")]
     [GameText] [SerializeField] string failedShortText = "Time's up";
@@ -158,7 +162,20 @@ public class GameHud : MonoBehaviour
 
             if (periodText != null)
                 periodText.text = Loc.F(challengeLabelFormat,
-                    challenge.Day, challenge.Score, challenge.Strikes, challenge.StrikesAllowed);
+                    challenge.Day, challenge.Score, challenge.Strikes, challenge.StrikesAllowed, challenge.PhaseName);
+            return;
+        }
+
+        // Classic mode: the card shows the clock, no warning color
+        if (ClassicManager.IsActive)
+        {
+            ClassicManager classic = ClassicManager.Instance;
+            SetActive(timerCard, true);
+            timerText.text = classic.ClockText;
+            timerText.color = timerNormalColor;
+
+            if (periodText != null)
+                periodText.text = Loc.F(classicLabelFormat, classic.PhaseName, classic.Completed);
             return;
         }
 

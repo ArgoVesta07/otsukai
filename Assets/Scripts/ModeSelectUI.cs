@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 
 // The mode menu opened by a ModeSelectPoint.
-//   Main panel:    Story / Challenge / Close
+//   Main panel:    Story / Classic / Challenge / Close
 //   Story panel:   Continue (Day 2 · Afternoon) / New story / Back   (only when a story save exists)
 //   Confirm panel: "Your saved story will be overwritten" Yes / No
 // Put this on a root canvas (e.g. HudCanvas). Hook the buttons to the public methods below.
@@ -118,6 +118,18 @@ public class ModeSelectUI : MonoBehaviour
             storyInfoText.text = canContinue ? "" : Loc.T(storyCompleteText);
 
         ShowOnly(storyPanel);
+    }
+
+    public void ChooseClassic()
+    {
+        if (ClassicManager.Instance == null)
+        {
+            Debug.LogWarning("ClassicManager was not found in the scene.");
+            return;
+        }
+
+        Close();
+        ClassicManager.Instance.StartClassic();
     }
 
     public void ChooseChallenge()

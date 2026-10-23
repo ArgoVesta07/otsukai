@@ -55,6 +55,7 @@
     <Compile Include="Assets\Scripts\LocalizeText.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\PeriodBanner.cs" />
+    <Compile Include="Assets\Scripts\TimeOfDayData.cs" />
     <Compile Include="Assets\Scripts\NavTarget.cs" />
     <Compile Include="Assets\Scripts\DebugPanel.cs" />
     <Compile Include="Assets\Scripts\Toast.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Assets\Scripts\InventoryRow.cs" />
     <Compile Include="Assets\Scripts\ChallengeManager.cs" />
     <Compile Include="Assets\Scripts\StoryData.cs" />
+    <Compile Include="Assets\Scripts\ClassicManager.cs" />
     <Compile Include="Assets\Scripts\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\IncidentManager.cs" />
     <Compile Include="Assets\Scripts\InventoryUI.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Assets\Scripts\NPC.cs" />
     <Compile Include="Assets\Scripts\IncidentData.cs" />
     <Compile Include="Assets\Scripts\StaticReset.cs" />
+    <Compile Include="Assets\Scripts\Bed.cs" />
     <Compile Include="Assets\Scripts\SpeechBubble.cs" />
     <Compile Include="Assets\Scripts\InventoryManager.cs" />
     <Compile Include="Assets\Scripts\ItemData.cs" />

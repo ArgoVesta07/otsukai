@@ -365,6 +365,30 @@ MonoBehaviour:
     m_Key: Score {1}   Strikes {2}/{3}   {4}
     m_Metadata:
       m_Items: []
+  - m_Id: 201736550838272
+    m_Key: Evening
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201736555032576
+    m_Key: '{0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201736555032577
+    m_Key: '{0} errand(s) expired'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 201736555032578
+    m_Key: Not sleepy yet...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 202743938772992
+    m_Key: '[E] Sleep'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 202743938772993
+    m_Key: Bed
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

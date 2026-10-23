@@ -11,6 +11,8 @@ public class ChallengeManager : MonoBehaviour
     public static ChallengeManager Instance;
 
     [Header("Clock")]
+    [Tooltip("Names the time of day (Morning, Afternoon, ...) for the HUD. Optional.")]
+    [SerializeField] TimeOfDayData timeOfDay;
     [SerializeField] int startHour = 8;
     [SerializeField] int endHour = 20;
     [Tooltip("In-game minutes that pass per real second.")]
@@ -50,6 +52,8 @@ public class ChallengeManager : MonoBehaviour
     [GameText] [SerializeField] string dayTitleFormat = "Challenge · Day {0}";
     [Tooltip("Banner on every later day. Empty = use Day Title Format.")]
     [GameText] [SerializeField] string nextDayTitle = "Next day";
+    [Tooltip("Small text under the day banner. {0} = time of day (needs Time Of Day). Empty = none.")]
+    [GameText] [SerializeField] string dayStartSubtitle = "{0}";
     [GameText] [SerializeField] string dayDoneFormat = "Day {0} survived";
     [GameText] [SerializeField] string daySummaryFormat = "Score {0}   Strikes {1}/{2}";
     [GameText] [SerializeField] string gameOverTitle = "Game over";
@@ -85,6 +89,7 @@ public class ChallengeManager : MonoBehaviour
     public static int BestDay => PlayerPrefs.GetInt(BestDayKey, 0);
 
     public string ClockText => FormatClock(clock);
+    public string PhaseName => timeOfDay != null ? timeOfDay.NameAt(clock) : "";
     public float MinutesLeftInDay => endHour * 60f - clock;
 
     void Awake()
@@ -142,7 +147,9 @@ public class ChallengeManager : MonoBehaviour
             ? Loc.T(nextDayTitle)
             : Loc.F(dayTitleFormat, Day);
 
-        PeriodBanner.Show(title, "", bannerSeconds, () =>
+        string subtitle = string.IsNullOrEmpty(dayStartSubtitle) ? "" : Loc.F(dayStartSubtitle, PhaseName);
+
+        PeriodBanner.Show(title, subtitle, bannerSeconds, () =>
         {
             running = true;
         });
