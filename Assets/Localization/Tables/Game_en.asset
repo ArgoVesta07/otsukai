@@ -492,6 +492,22 @@ MonoBehaviour:
     m_Localized: It's late. Go home and sleep.
     m_Metadata:
       m_Items: []
+  - m_Id: 305798306820096
+    m_Localized: Hmm, you don't have it yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305798306820097
+    m_Localized: Find who needs help ({0} left)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305798306820098
+    m_Localized: '{0} errand(s) missed!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305798306820099
+    m_Localized: Score {1}   Strikes {2}/{3}   {4}   {5}/{6}
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

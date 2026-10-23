@@ -6532,7 +6532,7 @@ MonoBehaviour:
   switchKey: 31
   freeLabelFormat: '{0}'
   classicLabelFormat: '{0}'
-  challengeLabelFormat: Score {1}   Strikes {2}/{3}   {4}
+  challengeLabelFormat: Score {1}   Strikes {2}/{3}   {4}   {5}/{6}
   challengeWarningMinutes: 60
   failedShortText: Time's up
   failedDetailText: You ran out of time.

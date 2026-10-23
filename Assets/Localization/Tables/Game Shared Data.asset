@@ -489,6 +489,22 @@ MonoBehaviour:
     m_Key: It's late. Go home and sleep.
     m_Metadata:
       m_Items: []
+  - m_Id: 305798306820096
+    m_Key: Hmm, you don't have it yet.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305798306820097
+    m_Key: Find who needs help ({0} left)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305798306820098
+    m_Key: '{0} errand(s) missed!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 305798306820099
+    m_Key: Score {1}   Strikes {2}/{3}   {4}   {5}/{6}
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -38,3 +38,11 @@ MonoBehaviour:
   flagsOnComplete: []
   flagsOnFail: []
   takeBackRewardsOnFail: 1
+  offerInClassic: 0
+  classicWeight: 1
+  offerLines: []
+  allowInChallenge: 0
+  weight: 1
+  minDay: 1
+  challengeDeadlineMinutes: 60
+  challengeScore: 100

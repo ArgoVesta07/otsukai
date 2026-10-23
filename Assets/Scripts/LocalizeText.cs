@@ -12,9 +12,11 @@ public class LocalizeText : MonoBehaviour
     [Tooltip("Empty = use the text typed in the TMP component.")]
     [SerializeField] string key;
 
-    TMP_Text label;
-    string source;
-    string lastApplied;
+    // NonSerialized: the editor keeps private fields over script reloads and turns null into "",
+    // which used to hide these labels from the Collect Game Texts tool
+    [System.NonSerialized] TMP_Text label;
+    [System.NonSerialized] string source;
+    [System.NonSerialized] string lastApplied;
 
     // The English key, also read by the Collect Game Texts tool
     public string SourceText
@@ -22,7 +24,7 @@ public class LocalizeText : MonoBehaviour
         get
         {
             if (!string.IsNullOrEmpty(key)) return key;
-            if (source != null) return source;
+            if (!string.IsNullOrEmpty(source)) return source;
             TMP_Text t = GetComponent<TMP_Text>();
             return t != null ? t.text : "";
         }
