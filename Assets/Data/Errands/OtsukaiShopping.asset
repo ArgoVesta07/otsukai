@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950534ad8bb4a4e44b451f1e65b16fd4, type: 3}
+  m_Name: OtsukaiShopping
+  m_EditorClassIdentifier: Assembly-CSharp::ErrandData
+  errandId: NewErrand
+  timeLimit: 180
+  kind: 1
+  steps:
+  - note: 
+    shortText: Buy groceries
+    detailText: Check the memo (Tab)
+    targetId: Supermarket
+    navTargetId: 
+    requiredItem: 
+    requiredAmount: 0
+    consumeRequiredItem: 0
+    rewardItem: 
+    rewardAmount: 0
+    shoppingList:
+    - itemId: Egg
+      amount: 1
+    - itemId: Milk
+      amount: 1
+    - itemId: Bread
+      amount: 1
+    requiredItems: []
+  - note: 
+    shortText: Bring it all to {giver}
+    detailText: 
+    targetId: Giver
+    navTargetId: 
+    requiredItem: Egg 1, Milk 1, Bread 1
+    requiredAmount: 0
+    consumeRequiredItem: 1
+    rewardItem: 
+    rewardAmount: 0
+    shoppingList: []
+    requiredItems: []
+  flagsOnComplete: []
+  flagsOnFail: []
+  takeBackRewardsOnFail: 1
+  allowAtNight: 0
+  offerInClassic: 1
+  classicWeight: 1
+  offerLines:
+  - Could you do the shopping for me?
+  allowInChallenge: 1
+  weight: 1
+  minDay: 1
+  challengeDeadlineMinutes: 60
+  challengeScore: 100

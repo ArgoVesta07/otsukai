@@ -533,6 +533,46 @@ MonoBehaviour:
     m_Key: Help people around town
     m_Metadata:
       m_Items: []
+  - m_Id: 1386635899138048
+    m_Key: Buy groceries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886784
+    m_Key: Check the memo (Tab)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886785
+    m_Key: Bring it all to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886786
+    m_Key: Could you do the shopping for me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886787
+    m_Key: Bread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886788
+    m_Key: Milk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886789
+    m_Key: Memo from {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886790
+    m_Key: Memo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886791
+    m_Key: Nothing to do right now.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1386635936886792
+    m_Key: '[E] Take {0}'
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

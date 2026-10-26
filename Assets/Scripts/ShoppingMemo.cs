@@ -16,6 +16,8 @@ public class ShoppingMemo : MonoBehaviour
     [SerializeField] Key toggleKey = Key.Tab;
     [Tooltip("Ticked = the memo follows the otsukai first, even when another errand is tracked.")]
     [SerializeField] bool preferOtsukai = true;
+    [Tooltip("Ticked = also list the other steps (e.g. \"Bring it all to Mom\"). Off = only the shopping list.")]
+    [SerializeField] bool showOtherSteps = false;
 
     [Header("Text")]
     [Tooltip("{0} = who asked")]
@@ -131,14 +133,14 @@ public class ShoppingMemo : MonoBehaviour
                     Append(lines, string.Format(itemLineFormat, mark, ItemName(quest, item.itemId), have, item.amount));
                 }
             }
-            else
+            else if (showOtherSteps)
             {
                 string text = errand.Fill(Loc.T(step.shortText));
                 Append(lines, string.Format(stepLineFormat, done ? doneMark : todoMark, text));
             }
         }
 
-        return lines.ToString();
+        return lines.Length > 0 ? lines.ToString() : Loc.T(emptyText);
     }
 
     static void Append(StringBuilder lines, string line)
