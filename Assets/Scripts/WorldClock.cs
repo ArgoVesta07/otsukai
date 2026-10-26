@@ -82,14 +82,14 @@ public class WorldClock : MonoBehaviour
     public bool IsNight => CurrentPhase != null && CurrentPhase.isNight;
     public bool CanSleep => IsActive && running && (!sleepOnlyAtNight || IsNight) && !HasUnfinishedWork;
 
-    // A request is running, or challenge errands are still waiting at NPCs: no sleeping yet
+    // A request is running, or a challenge night otsukai is still waiting: no sleeping yet
     public bool HasUnfinishedWork
     {
         get
         {
             QuestManager quest = QuestManager.Instance;
             if (quest != null && quest.Active.Count > 0) return true;
-            return ChallengeManager.IsActive && ChallengeManager.Instance.OffersLeft > 0;
+            return ChallengeManager.IsActive && ChallengeManager.Instance.BlocksSleep;
         }
     }
     public string BedNavId => bedNavId;
@@ -116,8 +116,7 @@ public class WorldClock : MonoBehaviour
         get
         {
             if (!IsActive || !running || !IsNight) return false;
-            QuestManager quest = QuestManager.Instance;
-            return quest == null || quest.Active.Count == 0;
+            return !HasUnfinishedWork;
         }
     }
 

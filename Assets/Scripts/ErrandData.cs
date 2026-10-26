@@ -65,6 +65,14 @@ public class ErrandData : ScriptableObject
     [FormerlySerializedAs("classicScore")] public int challengeScore = 100;
 }
 
+// An item and how many of it (shopping lists)
+[Serializable]
+public class ItemAmount
+{
+    public string itemId;
+    public int amount = 1;
+}
+
 [Serializable]
 public class ErrandStep
 {
@@ -90,6 +98,17 @@ public class ErrandStep
     [Tooltip("Item given to the player when this step is completed. Empty = none.")]
     public string rewardItem;
     public int rewardAmount = 1;
+
+    [Header("Shopping list")]
+    [Tooltip("Items to collect for this step, in any order (from ShopItem shelves). With an empty Target Id the step " +
+             "is done as soon as everything is in the bag. Shown on the shopping memo.")]
+    public ItemAmount[] shoppingList;
+
+    [Tooltip("More items needed to complete this step, besides Required Item (e.g. everything from the shopping list). " +
+             "Consume Required Item also applies to these.")]
+    public ItemAmount[] requiredItems;
+
+    public bool IsShopping => shoppingList != null && shoppingList.Length > 0;
 
     public string NavId => string.IsNullOrEmpty(navTargetId) ? targetId : navTargetId;
 }

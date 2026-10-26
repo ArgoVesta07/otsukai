@@ -26,6 +26,8 @@ MonoBehaviour:
     consumeRequiredItem: 0
     rewardItem: Egg
     rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
   - note: give eggs
     shortText: Bring eggs to {giver}
     detailText: Bring the eggs to {giver}.
@@ -36,10 +38,12 @@ MonoBehaviour:
     consumeRequiredItem: 1
     rewardItem: 
     rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
   flagsOnComplete: []
   flagsOnFail: []
   takeBackRewardsOnFail: 1
-  allowAtNight: 0
+  allowAtNight: 1
   offerInClassic: 1
   classicWeight: 1
   offerLines:

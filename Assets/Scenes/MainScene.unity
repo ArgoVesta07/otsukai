@@ -3208,15 +3208,15 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.0007558579
+    x: 0.000967118
     y: 0
-    width: 0.99773246
-    height: 1
+    width: 0.99806577
+    height: 0.9982788
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 7.75
+  orthographic size: 9.0625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -6113,6 +6113,7 @@ MonoBehaviour:
   otherErrandRowPrefab: {fileID: 5661404450804088132, guid: 14fa2fd5e4849b54586085ebf779f9bf, type: 3}
   switchHint: {fileID: 569460986}
   switchKey: 31
+  detailKey: 0
   otsukaiPrefix: "\u2605 "
   otsukaiTextColor: {r: 1, g: 0.85, b: 0.3, a: 1}
   freeLabelFormat: '{0}'
@@ -34508,11 +34509,13 @@ MonoBehaviour:
   gameMinutesPerSecond: 2
   strikesAllowed: 3
   bonusPerMinuteLeft: 1
-  errandsPerPhaseDay1: 2
-  errandsPerPhaseCap: 4
+  requestQuotaDay1: 2
+  requestQuotaCap: 4
   extraErrandEveryDays: 2
-  nightErrandChance: 0.5
-  nightErrandsMax: 1
+  extraOffers: 1
+  nightChanceDay1: 0.5
+  nightChancePerDay: 0.1
+  nightChanceMax: 0.7
   dailySpeedUp: 0.9
   minDeadlineShare: 0.5
   incidentPool:
@@ -34533,6 +34536,7 @@ MonoBehaviour:
   deadlineFormat: by {0}
   findErrandsFormat: Find who needs help ({0} left)
   missedErrandsFormat: '{0} errand(s) missed!'
+  otsukaiWaitingFormat: '{0} has an errand for you'
   bannerSeconds: 2.5
 --- !u!4 &1255188122
 Transform:
@@ -37092,6 +37096,10 @@ PrefabInstance:
     - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2178850349021274075, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: targetId
+      value: Neighbor
       objectReference: {fileID: 0}
     - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
       propertyPath: npcName

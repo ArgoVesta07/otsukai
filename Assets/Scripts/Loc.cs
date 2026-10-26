@@ -104,10 +104,21 @@ public static class Loc
         }
     }
 
+    static bool LooksTranslated(string text)
+    {
+        foreach (char c in text)
+        {
+            if (c >= '\u3000' && c <= '\u9FFF') return true;   // kana, kanji, Japanese punctuation
+            if (c >= '\uFF00' && c <= '\uFFEF') return true;   // full-width forms
+        }
+        return false;
+    }
+
     static void WarnMissing(string text, Locale locale)
     {
         if (!Debug.isDebugBuild) return;
         if (locale.Identifier.Code.StartsWith("en")) return;   // English falls back to the key itself
+        if (LooksTranslated(text)) return;                      // already Japanese (e.g. built from a translated format)
         if (!warned.Add(text)) return;
 
         Debug.LogWarning("No " + locale.Identifier.Code + " text for: \"" + text + "\"  (run Otsukai > Localization > Collect Game Texts, then fill it in the Game table)");

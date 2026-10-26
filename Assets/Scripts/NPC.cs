@@ -202,7 +202,8 @@ public class NPC : MonoBehaviour
     {
         bool request = (ClassicManager.IsActive && ClassicManager.Instance.HasOffer(targetId)) ||
                        (ChallengeManager.IsActive && ChallengeManager.Instance.HasOffer(targetId));
-        bool otsukai = ClassicManager.IsActive && ClassicManager.Instance.HasOtsukai(targetId);
+        bool otsukai = (ClassicManager.IsActive && ClassicManager.Instance.HasOtsukai(targetId)) ||
+                       (ChallengeManager.IsActive && ChallengeManager.Instance.HasOtsukai(targetId));
 
         if (otsukaiMarker != null)
         {
@@ -270,8 +271,14 @@ public class NPC : MonoBehaviour
             return true;
         }
 
-        // 3. Challenge: this NPC has a secret errand. Talking takes it right away.
+        // 3. Challenge: this NPC has an otsukai or a secret request. Talking takes it right away.
         ChallengeManager challenge = ChallengeManager.IsActive ? ChallengeManager.Instance : null;
+        if (challenge != null && challenge.HasOtsukai(targetId))
+        {
+            Say(offerLines, DialogueStyle.Box, () => challenge.AcceptOtsukai(targetId));
+            return true;
+        }
+
         if (challenge != null && challenge.HasOffer(targetId))
         {
             Say(offerLines, DialogueStyle.Box, () => challenge.AcceptOffer(targetId));

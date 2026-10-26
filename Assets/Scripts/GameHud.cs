@@ -34,6 +34,8 @@ public class GameHud : MonoBehaviour
     [SerializeField] TMP_Text otherErrandRowPrefab;    // one line of text per errand
     [SerializeField] GameObject switchHint;            // optional "[Q] Switch", shown when 2+ errands run
     [SerializeField] Key switchKey = Key.Q;
+    [Tooltip("Key that expands the errand card. None = only by clicking the card (Tab opens the shopping memo).")]
+    [SerializeField] Key detailKey = Key.None;
 
     [Header("Otsukai (main errand)")]
     [Tooltip("Put in front of otsukai on the HUD (e.g. a star). Empty = nothing.")]
@@ -50,7 +52,7 @@ public class GameHud : MonoBehaviour
 
     [Header("Challenge mode")]
     [Tooltip("{0} = day, {1} = score, {2} = strikes, {3} = strikes allowed, {4} = time of day, " +
-             "{5} = errands done this phase, {6} = errands this phase")]
+             "{5} = requests done this phase, {6} = request quota this phase")]
     [GameText] [SerializeField] string challengeLabelFormat = "Day {0}   Score {1}   Strikes {2}/{3}";
     [Tooltip("The clock turns to the warning color when this many in-game minutes are left in the day.")]
     [SerializeField] float challengeWarningMinutes = 60f;
@@ -113,7 +115,7 @@ public class GameHud : MonoBehaviour
         var k = Keyboard.current;
         if (k == null) return;
 
-        if (k.tabKey.wasPressedThisFrame)
+        if (detailKey != Key.None && k[detailKey].wasPressedThisFrame)
             ToggleDetail();
 
         if (k[switchKey].wasPressedThisFrame && QuestManager.Instance != null)
@@ -154,6 +156,21 @@ public class GameHud : MonoBehaviour
 
         if (incidentCard != null)
             SetActive(incidentCard, IncidentManager.HasActive);
+    }
+
+    // Family member waiting with an otsukai (classic or challenge), or null
+    static string OtsukaiGiverId()
+    {
+        if (ClassicManager.IsActive && ClassicManager.Instance.OtsukaiGiverId != null) return ClassicManager.Instance.OtsukaiGiverId;
+        if (ChallengeManager.IsActive && ChallengeManager.Instance.OtsukaiGiverId != null) return ChallengeManager.Instance.OtsukaiGiverId;
+        return null;
+    }
+
+    static string OtsukaiWaitingText()
+    {
+        if (ClassicManager.IsActive && ClassicManager.Instance.OtsukaiWaitingText != null) return ClassicManager.Instance.OtsukaiWaitingText;
+        if (ChallengeManager.IsActive && ChallengeManager.Instance.OtsukaiWaitingText != null) return ChallengeManager.Instance.OtsukaiWaitingText;
+        return null;
     }
 
     // Time to sleep: night with nothing left to do, or the story day is over
@@ -257,18 +274,18 @@ public class GameHud : MonoBehaviour
                 shortText += "  " + tracked.deadlineLabel;
             detailText = tracked.Fill(Loc.T(tracked.CurrentStep.detailText));
         }
-        else if (ChallengeManager.IsActive && ChallengeManager.Instance.OffersLeft > 0)
+        else if (OtsukaiWaitingText() != null)
         {
-            // Challenge: errands are waiting at NPCs
-            shortText = ChallengeManager.Instance.FindErrandsText;
-            detailText = shortText;
-        }
-        else if (ClassicManager.IsActive && ClassicManager.Instance.OtsukaiWaitingText != null)
-        {
-            // Classic: a family member is waiting with an otsukai
-            shortText = otsukaiPrefix + ClassicManager.Instance.OtsukaiWaitingText;
+            // A family member is waiting with an otsukai
+            shortText = otsukaiPrefix + OtsukaiWaitingText();
             detailText = shortText;
             otsukai = true;
+        }
+        else if (ChallengeManager.IsActive && ChallengeManager.Instance.RequestsNeeded > 0 && ChallengeManager.Instance.OffersLeft > 0)
+        {
+            // Challenge: requests are still needed, waiting at town people
+            shortText = ChallengeManager.Instance.FindErrandsText;
+            detailText = shortText;
         }
         else if (WantsBed() && WorldClock.Instance != null)
         {
@@ -365,11 +382,11 @@ public class GameHud : MonoBehaviour
         NavTarget target = null;
         string navId = tracked != null ? tracked.CurrentNavId : null;
 
-        if (navId == null && ChallengeManager.IsActive && player != null)
-            navId = ChallengeManager.Instance.NearestOfferNavId(player.position);
+        if (navId == null)
+            navId = OtsukaiGiverId();   // go to the family member with an otsukai
 
-        if (navId == null && ClassicManager.IsActive)
-            navId = ClassicManager.Instance.OtsukaiGiverId;   // go to the family member with an otsukai
+        if (navId == null && ChallengeManager.IsActive && player != null && ChallengeManager.Instance.RequestsNeeded > 0)
+            navId = ChallengeManager.Instance.NearestOfferNavId(player.position);
 
         if (navId == null && WantsBed() && WorldClock.Instance != null)
             navId = WorldClock.Instance.BedNavId;

@@ -52,6 +52,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.6.4f1\Editor\Data\BCLExtensions\TargetingPacks\netstandard2.1\analyzers\dotnet\roslyn4.0\cs\System.Text.Json.SourceGeneration.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ShopItem.cs" />
     <Compile Include="Assets\Scripts\LocalizeText.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\NpcRegistry.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Assets\Scripts\LanguageSetting.cs" />
     <Compile Include="Assets\Scripts\SaveData.cs" />
     <Compile Include="Assets\Scripts\NPC.cs" />
+    <Compile Include="Assets\Scripts\ShoppingMemo.cs" />
     <Compile Include="Assets\Scripts\IncidentData.cs" />
     <Compile Include="Assets\Scripts\StaticReset.cs" />
     <Compile Include="Assets\Scripts\Bed.cs" />

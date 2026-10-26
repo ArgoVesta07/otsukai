@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 // Challenge mode: endless random days on the shared WorldClock.
-// At the start of every day phase (not night), some random NPCs secretly get an errand ("!" above them).
-// The HUD shows how many there are and points to the nearest one. Talking to the NPC starts the errand,
-// and its deadline starts counting from then. An errand only lasts for its phase: late errands, errands
-// still running when the phase ends and errands nobody picked up are strikes; too many = game over.
-// Night may have a few errands too (Allow At Night); the player can't sleep until they're done.
-// Each day gets harder (more errands, shorter deadlines). Then the player sleeps for the next day.
-// Only the best score is kept (no save).
+// Every day phase has one otsukai from family (star) and a quota of requests from town people ("!");
+// a few more requests than the quota are offered, so the player can choose. Talking to the NPC starts the
+// errand and its deadline. When the phase ends: an otsukai not done (late, unfinished or never picked up)
+// is a strike, and every request missing from the quota is a strike. Too many strikes = game over.
+// Night sometimes has an otsukai (chance grows each day, needs Allow At Night); the player can't sleep
+// until it's done. Each day gets harder (bigger quota, shorter deadlines). Only the best score is kept.
 // Put this on its own object in the game scene (e.g. next to the WorldClock).
 public class ChallengeManager : MonoBehaviour
 {
@@ -25,15 +25,22 @@ public class ChallengeManager : MonoBehaviour
     [Tooltip("Bonus points per remaining in-game minute when an errand is finished.")]
     [SerializeField] float bonusPerMinuteLeft = 1f;
 
-    [Header("Errands")]
-    [Tooltip("Errands given out at the start of each day phase on Day 1.")]
-    [SerializeField] int errandsPerPhaseDay1 = 2;
-    [SerializeField] int errandsPerPhaseCap = 4;
-    [Tooltip("Every this many days, one more errand per phase.")]
+    [Header("Requests (from town people)")]
+    [Tooltip("Requests the player must finish in each day phase on Day 1.")]
+    [SerializeField, FormerlySerializedAs("errandsPerPhaseDay1")] int requestQuotaDay1 = 2;
+    [SerializeField, FormerlySerializedAs("errandsPerPhaseCap")] int requestQuotaCap = 4;
+    [Tooltip("Every this many days, the quota grows by one.")]
     [SerializeField] int extraErrandEveryDays = 2;
-    [Tooltip("Chance that night has errands too (only errands with Allow At Night).")]
-    [SerializeField, Range(0f, 1f)] float nightErrandChance = 0.5f;
-    [SerializeField] int nightErrandsMax = 1;
+    [Tooltip("Requests offered on top of the quota, so the player can choose.")]
+    [SerializeField] int extraOffers = 1;
+
+    [Header("Night")]
+    [Tooltip("Chance that night has an otsukai on Day 1 (only otsukai with Allow At Night).")]
+    [SerializeField, Range(0f, 1f), FormerlySerializedAs("nightErrandChance")] float nightChanceDay1 = 0.3f;
+    [SerializeField, Range(0f, 1f)] float nightChancePerDay = 0.1f;
+    [SerializeField, Range(0f, 1f)] float nightChanceMax = 0.7f;
+
+    [Header("Deadlines")]
     [Tooltip("Deadlines are multiplied by this for every day after Day 1 (0.9 = 10% shorter).")]
     [SerializeField, Range(0.5f, 1f)] float dailySpeedUp = 0.9f;
     [Tooltip("Deadlines never get shorter than this share of the original.")]
@@ -63,10 +70,12 @@ public class ChallengeManager : MonoBehaviour
     [GameText] [SerializeField] string strikeFormat = "Too late! Strike {0}/{1}";
     [GameText] [SerializeField] string scoreFormat = "+{0}";
     [GameText] [SerializeField] string deadlineFormat = "by {0}";   // shown after the errand name on the HUD
-    [Tooltip("Errand card while no errand is running. {0} = errands waiting at NPCs")]
+    [Tooltip("Errand card while requests are still needed. {0} = how many more")]
     [GameText] [SerializeField] string findErrandsFormat = "Find who needs help ({0} left)";
-    [Tooltip("Pop-up when errands weren't picked up in time. {0} = how many")]
+    [Tooltip("Pop-up at the end of a phase for the otsukai / requests that weren't done. {0} = how many")]
     [GameText] [SerializeField] string missedErrandsFormat = "{0} errand(s) missed!";
+    [Tooltip("Errand card while a family member is waiting with an otsukai. {0} = their name")]
+    [GameText] [SerializeField] string otsukaiWaitingFormat = "{0} has an errand for you";
     [SerializeField] float bannerSeconds = 2.5f;
 
     // Old key names are kept so earlier best scores aren't lost
@@ -78,8 +87,10 @@ public class ChallengeManager : MonoBehaviour
     bool active;         // challenge mode is on
     float nextIncidentCheckAt;   // clock minutes
 
-    readonly Dictionary<string, ErrandData> offers = new Dictionary<string, ErrandData>();   // NPC id -> errand
-    readonly HashSet<string> phaseErrands = new HashSet<string>();   // errand ids given out this phase
+    readonly Dictionary<string, ErrandData> offers = new Dictionary<string, ErrandData>();   // NPC id -> request
+    readonly HashSet<string> phaseErrands = new HashSet<string>();   // request ids given out this phase
+    string otsukaiGiver;      // family member waiting with this phase's otsukai (null = none / taken)
+    ErrandData otsukaiOffer;
 
     static WorldClock Clock => WorldClock.Instance;
     float Now => Clock != null ? Clock.Clock : 0f;
@@ -89,10 +100,19 @@ public class ChallengeManager : MonoBehaviour
     public int Score { get; private set; }
     public int Strikes { get; private set; }
     public int StrikesAllowed => strikesAllowed;
-    public int PhaseTotal { get; private set; }   // errands given out this phase
-    public int PhaseDone { get; private set; }    // ...and finished
+    public int PhaseTotal { get; private set; }   // request quota this phase
+    public int PhaseDone { get; private set; }    // requests finished this phase
+    public int RequestsNeeded => Mathf.Max(0, PhaseTotal - PhaseDone);
     public int OffersLeft => offers.Count;
-    public string FindErrandsText => Loc.F(findErrandsFormat, offers.Count);
+    public string FindErrandsText => Loc.F(findErrandsFormat, RequestsNeeded);
+
+    // The family member waiting with an otsukai (null = none), for the HUD card and arrow
+    public string OtsukaiGiverId => active ? otsukaiGiver : null;
+    public string OtsukaiWaitingText =>
+        OtsukaiGiverId != null ? Loc.F(otsukaiWaitingFormat, Loc.T(NpcRegistry.NameOf(otsukaiGiver))) : null;
+
+    // No sleeping while a night otsukai is still waiting to be picked up
+    public bool BlocksSleep => OtsukaiGiverId != null;
     public bool Running => active && WorldClock.IsActive && Clock.Running;
     public static int BestScore => PlayerPrefs.GetInt(BestScoreKey, 0);
     public static int BestDay => PlayerPrefs.GetInt(BestDayKey, 0);
@@ -141,10 +161,7 @@ public class ChallengeManager : MonoBehaviour
         active = true;
         Score = 0;
         Strikes = 0;
-        offers.Clear();
-        phaseErrands.Clear();
-        PhaseTotal = 0;
-        PhaseDone = 0;
+        ClearPhase();
         EndAllIncidents();
 
         float start = startHour * 60f;
@@ -184,34 +201,47 @@ public class ChallengeManager : MonoBehaviour
         EndAllIncidents();
     }
 
-    // New phase: errands from the last phase that are still running or were never picked up are strikes,
-    // then new errands go to random NPCs
+    // New phase: settle the last one (strikes), then give out this phase's otsukai and requests
     void OnPhaseChanged()
     {
         if (!active) return;
 
-        FailRunningErrands();
+        EndPhase();
         if (!active) return;   // the strikes ended the run
 
-        MissLeftoverOffers();
-        if (!active) return;   // the strikes ended the run
-
-        phaseErrands.Clear();
-        PhaseTotal = 0;
-        PhaseDone = 0;
-
-        GiveOutErrands();
+        StartPhase();
     }
 
-    // Going to sleep (only possible once night errands are done): anything left over is a strike
+    // Going to sleep (only possible once the night otsukai is done): settle the night
     void OnDayEnded(int day)
     {
         if (!active) return;
+        EndPhase();
+    }
 
+    // Running errands fail (an otsukai is a strike), then a strike for the missed otsukai / requests
+    void EndPhase()
+    {
         FailRunningErrands();
         if (!active) return;
 
-        MissLeftoverOffers();
+        int missed = (otsukaiGiver != null ? 1 : 0) + RequestsNeeded;
+        ClearPhase();
+        if (missed == 0) return;
+
+        Toast.Show(Loc.F(missedErrandsFormat, missed));
+        for (int i = 0; i < missed && active; i++)
+            AddStrike();
+    }
+
+    void ClearPhase()
+    {
+        offers.Clear();
+        phaseErrands.Clear();
+        otsukaiGiver = null;
+        otsukaiOffer = null;
+        PhaseTotal = 0;
+        PhaseDone = 0;
     }
 
     // Night: no new errands; the ones still open count as late
@@ -230,14 +260,14 @@ public class ChallengeManager : MonoBehaviour
         foreach (ActiveErrand e in open)
         {
             if (!active) return;
-            quest.ForceFail(e.data);   // fires OnErrandFailed -> strikes (may end the run)
+            quest.ForceFail(e.data);   // an otsukai fires a strike in OnErrandFailed (may end the run)
         }
     }
 
     void GameOver()
     {
         active = false;
-        offers.Clear();
+        ClearPhase();
         EndAllIncidents();
         int day = Day;
         if (Clock != null) Clock.Stop();   // nothing else happens on the clock (e.g. the sleep banner)
@@ -271,7 +301,7 @@ public class ChallengeManager : MonoBehaviour
     public void Stop()
     {
         active = false;
-        offers.Clear();
+        ClearPhase();
         EndAllIncidents();
         Unhook();
     }
@@ -317,37 +347,64 @@ public class ChallengeManager : MonoBehaviour
         return Mathf.Pow(dailySpeedUp, Day - 1);
     }
 
-    int ErrandsThisPhase()
+    int RequestQuota()
     {
         int extra = extraErrandEveryDays > 0 ? (Day - 1) / extraErrandEveryDays : 0;
-        return Mathf.Min(errandsPerPhaseDay1 + extra, errandsPerPhaseCap);
+        return Mathf.Min(requestQuotaDay1 + extra, requestQuotaCap);
     }
 
-    // Hands this phase's errands to random free NPCs (secret until the player talks to them)
-    void GiveOutErrands()
+    float NightChance()
     {
-        offers.Clear();
+        return Mathf.Min(nightChanceMax, nightChanceDay1 + nightChancePerDay * (Day - 1));
+    }
+
+    // Day phase: 1 otsukai + requests (quota + a few extra). Night: maybe 1 otsukai.
+    void StartPhase()
+    {
+        ClearPhase();
 
         QuestManager quest = QuestManager.Instance;
         if (quest == null) return;
 
         bool night = Clock != null && Clock.IsNight;
-        int wanted = night
-            ? (Random.value < nightErrandChance ? nightErrandsMax : 0)
-            : ErrandsThisPhase();
-        if (wanted <= 0)
+        if (night)
         {
-            PhaseTotal = 0;
-            return;   // e.g. a quiet night: straight to bed
+            if (Random.value < NightChance()) GiveOtsukai(quest, true);
+            return;   // a quiet night: straight to bed
         }
 
+        GiveOtsukai(quest, false);
+        GiveRequests(quest, RequestQuota());
+    }
+
+    void GiveOtsukai(QuestManager quest, bool night)
+    {
+        ErrandData pick = PickErrand(quest, null, night, ErrandKind.Otsukai);
+        List<string> family = NpcRegistry.FreeGiversShuffled(NpcRole.Family);
+
+        if (pick == null || family.Count == 0)
+        {
+            if (!night)
+                Debug.LogWarning("Challenge: no otsukai this phase. Needs an NPC with Role = Family and an ErrandData " +
+                                 "with Kind = Otsukai + Allow In Challenge.");
+            return;
+        }
+
+        otsukaiGiver = family[0];
+        otsukaiOffer = pick;
+        Debug.Log("Challenge: otsukai " + pick.errandId + " from " + otsukaiGiver);
+    }
+
+    // Hands requests to random free town people (secret until the player talks to them)
+    void GiveRequests(QuestManager quest, int quota)
+    {
         List<string> givers = NpcRegistry.FreeGiversShuffled(NpcRole.Townsperson);
         List<ErrandData> used = new List<ErrandData>();
-        int count = Mathf.Min(wanted, givers.Count);
+        int count = Mathf.Min(quota + extraOffers, givers.Count);
 
         for (int i = 0; i < count; i++)
         {
-            ErrandData pick = PickErrand(quest, used, night);
+            ErrandData pick = PickErrand(quest, used, false, ErrandKind.Request);
             if (pick == null) break;
 
             used.Add(pick);
@@ -355,27 +412,32 @@ public class ChallengeManager : MonoBehaviour
             phaseErrands.Add(pick.errandId);
         }
 
-        PhaseTotal = offers.Count;
+        // Never ask for more than what was actually given out
+        PhaseTotal = Mathf.Min(quota, offers.Count);
 
         if (offers.Count > 0)
-            Debug.Log("Challenge: " + offers.Count + " errand(s) at " + string.Join(", ", offers.Keys));
+            Debug.Log("Challenge: quota " + PhaseTotal + ", requests at " + string.Join(", ", offers.Keys));
         else if (NpcRegistry.CountOf(NpcRole.Townsperson) == 0)
-            Debug.LogWarning("Challenge: no town people can give errands (Gives Errands + Role = Townsperson on NPCs).");
+            Debug.LogWarning("Challenge: no town people can give requests (Gives Errands + Role = Townsperson on NPCs).");
         else
-            Debug.LogWarning("Challenge: no errand to hand out. Check the QuestManager's Errand Library, " +
-                             "and 'Allow In Challenge' / 'Min Day' / 'Weight' on the ErrandData assets.");
+            Debug.LogWarning("Challenge: no request to hand out. Check the Errand Library and " +
+                             "Kind = Request / 'Allow In Challenge' / 'Min Day' / 'Weight' on the ErrandData assets.");
     }
 
-    // Offers nobody picked up before the phase ended: one strike each
-    void MissLeftoverOffers()
+    public bool HasOtsukai(string npcId)
     {
-        int missed = offers.Count;
-        offers.Clear();
-        if (missed == 0) return;
+        return active && otsukaiGiver != null && otsukaiGiver == npcId;
+    }
 
-        Toast.Show(Loc.F(missedErrandsFormat, missed));
-        for (int i = 0; i < missed && active; i++)
-            AddStrike();
+    // The player talked to the family member: the otsukai starts, its deadline counts from here
+    public bool AcceptOtsukai(string npcId)
+    {
+        if (!HasOtsukai(npcId)) return false;
+
+        ErrandData pick = otsukaiOffer;
+        otsukaiGiver = null;
+        otsukaiOffer = null;
+        return StartWithDeadline(pick, npcId);
     }
 
     public bool HasOffer(string npcId)
@@ -383,14 +445,20 @@ public class ChallengeManager : MonoBehaviour
         return active && !string.IsNullOrEmpty(npcId) && offers.ContainsKey(npcId);
     }
 
-    // The player talked to an NPC with an errand: start it now, the deadline counts from here
+    // The player talked to an NPC with a request: start it now, the deadline counts from here
     public bool AcceptOffer(string npcId)
     {
-        QuestManager quest = QuestManager.Instance;
-        if (quest == null || !HasOffer(npcId)) return false;
+        if (!HasOffer(npcId)) return false;
 
         ErrandData pick = offers[npcId];
         offers.Remove(npcId);
+        return StartWithDeadline(pick, npcId);
+    }
+
+    bool StartWithDeadline(ErrandData pick, string npcId)
+    {
+        QuestManager quest = QuestManager.Instance;
+        if (quest == null || pick == null) return false;
 
         float minutes = pick.challengeDeadlineMinutes * Mathf.Max(SpeedFactor(), minDeadlineShare);
         float seconds = minutes / gameMinutesPerSecond;
@@ -445,7 +513,7 @@ public class ChallengeManager : MonoBehaviour
         return best;
     }
 
-    ErrandData PickErrand(QuestManager quest, List<ErrandData> exclude, bool night)
+    ErrandData PickErrand(QuestManager quest, List<ErrandData> exclude, bool night, ErrandKind kind)
     {
         if (quest.ErrandLibrary == null) return null;
 
@@ -454,7 +522,7 @@ public class ChallengeManager : MonoBehaviour
 
         foreach (ErrandData e in quest.ErrandLibrary)
         {
-            if (e == null || e.kind != ErrandKind.Request) continue;   // otsukai are handled separately
+            if (e == null || e.kind != kind) continue;
             if (!e.allowInChallenge || e.minDay > Day || e.weight <= 0f) continue;
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;   // already running
             if (exclude != null && exclude.Contains(e)) continue;             // already given out this phase
@@ -482,13 +550,14 @@ public class ChallengeManager : MonoBehaviour
         float minutesLeft = errand.timeLeft * gameMinutesPerSecond;
         int points = errand.data.challengeScore + Mathf.RoundToInt(minutesLeft * bonusPerMinuteLeft);
         Score += points;
-        if (phaseErrands.Contains(errand.data.errandId)) PhaseDone++;
+        if (!errand.IsOtsukai && phaseErrands.Contains(errand.data.errandId)) PhaseDone++;
         Toast.Show(Loc.F(scoreFormat, points));
     }
 
+    // A failed otsukai is a strike right away. A failed request just doesn't count toward the quota.
     void OnErrandFailed(ActiveErrand errand)
     {
-        if (!active) return;
+        if (!active || !errand.IsOtsukai) return;
         AddStrike();
     }
 

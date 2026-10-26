@@ -134,6 +134,54 @@ public class QuestManager : MonoBehaviour
                 Fail(errand);
             }
         }
+
+        // Shopping steps without a target finish by themselves once everything is in the bag
+        for (int i = active.Count - 1; i >= 0; i--)
+        {
+            ActiveErrand errand = active[i];
+            ErrandStep step = errand.CurrentStep;
+            if (step == null || !step.IsShopping || !string.IsNullOrEmpty(step.targetId)) continue;
+            if (!HasAll(step.shoppingList)) continue;
+
+            Debug.Log("Errand '" + errand.data.errandId + "' shopping done: " + step.shortText);
+            errand.stepIndex++;
+            if (errand.stepIndex >= errand.data.steps.Length)
+                Complete(errand);
+        }
+    }
+
+    // ---------- Items ----------
+
+    public bool HasAll(ItemAmount[] list)
+    {
+        if (list == null) return true;
+        foreach (ItemAmount item in list)
+        {
+            if (item == null || string.IsNullOrEmpty(item.itemId)) continue;
+            if (inventory == null || !inventory.HasItem(item.itemId, item.amount)) return false;
+        }
+        return true;
+    }
+
+    // How many more of this item the running shopping lists still need (0 = none)
+    public int ShoppingNeed(string itemId)
+    {
+        if (string.IsNullOrEmpty(itemId)) return 0;
+
+        int need = 0;
+        foreach (ActiveErrand errand in active)
+        {
+            ErrandStep step = errand.CurrentStep;
+            if (step == null || !step.IsShopping) continue;
+
+            foreach (ItemAmount item in step.shoppingList)
+            {
+                if (item != null && item.itemId == itemId) need += item.amount;
+            }
+        }
+
+        int have = inventory != null ? inventory.GetItemCount(itemId) : 0;
+        return Mathf.Max(0, need - have);
     }
 
     // ---------- Starting ----------
@@ -213,17 +261,26 @@ public class QuestManager : MonoBehaviour
             ErrandStep step = errand.CurrentStep;
             if (step == null || errand.CurrentTargetId != targetId) continue;
 
-            // Check the required item
-            if (!string.IsNullOrEmpty(step.requiredItem))
+            // Check the required items (and the shopping list, if this step has one and a target)
+            if (!HasItemsFor(errand))
             {
-                if (inventory == null || !inventory.HasItem(step.requiredItem, step.requiredAmount))
-                {
-                    Debug.Log("You need " + step.requiredItem + " x" + step.requiredAmount + ".");
-                    return false;
-                }
+                Debug.Log("Errand '" + errand.data.errandId + "': missing items for " + step.shortText + ".");
+                return false;
+            }
 
-                if (step.consumeRequiredItem)
+            if (step.consumeRequiredItem && inventory != null)
+            {
+                if (!string.IsNullOrEmpty(step.requiredItem))
                     inventory.RemoveItem(step.requiredItem, step.requiredAmount);
+
+                if (step.requiredItems != null)
+                {
+                    foreach (ItemAmount item in step.requiredItems)
+                    {
+                        if (item != null && !string.IsNullOrEmpty(item.itemId))
+                            inventory.RemoveItem(item.itemId, item.amount);
+                    }
+                }
             }
 
             // Give the reward item
@@ -267,8 +324,13 @@ public class QuestManager : MonoBehaviour
     public bool HasItemsFor(ActiveErrand errand)
     {
         ErrandStep step = errand != null ? errand.CurrentStep : null;
-        if (step == null || string.IsNullOrEmpty(step.requiredItem)) return true;
-        return inventory != null && inventory.HasItem(step.requiredItem, step.requiredAmount);
+        if (step == null) return true;
+
+        if (!string.IsNullOrEmpty(step.requiredItem) &&
+            (inventory == null || !inventory.HasItem(step.requiredItem, step.requiredAmount)))
+            return false;
+
+        return HasAll(step.requiredItems) && (!step.IsShopping || HasAll(step.shoppingList));
     }
 
     // ---------- Queries ----------
@@ -342,6 +404,21 @@ public class QuestManager : MonoBehaviour
             int amount = Mathf.Min(step.rewardAmount, inventory.GetItemCount(step.rewardItem));
             if (amount > 0)
                 inventory.RemoveItem(step.rewardItem, amount);
+        }
+
+        // Shopping lists of the steps done so far (and the current one, partly bought)
+        int shoppedSteps = Mathf.Min(errand.stepIndex + 1, errand.data.steps.Length);
+        for (int i = 0; i < shoppedSteps; i++)
+        {
+            ErrandStep step = errand.data.steps[i];
+            if (step == null || !step.IsShopping) continue;
+
+            foreach (ItemAmount item in step.shoppingList)
+            {
+                if (item == null || string.IsNullOrEmpty(item.itemId)) continue;
+                int amount = Mathf.Min(item.amount, inventory.GetItemCount(item.itemId));
+                if (amount > 0) inventory.RemoveItem(item.itemId, amount);
+            }
         }
     }
 
