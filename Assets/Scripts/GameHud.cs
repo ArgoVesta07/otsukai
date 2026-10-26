@@ -35,6 +35,11 @@ public class GameHud : MonoBehaviour
     [SerializeField] GameObject switchHint;            // optional "[Q] Switch", shown when 2+ errands run
     [SerializeField] Key switchKey = Key.Q;
 
+    [Header("Otsukai (main errand)")]
+    [Tooltip("Put in front of otsukai on the HUD (e.g. a star). Empty = nothing.")]
+    [SerializeField] string otsukaiPrefix = "\u2605 ";
+    [SerializeField] Color otsukaiTextColor = new Color(1f, 0.85f, 0.3f);
+
     [Header("Free mode")]
     [Tooltip("{0} = time of day (Morning...)")]
     [GameText] [SerializeField] string freeLabelFormat = "{0}";
@@ -71,6 +76,8 @@ public class GameHud : MonoBehaviour
     bool expanded;
     float collapseTimer;
     string shownShort;   // what the card currently shows, to avoid rebuilding every frame
+    Color normalShortColor = Color.white;
+    Color normalDetailColor = Color.white;
     readonly List<TMP_Text> otherRows = new List<TMP_Text>();
 
     void Awake()
@@ -86,6 +93,9 @@ public class GameHud : MonoBehaviour
 
         if (errandRow != null)
             layoutRoot = errandRow.transform.parent as RectTransform;
+
+        if (errandShortText != null) normalShortColor = errandShortText.color;
+        if (errandDetailText != null) normalDetailColor = errandDetailText.color;
 
         SetExpanded(false);
     }
@@ -237,10 +247,12 @@ public class GameHud : MonoBehaviour
     {
         string shortText = null;
         string detailText = null;
+        bool otsukai = tracked != null && tracked.IsOtsukai;
 
         if (tracked != null && tracked.CurrentStep != null)
         {
             shortText = tracked.Fill(Loc.T(tracked.CurrentStep.shortText));
+            if (otsukai) shortText = otsukaiPrefix + shortText;
             if (!string.IsNullOrEmpty(tracked.deadlineLabel))
                 shortText += "  " + tracked.deadlineLabel;
             detailText = tracked.Fill(Loc.T(tracked.CurrentStep.detailText));
@@ -250,6 +262,13 @@ public class GameHud : MonoBehaviour
             // Challenge: errands are waiting at NPCs
             shortText = ChallengeManager.Instance.FindErrandsText;
             detailText = shortText;
+        }
+        else if (ClassicManager.IsActive && ClassicManager.Instance.OtsukaiWaitingText != null)
+        {
+            // Classic: a family member is waiting with an otsukai
+            shortText = otsukaiPrefix + ClassicManager.Instance.OtsukaiWaitingText;
+            detailText = shortText;
+            otsukai = true;
         }
         else if (WantsBed() && WorldClock.Instance != null)
         {
@@ -262,6 +281,15 @@ public class GameHud : MonoBehaviour
             shortText = Loc.T(failedShortText);
             detailText = Loc.T(failedDetailText);
         }
+        else if (ClassicManager.IsActive && WorldClock.IsActive && !WorldClock.Instance.IsNight)
+        {
+            // Classic: nothing to do, helping town people is optional
+            shortText = ClassicManager.Instance.HelpTownText;
+            detailText = shortText;
+        }
+
+        if (errandShortText != null) errandShortText.color = otsukai ? otsukaiTextColor : normalShortColor;
+        if (errandDetailText != null) errandDetailText.color = otsukai ? otsukaiTextColor : normalDetailColor;
 
         bool show = !string.IsNullOrEmpty(shortText);
         SetActive(errandRow, show);
@@ -308,6 +336,7 @@ public class GameHud : MonoBehaviour
             if (e == tracked) continue;
 
             string text = e.CurrentStep != null ? e.Fill(Loc.T(e.CurrentStep.shortText)) : e.data.errandId;
+            if (e.IsOtsukai) text = otsukaiPrefix + text;
             if (!string.IsNullOrEmpty(e.deadlineLabel))
             {
                 text += "  " + e.deadlineLabel;
@@ -339,12 +368,16 @@ public class GameHud : MonoBehaviour
         if (navId == null && ChallengeManager.IsActive && player != null)
             navId = ChallengeManager.Instance.NearestOfferNavId(player.position);
 
+        if (navId == null && ClassicManager.IsActive)
+            navId = ClassicManager.Instance.OtsukaiGiverId;   // go to the family member with an otsukai
+
         if (navId == null && WantsBed() && WorldClock.Instance != null)
             navId = WorldClock.Instance.BedNavId;
 
         if (!string.IsNullOrEmpty(navId))
         {
             target = NavTarget.Find(navId);
+            if (target == null) target = NavTarget.Find(NpcRegistry.NavIdFor(navId));   // NPC in another scene
             if (target == null) target = NavTarget.Find(fallbackTargetId);
         }
 

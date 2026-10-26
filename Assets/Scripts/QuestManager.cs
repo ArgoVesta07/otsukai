@@ -23,6 +23,7 @@ public class ActiveErrand
     public string giverName;     // that NPC's name, for "{giver}" in errand texts
 
     public bool HasTimer => timeLimit > 0f;
+    public bool IsOtsukai => data != null && data.kind == ErrandKind.Otsukai;
     public ErrandStep CurrentStep =>
         data.steps != null && stepIndex < data.steps.Length ? data.steps[stepIndex] : null;
 
@@ -190,6 +191,10 @@ public class QuestManager : MonoBehaviour
             giverId = giverId,
             giverName = giverName
         });
+
+        // An otsukai becomes the errand the HUD and arrow follow
+        if (data.kind == ErrandKind.Otsukai)
+            trackedIndex = active.Count - 1;
 
         Debug.Log("Errand started: " + data.errandId);
         return true;

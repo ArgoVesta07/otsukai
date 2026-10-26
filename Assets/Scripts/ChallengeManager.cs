@@ -341,7 +341,7 @@ public class ChallengeManager : MonoBehaviour
             return;   // e.g. a quiet night: straight to bed
         }
 
-        List<string> givers = NpcRegistry.FreeGiversShuffled();
+        List<string> givers = NpcRegistry.FreeGiversShuffled(NpcRole.Townsperson);
         List<ErrandData> used = new List<ErrandData>();
         int count = Mathf.Min(wanted, givers.Count);
 
@@ -359,8 +359,8 @@ public class ChallengeManager : MonoBehaviour
 
         if (offers.Count > 0)
             Debug.Log("Challenge: " + offers.Count + " errand(s) at " + string.Join(", ", offers.Keys));
-        else if (NpcRegistry.Count == 0)
-            Debug.LogWarning("Challenge: no NPC can give errands (tick Gives Errands on NPCs).");
+        else if (NpcRegistry.CountOf(NpcRole.Townsperson) == 0)
+            Debug.LogWarning("Challenge: no town people can give errands (Gives Errands + Role = Townsperson on NPCs).");
         else
             Debug.LogWarning("Challenge: no errand to hand out. Check the QuestManager's Errand Library, " +
                              "and 'Allow In Challenge' / 'Min Day' / 'Weight' on the ErrandData assets.");
@@ -454,7 +454,8 @@ public class ChallengeManager : MonoBehaviour
 
         foreach (ErrandData e in quest.ErrandLibrary)
         {
-            if (e == null || !e.allowInChallenge || e.minDay > Day || e.weight <= 0f) continue;
+            if (e == null || e.kind != ErrandKind.Request) continue;   // otsukai are handled separately
+            if (!e.allowInChallenge || e.minDay > Day || e.weight <= 0f) continue;
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;   // already running
             if (exclude != null && exclude.Contains(e)) continue;             // already given out this phase
             if (night && !e.allowAtNight) continue;

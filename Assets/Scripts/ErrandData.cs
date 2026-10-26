@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+// Otsukai = main errand from family (star marker). Request = side errand from people in town ("!").
+public enum ErrandKind { Request, Otsukai }
+
 // One errand (e.g. "Buy eggs"), made as an asset: right-click in the Project window >
 // Create > Otsukai > Errand. New errands are new assets; no code changes needed.
 [CreateAssetMenu(menuName = "Otsukai/Errand", fileName = "NewErrand")]
@@ -12,6 +15,9 @@ public class ErrandData : ScriptableObject
 
     [Tooltip("Seconds to finish the errand after it starts. 0 = no timer.")]
     public float timeLimit = 180f;
+
+    [Tooltip("Otsukai = main errand from family (star). Request = side errand from people in town (!).")]
+    public ErrandKind kind = ErrandKind.Request;
 
     [Tooltip("Steps are done in order. The errand completes after the last one.")]
     public ErrandStep[] steps;
@@ -32,8 +38,8 @@ public class ErrandData : ScriptableObject
     public bool allowAtNight = false;
 
     [Header("Classic mode (NPC errands)")]
-    [Tooltip("Can NPCs offer this errand in classic mode? Tip: a step with Target Id \"Giver\" sends the player " +
-             "back to whoever asked, and \"{giver}\" in a text becomes that NPC's name.")]
+    [Tooltip("Can this errand be given in classic mode (otsukai by family, request by town people)? Tip: a step with " +
+             "Target Id \"Giver\" sends the player back to whoever asked, and \"{giver}\" in a text becomes their name.")]
     public bool offerInClassic = false;
 
     [Tooltip("Higher = offered more often in classic mode.")]

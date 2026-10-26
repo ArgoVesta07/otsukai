@@ -67,8 +67,17 @@ public class NPC : MonoBehaviour
     [Tooltip("Can this NPC be picked to give random errands in classic and challenge mode?")]
     [FormerlySerializedAs("givesClassicErrands")] public bool givesErrands = true;
 
-    [Tooltip("Shown while this NPC has an errand to give (e.g. a \"!\" above the head). Hidden otherwise.")]
+    [Tooltip("Family = gives otsukai (main errands, star). Townsperson = gives requests (side errands, !).")]
+    public NpcRole role = NpcRole.Townsperson;
+
+    [Tooltip("NavTarget id the arrow uses while this NPC is in another scene (e.g. \"Home\" for someone inside the house). Empty = none.")]
+    public string awayNavId = "";
+
+    [Tooltip("Shown while this NPC has a request to give (e.g. a \"!\" above the head). Hidden otherwise.")]
     public GameObject offerMarker;
+
+    [Tooltip("Shown while this family member has an otsukai for the player (e.g. a star). Empty = use the Offer Marker.")]
+    public GameObject otsukaiMarker;
 
     [Tooltip("Said when giving an errand whose ErrandData has no Offer Lines.")]
     [GameText] [TextArea(2, 4)] public string[] offerLines = { "Could you help me with something?" };
@@ -89,7 +98,7 @@ public class NPC : MonoBehaviour
     void OnEnable()
     {
         if (givesErrands)
-            NpcRegistry.Register(targetId, npcName);
+            NpcRegistry.Register(targetId, npcName, role, awayNavId);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -191,11 +200,24 @@ public class NPC : MonoBehaviour
 
     void UpdateOfferMarker()
     {
-        if (offerMarker == null) return;
+        bool request = (ClassicManager.IsActive && ClassicManager.Instance.HasOffer(targetId)) ||
+                       (ChallengeManager.IsActive && ChallengeManager.Instance.HasOffer(targetId));
+        bool otsukai = ClassicManager.IsActive && ClassicManager.Instance.HasOtsukai(targetId);
 
-        bool show = (ClassicManager.IsActive && ClassicManager.Instance.HasOffer(targetId)) ||
-                    (ChallengeManager.IsActive && ChallengeManager.Instance.HasOffer(targetId));
-        if (offerMarker.activeSelf != show) offerMarker.SetActive(show);
+        if (otsukaiMarker != null)
+        {
+            SetMarker(otsukaiMarker, otsukai);
+            SetMarker(offerMarker, request);
+        }
+        else
+        {
+            SetMarker(offerMarker, request || otsukai);
+        }
+    }
+
+    static void SetMarker(GameObject marker, bool show)
+    {
+        if (marker != null && marker.activeSelf != show) marker.SetActive(show);
     }
 
     void StartTalk()
@@ -238,7 +260,17 @@ public class NPC : MonoBehaviour
             return true;
         }
 
-        // 2. Challenge: this NPC has a secret errand. Talking takes it right away.
+        // 2. Classic: this family member has an otsukai. Talking takes it right away.
+        ClassicManager classicMode = ClassicManager.IsActive ? ClassicManager.Instance : null;
+        if (classicMode != null && classicMode.HasOtsukai(targetId))
+        {
+            ErrandData otsukai = classicMode.OtsukaiFor(targetId);
+            string[] askLines = otsukai.offerLines != null && otsukai.offerLines.Length > 0 ? otsukai.offerLines : offerLines;
+            Say(askLines, DialogueStyle.Box, () => classicMode.AcceptOtsukai(targetId));
+            return true;
+        }
+
+        // 3. Challenge: this NPC has a secret errand. Talking takes it right away.
         ChallengeManager challenge = ChallengeManager.IsActive ? ChallengeManager.Instance : null;
         if (challenge != null && challenge.HasOffer(targetId))
         {
@@ -249,7 +281,7 @@ public class NPC : MonoBehaviour
         ClassicManager classic = ClassicManager.IsActive ? ClassicManager.Instance : null;
         if (classic == null) return false;
 
-        // 3. Classic: this NPC has an errand to offer (shown on a card: Accept / Later)
+        // 4. Classic: this NPC has a request to offer (shown on a card: Accept / Later)
         ErrandData offer = classic.OfferFor(targetId);
         if (offer != null)
         {
@@ -269,7 +301,7 @@ public class NPC : MonoBehaviour
             return true;
         }
 
-        // 4. Nothing to do: small talk for classic mode, if set
+        // 5. Nothing to do: small talk for classic mode, if set
         if (classicIdleLines != null && classicIdleLines.Length > 0)
         {
             Say(classicIdleLines, DialogueStyle.Bubble, null);
