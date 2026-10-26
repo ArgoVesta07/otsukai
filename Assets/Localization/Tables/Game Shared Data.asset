@@ -513,6 +513,26 @@ MonoBehaviour:
     m_Key: Finish what you were asked first.
     m_Metadata:
       m_Items: []
+  - m_Id: 1355980339376128
+    m_Key: Could you buy some eggs for dinner?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1355980377124864
+    m_Key: Neighbor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1355980377124865
+    m_Key: 'Errand: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1355980377124866
+    m_Key: '{0} has an errand for you'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1355980377124867
+    m_Key: Help people around town
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

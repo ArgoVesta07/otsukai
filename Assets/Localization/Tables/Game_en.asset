@@ -516,6 +516,26 @@ MonoBehaviour:
     m_Localized: Finish what you were asked first.
     m_Metadata:
       m_Items: []
+  - m_Id: 1355980339376128
+    m_Localized: Could you buy some eggs for dinner?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1355980377124864
+    m_Localized: Neighbor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1355980377124865
+    m_Localized: 'Errand: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1355980377124866
+    m_Localized: '{0} has an errand for you'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1355980377124867
+    m_Localized: Help people around town
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

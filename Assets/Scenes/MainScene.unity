@@ -3208,15 +3208,15 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.0007558579
     y: 0
-    width: 1
+    width: 0.99773246
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 7.5
+  orthographic size: 7.75
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -5963,6 +5963,11 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &829466144 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1234539102608929569, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+  m_PrefabInstance: {fileID: 1627156617}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &838116578
 GameObject:
   m_ObjectHideFlags: 0
@@ -6108,6 +6113,8 @@ MonoBehaviour:
   otherErrandRowPrefab: {fileID: 5661404450804088132, guid: 14fa2fd5e4849b54586085ebf779f9bf, type: 3}
   switchHint: {fileID: 569460986}
   switchKey: 31
+  otsukaiPrefix: "\u2605 "
+  otsukaiTextColor: {r: 1, g: 0.85, b: 0.3, a: 1}
   freeLabelFormat: '{0}'
   classicLabelFormat: '{0}'
   challengeLabelFormat: Score {1}   Strikes {2}/{3}   {4}   {5}/{6}
@@ -6220,6 +6227,11 @@ MonoBehaviour:
   stepFormat: '{0}. {1}'
   acceptKey: 19
   laterKey: 60
+--- !u!1 &850603064 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1234539102608929569, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+  m_PrefabInstance: {fileID: 7018340109781090397}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &868204796
 GameObject:
   m_ObjectHideFlags: 0
@@ -6784,6 +6796,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 911446740}
   m_CullTransparentMesh: 1
+--- !u!1 &934954612 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5919825422515787281, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+  m_PrefabInstance: {fileID: 1627156617}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &939311832
 GameObject:
   m_ObjectHideFlags: 0
@@ -34001,6 +34018,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ba99d92e7fc012346b7fb453a626582d, type: 2}
   - {fileID: 11400000, guid: 1d343e6ff58252e4f874877dc71bbfa1, type: 2}
   - {fileID: 11400000, guid: f00f24217e34b644baaa28c7b9888774, type: 2}
+  - {fileID: 11400000, guid: bb0ea0eaabf0a0441b1ef16afd119fb1, type: 2}
 --- !u!114 &1230287187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36426,9 +36444,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1234539102608929569, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1686799082249711685, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2178850349021274075, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
       propertyPath: targetId
       value: GrandMother
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154424691946138657, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154424691946138657, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154424691946138657, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154424691946138657, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: role
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
       propertyPath: npcName
@@ -36441,7 +36487,11 @@ PrefabInstance:
     - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
       propertyPath: offerMarker
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 934954612}
+    - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: otsukaiMarker
+      value: 
+      objectReference: {fileID: 829466144}
     - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
       propertyPath: dialogues.Array.size
       value: 1
@@ -36995,6 +37045,76 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1679655003}
   m_CullTransparentMesh: 1
+--- !u!1001 &1682457962
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -16.309597
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -5.8027773
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061746917399879312, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: npcName
+      value: Neighbor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: targetId
+      value: Neighbor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: awayNavId
+      value: Neighbor
+      objectReference: {fileID: 0}
+    - target: {fileID: 5391012562478522078, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_Name
+      value: NPC 3
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects:
+    - {fileID: 1234539102608929569, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
 --- !u!1 &1687953176
 GameObject:
   m_ObjectHideFlags: 0
@@ -37905,6 +38025,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClassicManager
   dayStartHour: 6
   gameMinutesPerSecond: 1
+  minOtsukaiPerDay: 2
+  maxOtsukaiPerDay: 3
   offersPerPhase: 2
   maxActiveErrands: 3
   errandTimeLimit: 0
@@ -37915,6 +38037,9 @@ MonoBehaviour:
   errandsExpiredFormat: '{0} errand(s) expired'
   newErrandFormat: 'New errand: {0}'
   tooManyErrandsText: You have enough errands for now.
+  newOtsukaiFormat: 'Errand: {0}'
+  otsukaiWaitingFormat: '{0} has an errand for you'
+  helpTownText: Help people around town
 --- !u!4 &1817591629
 Transform:
   m_ObjectHideFlags: 0
@@ -39642,6 +39767,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1234539102608929569, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1686799082249711685, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154424691946138657, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154424691946138657, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154424691946138657, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3154424691946138657, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: role
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3231198084489004955, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
+      propertyPath: otsukaiMarker
+      value: 
+      objectReference: {fileID: 850603064}
     - target: {fileID: 5391012562478522078, guid: a83cc595fac2faf48ab0955fd683f9fe, type: 3}
       propertyPath: m_Name
       value: NPC 1
@@ -39666,6 +39823,7 @@ SceneRoots:
   - {fileID: 5934385958204502726}
   - {fileID: 7018340109781090397}
   - {fileID: 1627156617}
+  - {fileID: 1682457962}
   - {fileID: 5664159792741230112}
   - {fileID: 703382421637912586}
   - {fileID: 1255188122}
