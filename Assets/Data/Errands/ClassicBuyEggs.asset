@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ErrandData
   errandId: ClassicBuyEggs
   timeLimit: 0
+  kind: 0
   steps:
   - note: get eggs
     shortText: Buy eggs
@@ -25,19 +26,24 @@ MonoBehaviour:
     consumeRequiredItem: 0
     rewardItem: Egg
     rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
   - note: give eggs
     shortText: Bring eggs to {giver}
     detailText: Bring the eggs to {giver}.
     targetId: Giver
-    navTargetId: Mom
+    navTargetId: 
     requiredItem: Egg
     requiredAmount: 1
     consumeRequiredItem: 1
     rewardItem: 
     rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
   flagsOnComplete: []
   flagsOnFail: []
   takeBackRewardsOnFail: 1
+  allowAtNight: 0
   offerInClassic: 1
   classicWeight: 1
   offerLines:

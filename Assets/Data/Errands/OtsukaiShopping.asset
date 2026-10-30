@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 950534ad8bb4a4e44b451f1e65b16fd4, type: 3}
   m_Name: OtsukaiShopping
   m_EditorClassIdentifier: Assembly-CSharp::ErrandData
-  errandId: NewErrand
+  errandId: OtsukaiShopping
   timeLimit: 180
   kind: 1
   steps:
   - note: 
     shortText: Buy groceries
     detailText: Check the memo (Tab)
-    targetId: Supermarket
-    navTargetId: 
+    targetId: 
+    navTargetId: Supermarket
     requiredItem: 
     requiredAmount: 0
     consumeRequiredItem: 0
