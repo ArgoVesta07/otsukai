@@ -74,7 +74,7 @@ public class SceneTransition : MonoBehaviour
         while (!op.isDone) yield return null;
         yield return null;   // wait one frame so all scene objects are ready
 
-        GameObject player = GameObject.Find("player");
+        GameObject player = PlayerMovement.FindPlayer();
         if (player != null)
             player.transform.position = spawnPosition;
         else

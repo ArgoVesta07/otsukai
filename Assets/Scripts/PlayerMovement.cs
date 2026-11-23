@@ -8,6 +8,13 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D rb;
     Vector2 input;
 
+    // The player in the loaded scene, found by component (not by object name), or null
+    public static GameObject FindPlayer()
+    {
+        PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
+        return player != null ? player.gameObject : null;
+    }
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
