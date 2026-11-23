@@ -143,8 +143,11 @@ public class NPC : MonoBehaviour
         if (k == null) return;
         if (!k.eKey.wasPressedThisFrame) return;
 
+        // Advancing our own dialogue always works, and takes the press so nothing else acts on it
+        // in the same frame (e.g. a door right after the box closes)
         if (inDialogue)
         {
+            InteractionState.TryUseInteract();
             DialogBox.Next();
             return;
         }
@@ -153,11 +156,12 @@ public class NPC : MonoBehaviour
 
         if (bubbleActive)
         {
-            SpeechBubble.Skip();
+            if (InteractionState.TryUseInteract()) SpeechBubble.Skip();
             return;
         }
 
         if (InteractionState.IsInteracting) return;
+        if (!InteractionState.TryUseInteract()) return;
 
         StartTalk();
     }

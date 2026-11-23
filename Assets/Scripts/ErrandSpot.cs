@@ -63,7 +63,7 @@ public class ErrandSpot : MonoBehaviour
 
         var k = Keyboard.current;
         if (k == null || !k.eKey.wasPressedThisFrame) return;
-        if (busy) return;
+        if (busy || !InteractionState.TryUseInteract()) return;
 
         if (needed)
         {

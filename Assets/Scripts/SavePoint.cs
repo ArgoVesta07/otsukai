@@ -43,7 +43,7 @@ public class SavePoint : MonoBehaviour
         if (InteractionState.IsInteracting) return;
 
         var k = Keyboard.current;
-        if (k == null || !k.eKey.wasPressedThisFrame) return;
+        if (k == null || !k.eKey.wasPressedThisFrame || !InteractionState.TryUseInteract()) return;
 
         QuestManager quest = QuestManager.Instance;
         bool errandRunning = quest != null && quest.Active.Count > 0;

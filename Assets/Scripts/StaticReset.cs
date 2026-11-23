@@ -8,7 +8,7 @@ public static class StaticReset
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetOnPlay()
     {
-        InteractionState.IsInteracting = false;
+        InteractionState.Reset();
         GameFlags.Clear();
         IncidentManager.Clear();
         Time.timeScale = 1f;
