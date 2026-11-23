@@ -39,13 +39,19 @@ MonoBehaviour:
     detailText: 
     targetId: Giver
     navTargetId: 
-    requiredItem: Egg 1, Milk 1, Bread 1
-    requiredAmount: 0
+    requiredItem: 
+    requiredAmount: 1
     consumeRequiredItem: 1
     rewardItem: 
     rewardAmount: 0
     shoppingList: []
-    requiredItems: []
+    requiredItems:
+    - itemId: Egg
+      amount: 1
+    - itemId: Milk
+      amount: 1
+    - itemId: Bread
+      amount: 1
   flagsOnComplete: []
   flagsOnFail: []
   takeBackRewardsOnFail: 1
