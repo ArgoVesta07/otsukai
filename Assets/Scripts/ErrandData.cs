@@ -71,6 +71,9 @@ public class ItemAmount
 {
     public string itemId;
     public int amount = 1;
+
+    // 0 or less in the Inspector counts as 1, so a forgotten amount can't make the item free
+    public int Amount => Mathf.Max(1, amount);
 }
 
 [Serializable]
@@ -109,6 +112,9 @@ public class ErrandStep
     public ItemAmount[] requiredItems;
 
     public bool IsShopping => shoppingList != null && shoppingList.Length > 0;
+
+    // 0 or less in the Inspector counts as 1, so a forgotten amount can't make the item free
+    public int RequiredAmount => Mathf.Max(1, requiredAmount);
 
     public string NavId => string.IsNullOrEmpty(navTargetId) ? targetId : navTargetId;
 }
