@@ -527,6 +527,7 @@ public class ChallengeManager : MonoBehaviour
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;   // already running
             if (exclude != null && exclude.Contains(e)) continue;             // already given out this phase
             if (night && !e.allowAtNight) continue;
+            if (!quest.CanGiveNow(e)) continue;
             options.Add(e);
             total += e.weight;
         }
