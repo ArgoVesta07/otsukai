@@ -109,49 +109,53 @@ Inventory (`InventoryManager/UI/Row`, `ItemData`), `Door` + `SceneTransition` (s
 - [ ] Update How to Play text (Memo = Tab).
 - [ ] Playtest + commit.
 
-## 7. Town plan (96×64 tiles)
+## 7. Town plan (96×64 tiles) — layout v2
 
-Reference image: `Docs/Denah_Kota_96x64.png` (+ `Denah_Kota_96x64.csv` with Unity root positions).
-Unity coords: x = tileX − 48, y = 32 − tileY (root = bottom-centre).
+Source of truth: `Design/denah-v2/` → `Denah_Kota_v2.png` (map), `Denah_Kota_v2.csv` (positions, doors, Target Ids,
+walking distance from home), `denah.py` (edit positions here, then run `python3 Design/denah-v2/denah.py Design/denah-v2`:
+checks overlaps / doors-on-road and rewrites PNG + CSV).
+Into the scene: **Otsukai > Town > Import Layout CSV** (TownBuilding placeholders, NavTarget at doors, ErrandSpot where
+errands happen; re-running moves existing objects). CSV positions are Unity coords (centre 0,0), root = bottom-centre.
 
-Layout concept:
-- **North**: railway, **station** + ekimae plaza (bus stop), **koban** and **konbini** in front of the station, park (NW).
-- **NE hill**: **SMP + SMA** reached by **stairs**.
-- **Centre**: **shotengai** lane of small 4×5 shops (roti, kue, kopi, bunga, dagashiya | daging, yaoya, laundry, restoran). Below: **Daiso, drugstore, supa** (+ parking).
-- **West**: civic — **shiyakusho, perpustakaan, yuubin (+ATM)**.
-- **East**: **rumah sakit** + **apotek** next to it, parking.
-- **South**: residential (player house near **SD** and **gomi station**), **Juntendo** (+ parking), park, **river** as the south edge (bridge = decoration).
-- Mailboxes: yuubin, ekimae, shotengai, residential.
+Layout concept (north → south):
+- **North**: railway, **station** + ekimae plaza (bus stop), **koban**; civic block **shiyakusho + library**; **SMA + SMP** on the hill (NE, path/stairs).
+- **Shotengai** (pedestrian lane): bunga, kue, roti, kopi, restoran | daging, yaoya, drugstore.
+- **Naka-dori**: **konbini** (close to home on purpose: frequent errands), **yuubin + ATM**, **Daiso**; **hospital + apotek** next door (east).
+- **Minami-dori**: houses, **laundry**, **supa** (+ parking), **Juntendo** (+ parking, east).
+- **Riverside (south)**: **player house**, **gomi station** right next to it, **SD** + **dagashiya** across, river path + parks (pet walk), bridge.
+- Rule: the more often an errand happens, the closer to home (trash 5, SD 16, laundry 22, konbini 31 … hospital 92 tiles).
+- Mailboxes: ekimae, yuubin, shotengai, near home. Extra spots: ATM, ParkWest, Bridge, ParkRiverside.
 
-| No | Building | Tiles | Enter | Root (Unity x, y) |
-|---|---|---|---|---|
-| 1 | Supa | 8×6 | yes | 6, -5 |
-| 2 | Player house | 5×5 | yes | -36.5, -20 |
-| 2b–2k | Neighbor houses (2–3 color variants) | 5×5 | no | see CSV |
-| 3 | Konbini | 7×5 | yes | -16.5, 19 |
-| 4 | Station | 14×6 | no | 0, 22 |
-| 5 | Daiso (100-yen) | 8×5 | yes | -18, -4 |
-| 6 | Hospital | 12×8 | yes | 35, 4 |
-| 8 | Yuubin + ATM | 7×5 | yes | -29.5, -2 |
-| 10 | Apotek | 4×4 | yes | 44, 5 |
-| 11 | Library | 10×6 | yes | -40, -2 |
-| 12a | SD | 14×8 | no | -15, -17 |
-| 12b / 12c | SMP / SMA (hill) | 11×7 | no | 25.5, 20 / 39.5, 20 |
-| 13 | Flower shop | 4×5 | yes | -10, 4 |
-| 14 | Restaurant | 6×5 | yes | 16, 4 |
-| 15 | Laundry | 4×5 | yes | 11, 4 |
-| 16 | Drugstore | 8×5 | yes | -8, -4 |
-| 17 | Koban | 4×4 | no | 15, 19 |
-| 18 | Juntendo (DIY) | 12×7 | yes | 10, -16 |
-| 20 | Bakery | 4×5 | yes | -22, 4 |
-| 21 | Butcher | 4×5 | yes | 3, 4 |
-| 22 | Yaoya (greengrocer) | 4×5 | yes | 7, 4 |
-| 23 | Shiyakusho | 12×7 | yes | -39, 6 |
-| 24 | Cake shop | 4×5 | yes | -18, 4 |
-| 25 | Coffee shop | 4×5 | yes | -14, 4 |
-| 26 | Dagashiya | 5×5 | yes | -5.5, 4 |
-| — | Gomi station, mailboxes, bus stop | 1–2 tiles | — | see image |
+| No | Building | Tiles | Enter | Root (Unity x, y) | Target Id | Walk from home |
+|---|---|---|---|---|---|---|
+| 1 | Supa | 8×6 | yes | 8, -11 | Supermarket | 52 |
+| 2 | Player house | 5×5 | yes | -28.5, -27 | Home | 0 |
+| 2b–2k | Neighbor houses | 5×5 | no | see CSV | — | — |
+| 3 | Konbini | 7×5 | yes | -25.5, 1 | Konbini | 31 |
+| 4 | Station | 14×6 | no | 0, 23 | Station | 78 |
+| 5 | Daiso | 8×5 | yes | 8, 1 | Daiso | 64 |
+| 6 | Hospital | 12×8 | yes | 36, 1 | Hospital | 92 |
+| 8 | Yuubin + ATM | 7×5 | yes | -8.5, 1 | PostOffice / ATM | 48 |
+| 10 | Apotek | 4×4 | yes | 45, 1 | Pharmacy | 101 |
+| 11 | Library | 10×6 | yes | -26, 19 | Library | 54 |
+| 12a | SD | 14×8 | no | -12, -27 | SchoolGate | 16 |
+| 12b / 12c | SMP / SMA (hill) | 11×7 | no | 34.5, 21 / 19.5, 21 | JuniorHigh / HighSchool | 111 / 96 |
+| 13 | Flower shop | 4×5 | yes | -22, 11 | FlowerShop | 50 |
+| 14 | Restaurant | 6×5 | yes | -5, 11 | Restaurant | 61 |
+| 15 | Laundry | 4×5 | yes | -22, -11 | Laundry | 22 |
+| 16 | Drugstore | 8×5 | yes | 14, 11 | Drugstore | 80 |
+| 17 | Koban | 4×4 | no | 12, 19 | Koban | 86 |
+| 18 | Juntendo | 12×7 | yes | 38, -11 | HomeCenter | 82 |
+| 19 / 19b | Gomi station | 3×2 | — | -23.5, -27 / 18.5, -27 | TrashArea / TrashAreaEast | 5 / 47 |
+| 20 | Bakery | 4×5 | yes | -14, 11 | Bakery | 52 |
+| 21 | Butcher | 4×5 | yes | 4, 11 | Butcher | 70 |
+| 22 | Yaoya | 4×5 | yes | 8, 11 | Greengrocer | 74 |
+| 23 | Shiyakusho | 12×7 | yes | -41, 19 | CityHall | 59 |
+| 24 | Cake shop | 4×5 | yes | -18, 11 | CakeShop | 52 |
+| 25 | Coffee shop | 4×5 | yes | -10, 11 | Cafe | 56 |
+| 26 | Dagashiya | 5×5 | yes | 5.5, -27 | Dagashiya | 34 |
 
+Walk = tiles door-to-door from the player's door (player speed 5 → divide by 5 for seconds).
 "Enter = no" buildings are decorative doors for now (can be changed). Map size may be tightened after playtest if walking feels too long.
 
 ## 8. Planned content (Phase 2) — errand ideas
@@ -176,7 +180,7 @@ Layout concept:
 | Take little sibling to school | SD | escort, morning only |
 | Walk the pet around town | Parks / river | undecided (needs follower system) |
 
-Escort-type errands need a new **follower NPC** feature (Phase 2).
+All of these exist as ErrandData assets (17). Escorts use `ErrandData.companionId` + a `Follower` component on the NPC / pet ("Giver", "Sibling", "Pet").
 
 ## 9. Art plan (Phase 4, can start early)
 
