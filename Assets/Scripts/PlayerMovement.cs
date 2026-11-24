@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     // The player in the loaded scene, found by component (not by object name), or null
     public static GameObject FindPlayer()
     {
-        PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
+        PlayerMovement player = FindAnyObjectByType<PlayerMovement>();
         return player != null ? player.gameObject : null;
     }
 
