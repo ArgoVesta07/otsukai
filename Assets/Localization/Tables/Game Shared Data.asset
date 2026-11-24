@@ -573,6 +573,250 @@ MonoBehaviour:
     m_Key: '[E] Take {0}'
     m_Metadata:
       m_Items: []
+  - m_Id: 11946052268814336
+    m_Key: Bill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174464
+    m_Key: Clean clothes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174465
+    m_Key: Laundry bag
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174466
+    m_Key: Fertilizer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174467
+    m_Key: Flowers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174468
+    m_Key: Library book
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174469
+    m_Key: Meat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174470
+    m_Key: Medicine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174471
+    m_Key: Melon bread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174472
+    m_Key: Money
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174473
+    m_Key: Parcel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174474
+    m_Key: Printout
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174475
+    m_Key: Sponge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174476
+    m_Key: Trash bag
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174477
+    m_Key: USB stick
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174478
+    m_Key: Withdraw money at the ATM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174479
+    m_Key: Buy fertilizer at Juntendo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174480
+    m_Key: Bring the fertilizer to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174481
+    m_Key: The garden needs fertilizer. Get some money from the ATM and buy it at Juntendo.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174482
+    m_Key: Buy flowers at the flower shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174483
+    m_Key: Bring the flowers to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174484
+    m_Key: Could you buy some flowers for the table?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174485
+    m_Key: Buy meat at the butcher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174486
+    m_Key: Bring the meat to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174487
+    m_Key: Could you get some meat for dinner from the butcher?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174488
+    m_Key: Go to city hall with {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174489
+    m_Key: I have to go to city hall. Will you come with me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174490
+    m_Key: Buy a sponge at Daiso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174491
+    m_Key: Bring the sponge to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174492
+    m_Key: We're out of sponges. Could you buy one at Daiso?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174493
+    m_Key: Wash the clothes at the laundromat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174494
+    m_Key: Bring the clean clothes to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174495
+    m_Key: The washing machine is broken. Could you take this to the laundromat?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174496
+    m_Key: Take {giver} to the hospital
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174497
+    m_Key: Pick up the medicine at the pharmacy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174498
+    m_Key: Give the medicine to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174499
+    m_Key: I have a hospital appointment. Will you come with me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174500
+    m_Key: Buy melon bread at the bakery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174501
+    m_Key: Bring the melon bread to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174502
+    m_Key: I'd love some melon bread from the bakery...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174503
+    m_Key: Pay the bill at the konbini
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174504
+    m_Key: Could you pay this bill at the konbini?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174505
+    m_Key: Print the file at the konbini
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174506
+    m_Key: Bring the printout to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174507
+    m_Key: Could you print this file at the konbini?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174508
+    m_Key: Return the book to the library
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174509
+    m_Key: Could you return this book to the library for me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174510
+    m_Key: Send the parcel at the post office
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174511
+    m_Key: Could you send this parcel at the post office?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174512
+    m_Key: Take your sister to the dagashiya
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174513
+    m_Key: Your sister wants sweets. Could you take her to the dagashiya?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174514
+    m_Key: Walk your sister to school
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174515
+    m_Key: Could you walk your sister to school?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174516
+    m_Key: Take the trash to the collection point
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174517
+    m_Key: It's trash day! Take this out before the truck comes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174518
+    m_Key: Walk the dog to the park
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174519
+    m_Key: Walk the dog to the bridge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174520
+    m_Key: Walk the dog to the riverside park
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174521
+    m_Key: The dog wants a walk! Go to the park and along the river.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174522
+    m_Key: Bring the money to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174523
+    m_Key: Could you get some money from the ATM?
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
