@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950534ad8bb4a4e44b451f1e65b16fd4, type: 3}
+  m_Name: BuyMeat
+  m_EditorClassIdentifier: Assembly-CSharp::ErrandData
+  errandId: BuyMeat
+  timeLimit: 0
+  kind: 1
+  steps:
+  - note: 
+    shortText: Buy meat at the butcher
+    detailText: 
+    targetId: Butcher
+    navTargetId: 
+    requiredItem: 
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: Meat
+    rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
+  - note: 
+    shortText: Bring the meat to {giver}
+    detailText: 
+    targetId: Giver
+    navTargetId: 
+    requiredItem: Meat
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: 
+    rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
+  startItems: []
+  companionId: 
+  flagsOnComplete: []
+  flagsOnFail: []
+  takeBackRewardsOnFail: 1
+  earliestHour: 0
+  latestHour: 18
+  cooldownDays: 1
+  allowAtNight: 0
+  offerInClassic: 1
+  classicWeight: 1
+  offerLines:
+  - Could you get some meat for dinner from the butcher?
+  allowInChallenge: 1
+  weight: 1
+  minDay: 1
+  challengeDeadlineMinutes: 170
+  challengeScore: 120

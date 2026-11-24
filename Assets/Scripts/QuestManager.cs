@@ -21,6 +21,7 @@ public class ActiveErrand
     public string deadlineLabel; // optional text for the HUD, e.g. "by 10:30" (challenge mode)
     public string giverId;       // NPC that gave this errand (classic mode). Steps with Target Id "Giver" go there.
     public string giverName;     // that NPC's name, for "{giver}" in errand texts
+    public int startedDay;       // WorldClock day it started (0 = no clock running)
 
     public bool HasTimer => timeLimit > 0f;
     public bool IsOtsukai => data != null && data.kind == ErrandKind.Otsukai;
@@ -30,6 +31,9 @@ public class ActiveErrand
     // Target and arrow id of the current step, with "Giver" replaced by the real NPC id
     public string CurrentTargetId => CurrentStep != null ? Resolve(CurrentStep.targetId) : null;
     public string CurrentNavId => CurrentStep != null ? Resolve(CurrentStep.NavId) : null;
+
+    // Who walks along (Follower id), with "Giver" replaced by the real NPC id. Null = nobody.
+    public string CompanionId => string.IsNullOrEmpty(data.companionId) ? null : Resolve(data.companionId);
 
     string Resolve(string id)
     {
@@ -61,6 +65,7 @@ public class QuestManager : MonoBehaviour
     readonly List<ActiveErrand> active = new List<ActiveErrand>();
     readonly HashSet<string> completed = new HashSet<string>();
     readonly HashSet<string> failed = new HashSet<string>();
+    readonly Dictionary<string, int> lastStartedDay = new Dictionary<string, int>();   // for Cooldown Days
 
     // Story mode: only these errands can be started this round. Off when no story is running.
     readonly HashSet<string> available = new HashSet<string>();
@@ -305,6 +310,7 @@ public class QuestManager : MonoBehaviour
         LastFailed = null;
 
         float limit = timeLimitOverride >= 0f ? timeLimitOverride : data.timeLimit;
+        int day = WorldClock.IsActive ? WorldClock.Instance.Day : 0;
 
         active.Add(new ActiveErrand
         {
@@ -314,8 +320,20 @@ public class QuestManager : MonoBehaviour
             timeLeft = limit,
             deadlineLabel = deadlineLabel,
             giverId = giverId,
-            giverName = giverName
+            giverName = giverName,
+            startedDay = day
         });
+
+        if (day > 0) lastStartedDay[data.errandId] = day;
+
+        if (data.startItems != null && inventory != null)
+        {
+            foreach (ItemAmount item in data.startItems)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.itemId))
+                    inventory.AddItem(item.itemId, item.Amount);
+            }
+        }
 
         // An otsukai becomes the errand the HUD and arrow follow
         if (data.kind == ErrandKind.Otsukai)
@@ -410,6 +428,32 @@ public class QuestManager : MonoBehaviour
 
     // ---------- Queries ----------
 
+    // Classic / challenge: may an NPC hand this out now? (Earliest / Latest Hour and Cooldown Days)
+    public bool CanGiveNow(ErrandData data)
+    {
+        if (data == null) return false;
+
+        WorldClock clock = WorldClock.Instance;
+        if (clock == null || !WorldClock.IsActive) return true;
+        if (!data.FitsHour(clock.Clock)) return false;
+
+        return data.cooldownDays <= 0 ||
+               !lastStartedDay.TryGetValue(data.errandId, out int last) ||
+               clock.Day - last > data.cooldownDays;
+    }
+
+    // True while a running errand needs this Follower to walk along
+    public bool IsCompanion(string followerId)
+    {
+        if (string.IsNullOrEmpty(followerId)) return false;
+
+        foreach (ActiveErrand errand in active)
+        {
+            if (errand.CompanionId == followerId) return true;
+        }
+        return false;
+    }
+
     public ErrandState GetState(string errandId)
     {
         if (FindActive(errandId) != null) return ErrandState.Active;
@@ -477,6 +521,16 @@ public class QuestManager : MonoBehaviour
 
             // Never more than the player still has, nor items another running errand holds
             RemoveUnclaimed(step.rewardItem, step.rewardAmount);
+        }
+
+        // Items handed out when the errand started (whatever wasn't used up yet)
+        if (errand.data.startItems != null)
+        {
+            foreach (ItemAmount item in errand.data.startItems)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.itemId))
+                    RemoveUnclaimed(item.itemId, item.Amount);
+            }
         }
 
         // Shopping lists of the steps done so far (and the current one, partly bought)
@@ -656,6 +710,7 @@ public class QuestManager : MonoBehaviour
     {
         active.Clear();
         tracked = null;
+        lastStartedDay.Clear();
         completed.Clear();
         failed.Clear();
         LastFailed = null;
