@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950534ad8bb4a4e44b451f1e65b16fd4, type: 3}
+  m_Name: HospitalVisit
+  m_EditorClassIdentifier: Assembly-CSharp::ErrandData
+  errandId: HospitalVisit
+  timeLimit: 0
+  kind: 1
+  steps:
+  - note: 
+    shortText: Take {giver} to the hospital
+    detailText: 
+    targetId: Hospital
+    navTargetId: 
+    requiredItem: 
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: 
+    rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
+  - note: 
+    shortText: Pick up the medicine at the pharmacy
+    detailText: 
+    targetId: Pharmacy
+    navTargetId: 
+    requiredItem: 
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: Medicine
+    rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
+  - note: 
+    shortText: Give the medicine to {giver}
+    detailText: 
+    targetId: Giver
+    navTargetId: 
+    requiredItem: Medicine
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: 
+    rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
+  startItems: []
+  companionId: Giver
+  flagsOnComplete: []
+  flagsOnFail: []
+  takeBackRewardsOnFail: 1
+  earliestHour: 0
+  latestHour: 15
+  cooldownDays: 3
+  allowAtNight: 0
+  offerInClassic: 1
+  classicWeight: 1
+  offerLines:
+  - I have a hospital appointment. Will you come with me?
+  allowInChallenge: 1
+  weight: 1
+  minDay: 1
+  challengeDeadlineMinutes: 250
+  challengeScore: 150

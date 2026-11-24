@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950534ad8bb4a4e44b451f1e65b16fd4, type: 3}
+  m_Name: SendParcel
+  m_EditorClassIdentifier: Assembly-CSharp::ErrandData
+  errandId: SendParcel
+  timeLimit: 0
+  kind: 1
+  steps:
+  - note: 
+    shortText: Send the parcel at the post office
+    detailText: 
+    targetId: PostOffice
+    navTargetId: 
+    requiredItem: Parcel
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: 
+    rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
+  startItems:
+  - itemId: Parcel
+    amount: 1
+  companionId: 
+  flagsOnComplete: []
+  flagsOnFail: []
+  takeBackRewardsOnFail: 1
+  earliestHour: 0
+  latestHour: 18
+  cooldownDays: 1
+  allowAtNight: 0
+  offerInClassic: 1
+  classicWeight: 1
+  offerLines:
+  - Could you send this parcel at the post office?
+  allowInChallenge: 1
+  weight: 1
+  minDay: 1
+  challengeDeadlineMinutes: 60
+  challengeScore: 100
