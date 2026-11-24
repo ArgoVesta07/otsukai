@@ -577,15 +577,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052268814336
-    m_Localized: Bill
+    m_Localized: Payment slip
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174464
-    m_Localized: Clean clothes
+    m_Localized: Clean laundry
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174465
-    m_Localized: Laundry bag
+    m_Localized: Laundry
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174466
@@ -613,11 +613,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174472
-    m_Localized: Money
+    m_Localized: Cash
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174473
-    m_Localized: Parcel
+    m_Localized: Package
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174474
@@ -637,11 +637,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174478
-    m_Localized: Withdraw money at the ATM
+    m_Localized: Get cash from the ATM
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174479
-    m_Localized: Buy fertilizer at Juntendo
+    m_Localized: Buy fertilizer at the home center
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174480
@@ -649,7 +649,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174481
-    m_Localized: The garden needs fertilizer. Get some money from the ATM and buy it at Juntendo.
+    m_Localized: We're out of fertilizer for the garden. Could you get some cash from the ATM and buy some at the home center?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174482
@@ -661,7 +661,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174484
-    m_Localized: Could you buy some flowers for the table?
+    m_Localized: Could you pick up some flowers for the table?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174485
@@ -673,7 +673,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174487
-    m_Localized: Could you get some meat for dinner from the butcher?
+    m_Localized: Could you grab some meat from the butcher for dinner?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174488
@@ -681,11 +681,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174489
-    m_Localized: I have to go to city hall. Will you come with me?
+    m_Localized: I have some business at city hall. Mind coming along?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174490
-    m_Localized: Buy a sponge at Daiso
+    m_Localized: Buy a sponge at the 100-yen shop
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174491
@@ -693,23 +693,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174492
-    m_Localized: We're out of sponges. Could you buy one at Daiso?
+    m_Localized: We're out of sponges. Could you get one at the 100-yen shop?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174493
-    m_Localized: Wash the clothes at the laundromat
+    m_Localized: Do the laundry at the laundromat
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174494
-    m_Localized: Bring the clean clothes to {giver}
+    m_Localized: Bring the clean laundry to {giver}
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174495
-    m_Localized: The washing machine is broken. Could you take this to the laundromat?
+    m_Localized: The washing machine broke... Could you wash these at the laundromat?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174496
-    m_Localized: Take {giver} to the hospital
+    m_Localized: Go to the hospital with {giver}
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174497
@@ -721,7 +721,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174499
-    m_Localized: I have a hospital appointment. Will you come with me?
+    m_Localized: I have a doctor's appointment today. Would you come with me?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174500
@@ -733,19 +733,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174502
-    m_Localized: I'd love some melon bread from the bakery...
+    m_Localized: I'm craving melon bread from the bakery...
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174503
-    m_Localized: Pay the bill at the konbini
+    m_Localized: Pay the bill at the convenience store
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174504
-    m_Localized: Could you pay this bill at the konbini?
+    m_Localized: Could you pay this at the convenience store?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174505
-    m_Localized: Print the file at the konbini
+    m_Localized: Print the file at the convenience store
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174506
@@ -753,7 +753,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174507
-    m_Localized: Could you print this file at the konbini?
+    m_Localized: Could you print this at the convenience store? It's on the USB stick.
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174508
@@ -761,23 +761,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174509
-    m_Localized: Could you return this book to the library for me?
+    m_Localized: Could you return this book to the library?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174510
-    m_Localized: Send the parcel at the post office
+    m_Localized: Mail the package at the post office
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174511
-    m_Localized: Could you send this parcel at the post office?
+    m_Localized: Could you mail this package at the post office?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174512
-    m_Localized: Take your sister to the dagashiya
+    m_Localized: Take your sister to the candy shop
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174513
-    m_Localized: Your sister wants sweets. Could you take her to the dagashiya?
+    m_Localized: Your sister wants snacks. Could you take her to the candy shop?
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174514
@@ -789,11 +789,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174516
-    m_Localized: Take the trash to the collection point
+    m_Localized: Take out the trash
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174517
-    m_Localized: It's trash day! Take this out before the truck comes.
+    m_Localized: It's trash day! Take it out before the garbage truck comes.
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174518
@@ -809,15 +809,15 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174521
-    m_Localized: The dog wants a walk! Go to the park and along the river.
+    m_Localized: The dog wants a walk! Go by the park, then along the river.
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174522
-    m_Localized: Bring the money to {giver}
+    m_Localized: Bring the cash to {giver}
     m_Metadata:
       m_Items: []
   - m_Id: 11946052298174523
-    m_Localized: Could you get some money from the ATM?
+    m_Localized: Could you run to the ATM and get some cash?
     m_Metadata:
       m_Items: []
   references:
