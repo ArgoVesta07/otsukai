@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Passed" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.0475145">
+  <test-suite type="TestSuite" id="1000" name="otsukai" fullname="otsukai" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.047515" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1006" name="Assembly-CSharp-Editor.dll" fullname="C:/Users/prdfm/Downloads/授業/ゲーム制作B秋26/otsukai/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.036077" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="35920" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestFixture" id="1001" name="GameFlagsTests" fullname="GameFlagsTests" classname="GameFlagsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.034340" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1005" name="EmptyOrNullName_IsIgnored" fullname="GameFlagsTests.EmptyOrNullName_IsIgnored" methodname="EmptyOrNullName_IsIgnored" classname="GameFlagsTests" runstate="Runnable" seed="1667769000" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.015073" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1004" name="FlagSetToZero_CountsAsOff" fullname="GameFlagsTests.FlagSetToZero_CountsAsOff" methodname="FlagSetToZero_CountsAsOff" classname="GameFlagsTests" runstate="Runnable" seed="1918455931" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.000749" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1003" name="SetFlag_ReadsBackValue" fullname="GameFlagsTests.SetFlag_ReadsBackValue" methodname="SetFlag_ReadsBackValue" classname="GameFlagsTests" runstate="Runnable" seed="1911392593" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.000431" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1002" name="UnsetFlag_ReadsAsZeroAndOff" fullname="GameFlagsTests.UnsetFlag_ReadsAsZeroAndOff" methodname="UnsetFlag_ReadsAsZeroAndOff" classname="GameFlagsTests" runstate="Runnable" seed="1614497699" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.000257" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1009" name="Unity.Addressables.DocExampleCode.Editor.Tests.dll" fullname="C:/Users/prdfm/Downloads/授業/ゲーム制作B秋26/otsukai/Library/ScriptAssemblies/Unity.Addressables.DocExampleCode.Editor.Tests.dll" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.002815" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="35920" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1010" name="AddressableAssets" fullname="AddressableAssets" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.001598" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1011" name="DocExampleCode" fullname="AddressableAssets.DocExampleCode" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.001348" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1007" name="TestStub" fullname="AddressableAssets.DocExampleCode.TestStub" classname="AddressableAssets.DocExampleCode.TestStub" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.001172" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1008" name="RequiredTest" fullname="AddressableAssets.DocExampleCode.TestStub.RequiredTest" methodname="RequiredTest" classname="AddressableAssets.DocExampleCode.TestStub" runstate="Runnable" seed="160633839" result="Passed" start-time="2026-11-24 11:25:17Z" end-time="2026-11-24 11:25:17Z" duration="0.000404" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/prdfm/AppData/LocalLow/DefaultCompany/otsukai\TestResults.xml
+Saving results to: C:/Users/prdfm/AppData/LocalLow/DefaultCompany/otsukai\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
