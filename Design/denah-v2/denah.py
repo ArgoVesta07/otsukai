@@ -73,6 +73,17 @@ B = [
  ("2g","Rumah",5,5,10,-27,False,"rumah"),
  ("19b","Sampah",3,2,17,-27,True,"sampah"),
 ]
+# NavTarget / ErrandSpot id per building (the ids errand steps use). Buildings with an interior scene
+# (a Door) only get a NavTarget, so E isn't shared between the door and an errand spot.
+IDS = {"4":"Station","17":"Koban","12c":"HighSchool","12b":"JuniorHigh","3":"Konbini","11":"Library",
+       "23":"CityHall","13":"FlowerShop","24":"CakeShop","20":"Bakery","25":"Cafe","14":"Restaurant",
+       "21":"Butcher","22":"Greengrocer","16":"Drugstore","8":"PostOffice","5":"Daiso","6":"Hospital",
+       "10":"Pharmacy","15":"Laundry","1":"Supermarket","18":"HomeCenter","2":"Home","19":"TrashArea",
+       "19b":"TrashAreaEast","12a":"SchoolGate","26":"Dagashiya"}
+HAS_INTERIOR = {"1","2"}
+# Extra errand spots that aren't building doors: name, id, x, y (tile centre)
+SPOTS = [("ATM","ATM",-6.5,0.5),("Taman barat","ParkWest",-41.5,-21.5),("Jembatan","Bridge",-0.5,-27.5),
+         ("Taman tepi sungai","ParkRiverside",37.5,-27.5)]
 props = [("Kotak pos",-9.5,20.5),("Kotak pos",-4.5,1.5),("Kotak pos",-25.5,-23.5),("Kotak pos",-25.5,11.5),
          ("Halte bus",7.5,20.5),("Halte bus",29.5,0.5)]
 
@@ -122,10 +133,22 @@ assert all(v is not None for v in dist.values()), dist
 # ---- CSV
 with open(OUT+"/Denah_Kota_v2.csv","w",newline="") as f:
     w = csv.writer(f)
-    w.writerow(["No","Nama","Ukuran (tile)","Bisa masuk","Posisi root Unity X","Posisi root Unity Y","Pintu X","Pintu Y","Jarak jalan dari rumah (tile)"])
+    w.writerow(["No","Nama","Ukuran (tile)","Bisa masuk","Posisi root Unity X","Posisi root Unity Y","Pintu X","Pintu Y",
+                "Jarak jalan dari rumah (tile)","Target Id","Errand Spot"])
     for b in B:
         d = door(b)
-        w.writerow([b[0],b[1],f"{b[2]}x{b[3]}","Ya" if b[6] else "Tidak", b[4]+b[2]/2, b[5], d[0]+0.5, d[1]+0.5, dist[b[0]]])
+        tid = IDS.get(b[0], "")
+        spot = "Ya" if tid and b[0] not in HAS_INTERIOR else "Tidak"
+        w.writerow([b[0],b[1],f"{b[2]}x{b[3]}","Ya" if b[6] else "Tidak", b[4]+b[2]/2, b[5], d[0]+0.5, d[1]+0.5,
+                    dist[b[0]], tid, spot])
+    # spots and mailboxes: size 0x0, root = the spot itself
+    extra = SPOTS + [("Kotak pos","Mailbox",x,y) for n,x,y in props if n=="Kotak pos"]
+    for i,(name,tid,x,y) in enumerate(extra, 1):
+        t = (math.floor(x), math.floor(y))
+        assert t not in occupied, ("spot inside a building", name)
+        near = min(from_home.get((t[0]+dx,t[1]+dy), 10**9) for dx in (-1,0,1) for dy in (-1,0,1))
+        assert near < 10**9, ("spot not reachable", name)
+        w.writerow([f"T{i}",name,"0x0","Tidak",x,y,x,y,near,tid,"Ya"])
 
 # ---- picture
 col = {"rail":"#7d7068","river":"#7fb2dc","bridge":"#a9845c","path":"#e2cfa9","road":"#b9b5ad","plaza":"#d9cfc3",
