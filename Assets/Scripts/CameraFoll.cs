@@ -13,10 +13,26 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] Vector2 boundsSize = new Vector2(64f, 40f);
 
     Camera cam;
+    Vector2 townCenter, townSize;   // the bounds set in the Inspector, to go back to after a room
 
     void Awake()
     {
         cam = GetComponent<Camera>();
+        townCenter = boundsCenter;
+        townSize = boundsSize;
+    }
+
+    // A room (RoomArea) uses its own bounds while the player is in it
+    public void SetBounds(Vector2 center, Vector2 size)
+    {
+        boundsCenter = center;
+        boundsSize = size;
+    }
+
+    public void ResetBounds()
+    {
+        boundsCenter = townCenter;
+        boundsSize = townSize;
     }
 
     void LateUpdate()

@@ -629,7 +629,11 @@ public class QuestManager : MonoBehaviour
         bool wasRestricted = restrictToAvailable;
         restrictToAvailable = false;
         ForgetErrand(data.errandId);
-        StartErrand(data);
+
+        // Steps that go back to "Giver" need someone: a family member for an otsukai, a townsperson for a request
+        List<string> givers = NpcRegistry.FreeGiversShuffled(data.kind == ErrandKind.Otsukai ? NpcRole.Family : NpcRole.Townsperson);
+        string giver = givers.Count > 0 ? givers[0] : null;
+        StartErrand(data, -1f, null, true, giver, giver != null ? NpcRegistry.NameOf(giver) : null);
         restrictToAvailable = wasRestricted;
     }
 

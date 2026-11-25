@@ -1,0 +1,21 @@
+Kind,X,Y,W,H,Label
+ground,-48,-32,96,64,Whole map (Ground tilemap)
+rail,-48,29,96,3,Railway
+river,-48,-32,96,3,River
+bridge,-2,-32,4,3,
+path,-48,-29,96,2,Riverside path (pet walks)
+road,-48,16,96,3,Ekimae-dori
+plaza,-10,19,20,4,"Ekimae plaza (bus stop, taxis)"
+arcade,-31,8,56,3,Shotengai (pedestrians)
+road,-48,-2,96,3,Naka-dori
+road,-48,-14,96,3,Minami-dori
+road,-2,-29,4,45,
+road,-34,-27,3,43,
+road,25,-27,3,43,
+park,-47,-21,12,6,Park (pet walks)
+park,30,-27,17,12,Riverside park
+lot,12,-11,10,6,Supermarket parking
+lot,29,-11,3,7,
+field,-19,-19,14,4,School field
+hill,12,19,36,10,
+path,14,19,34,2,

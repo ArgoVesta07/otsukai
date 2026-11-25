@@ -912,8 +912,116 @@ MonoBehaviour:
     m_Localized: Dog
     m_Metadata:
       m_Items: []
-  - m_Id: 12214902554062848
-    m_Localized: Game saved
+  - m_Id: 12219444502949888
+    m_Localized: Station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892928
+    m_Localized: Koban
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892929
+    m_Localized: High School
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892930
+    m_Localized: Junior High School
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892931
+    m_Localized: Library
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892932
+    m_Localized: City Hall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892933
+    m_Localized: Flower Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892934
+    m_Localized: Cake Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892935
+    m_Localized: Bakery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892936
+    m_Localized: Coffee Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892937
+    m_Localized: Restaurant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892938
+    m_Localized: Butcher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892939
+    m_Localized: Greengrocer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892940
+    m_Localized: Drugstore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892941
+    m_Localized: Convenience Store
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892942
+    m_Localized: Post Office
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892943
+    m_Localized: 100-Yen Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892944
+    m_Localized: Hospital
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892945
+    m_Localized: Pharmacy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892946
+    m_Localized: Laundromat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892947
+    m_Localized: Home Center
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892948
+    m_Localized: Trash Collection Point
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892949
+    m_Localized: Elementary School
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892950
+    m_Localized: Candy Shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892951
+    m_Localized: ATM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892952
+    m_Localized: Park
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892953
+    m_Localized: Bridge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12219444544892954
+    m_Localized: Riverside Park
     m_Metadata:
       m_Items: []
   references:
