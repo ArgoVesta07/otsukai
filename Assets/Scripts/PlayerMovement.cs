@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +8,22 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody2D rb;
     Vector2 input;
+
+    // Zones that slow the player down (StairZone), each with its own speed factor. The slowest one counts.
+    readonly Dictionary<Object, float> speedFactors = new Dictionary<Object, float>();
+
+    public void SetSpeedFactor(Object source, float factor) => speedFactors[source] = factor;
+    public void ClearSpeedFactor(Object source) => speedFactors.Remove(source);
+
+    float SpeedFactor
+    {
+        get
+        {
+            float factor = 1f;
+            foreach (float f in speedFactors.Values) factor = Mathf.Min(factor, f);
+            return factor;
+        }
+    }
 
     // The player in the loaded scene, found by component (not by object name), or null
     public static GameObject FindPlayer()
@@ -41,6 +58,6 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.linearVelocity = input * speed;
+        rb.linearVelocity = input * speed * SpeedFactor;
     }
 }

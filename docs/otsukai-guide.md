@@ -100,14 +100,14 @@ Inventory (`InventoryManager/UI/Row`, `ItemData`), `Door` + `SceneTransition` (s
 | 5 | Polish: UI animation, sound | Later |
 
 ### Phase 1.5 checklist
-- [ ] Resize town to **96×64 tiles** (centre 0,0) → paint ground/roads, CameraFollow `boundsSize` 96×64, edge walls at ±48.5 / ±32.5.
-- [ ] Place buildings / NPCs per the town plan (section 7).
+- [x] Resize town to **96×64 tiles** (centre 0,0): Otsukai > Town > Paint Ground And Roads, CameraFollow `boundsSize` 96×64, `MapBounds` Edge Collider 2D around ±48 / ±32.
+- [x] Place buildings / NPCs per the town plan (section 7). Neighbour houses 2b–2k are still placeholders (need a door-less decor house prefab).
 - [ ] Props as root + Visual: Mailbox, ModeBoard, Bed, LetterDesk, EggShelf.
 - [ ] Interior tilemap floors + camera bounds per interior scene.
-- [ ] Spawn NavTargets on every door.
+- [x] Spawn NavTargets on every door (Import Layout CSV).
 - [ ] **StairZone** script (slow down + optional visual offset on stairs) — stairs to the school hill.
 - [ ] Update How to Play text (Memo = Tab).
-- [ ] Playtest + commit.
+- [x] Playtest + commit (errand test list passed, 2026-11-25).
 
 ## 7. Town plan (96×64 tiles) — layout v2
 
