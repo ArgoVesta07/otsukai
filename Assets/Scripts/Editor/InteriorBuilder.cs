@@ -159,7 +159,8 @@ public static class InteriorBuilder
             AddBox(walls, new Vector2(-w / 2f - 0.5f, -1f + (h + 4) / 2f), new Vector2(1, h + 4));
             AddBox(walls, new Vector2(w / 2f + 0.5f, -1f + (h + 4) / 2f), new Vector2(1, h + 4));
 
-            foreach (Piece piece in Layout(r.template, w, h, out Vector2 spot))
+            List<Piece> pieces = Layout(r.template, w, h, out Vector2 spot);
+            foreach (Piece piece in pieces)
             {
                 if (!items.TryGetValue(piece.key, out Item item)) continue;
                 Furniture(room.transform, piece, item);
