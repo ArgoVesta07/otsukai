@@ -410,8 +410,14 @@ public class GameHud : MonoBehaviour
         SetActive(navArrow.gameObject, show);
         if (!show) return;
 
+        // Inside a room with the target somewhere else: point at the room's way out first
+        Vector3 goal = target.transform.position;
+        RoomArea playerRoom = RoomArea.At(player.position);
+        if (playerRoom != null && RoomArea.At(goal) != playerRoom && playerRoom.Exit != null)
+            goal = playerRoom.Exit.position;
+
         // The arrow sprite points up, so subtract 90 degrees from the world angle
-        Vector2 dir = target.transform.position - player.position;
+        Vector2 dir = goal - player.position;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
         navArrow.localRotation = Quaternion.Euler(0f, 0f, angle);
     }

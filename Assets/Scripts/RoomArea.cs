@@ -15,6 +15,22 @@ public class RoomArea : MonoBehaviour
 
     static readonly List<RoomArea> all = new List<RoomArea>();
 
+    Transform exit;
+
+    // The door that leads out of this room (the first Door inside it), for the HUD arrow
+    public Transform Exit
+    {
+        get
+        {
+            if (exit == null)
+            {
+                Door d = GetComponentInChildren<Door>();
+                if (d != null) exit = d.transform;
+            }
+            return exit;
+        }
+    }
+
     void OnEnable() => all.Add(this);
     void OnDisable() => all.Remove(this);
 
