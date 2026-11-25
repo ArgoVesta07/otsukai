@@ -912,6 +912,10 @@ MonoBehaviour:
     m_Localized: Dog
     m_Metadata:
       m_Items: []
+  - m_Id: 12214902554062848
+    m_Localized: Game saved
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
