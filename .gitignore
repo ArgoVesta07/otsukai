@@ -25,3 +25,6 @@ Desktop.ini
 *.suo
 *.user
 *.userprefs
+
+# Claude Code Game Studios session logs (rewritten every session, local only)
+production/session-logs/
