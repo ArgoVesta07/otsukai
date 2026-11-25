@@ -458,11 +458,34 @@ function washer() {
   return b;
 }
 
+// Bed: 1 x 2 tiles, pillow at the top, blanket over the rest
+function bed() {
+  const W = T, H = 2 * T, b = new P.Buf(W, H);
+  const sheet = ramp(3, 210, 0.08, [0.72, 0.9], 8), blanket = ramp(3, 205, 0.4, [0.36, 0.58], 15);
+  b.rect(1, 1, W - 1, H - 1, WOOD[1]); b.rect(1, 1, W - 1, 3, WOOD[2]);          // frame, headboard lit
+  b.rect(2, 3, W - 2, 9, sheet[1]); b.rect(3, 4, W - 3, 8, sheet[2]);              // pillow
+  b.rect(2, 10, W - 2, H - 3, blanket[1]); b.rect(2, 10, W - 2, 12, blanket[2]);   // folded edge catches the light
+  b.rect(W - 3, 12, W - 2, H - 3, blanket[0]);
+  b.rect(1, H - 3, W - 1, H - 1, WOOD[0]);                                         // footboard
+  b.wall = 14;
+  return b;
+}
+// Writing desk: 2 x 1 tiles, with a letter on it
+function desk() {
+  const W = 2 * T, H = T, b = new P.Buf(W, H);
+  b.rect(1, 2, W - 1, 8, WOOD[2]); b.rect(1, 8, W - 1, 11, WOOD[1]);              // top and front edge
+  b.rect(2, 11, 4, H, WOOD[0]); b.rect(W - 4, 11, W - 2, H, WOOD[0]);              // legs
+  b.rect(12, 3, 20, 7, [240, 236, 225]); b.rect(12, 3, 20, 4, [200, 195, 185]);    // letter
+  b.wall = 6;
+  return b;
+}
+
 const PROPS = {
   FloorWood: ["Lantai kayu", floorWood], FloorTile: ["Lantai keramik", floorTile],
   WallFaceUpper: ["Dinding atas", wallFaceUpper], WallFace: ["Dinding", wallFace], WallTop: ["Atas dinding", wallTop],
   Counter: ["Kasir", () => counter(3)], Shelf: ["Rak", () => shelf(1)], Bookshelf: ["Rak buku", () => bookshelf(2)],
   Bench: ["Bangku", bench], CafeTable: ["Meja kafe", cafeTable], Washer: ["Mesin cuci", washer],
+  Bed: ["Kasur", bed], Desk: ["Meja surat", desk],
 };
 module.exports.PROPS = PROPS;
 
