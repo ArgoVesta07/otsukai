@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950534ad8bb4a4e44b451f1e65b16fd4, type: 3}
+  m_Name: NeighborFlowers
+  m_EditorClassIdentifier: Assembly-CSharp::ErrandData
+  errandId: NeighborFlowers
+  timeLimit: 0
+  kind: 0
+  steps:
+  - note: 
+    shortText: Buy flowers for {giver}
+    detailText: 
+    targetId: FlowerShop
+    navTargetId: 
+    requiredItem: 
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: Flowers
+    rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
+  - note: 
+    shortText: Bring the flowers to {giver}
+    detailText: 
+    targetId: Giver
+    navTargetId: 
+    requiredItem: Flowers
+    requiredAmount: 1
+    consumeRequiredItem: 1
+    rewardItem: 
+    rewardAmount: 1
+    shoppingList: []
+    requiredItems: []
+  startItems: []
+  companionId: 
+  flagsOnComplete: []
+  flagsOnFail: []
+  takeBackRewardsOnFail: 1
+  earliestHour: 0
+  latestHour: 18
+  cooldownDays: 3
+  allowAtNight: 0
+  offerInClassic: 1
+  classicWeight: 1
+  offerLines:
+  - "It's our anniversary. Could you buy flowers for my wife?"
+  allowInChallenge: 1
+  weight: 1
+  minDay: 1
+  challengeDeadlineMinutes: 120
+  challengeScore: 100
