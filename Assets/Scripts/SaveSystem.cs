@@ -145,6 +145,7 @@ public static class SaveSystem
             GameObject player = PlayerMovement.FindPlayer();
             if (player != null)
                 player.transform.position = data.playerPosition;
+            RoomArea.ApplyCamera(data.playerPosition);   // saved inside a room: use its camera bounds
         }
 
         Debug.Log("Game loaded (saved " + data.savedAt + ").");
