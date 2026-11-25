@@ -349,3 +349,145 @@ if (require.main === module) {
     console.log("preview:", items.length, "sprites");
   }
 }
+
+// --- Interior blockout: tiles and furniture ------------------------------------------------------------
+// Light from the top left, 3/4 view: the top of a piece is lighter, its front face darker.
+
+function floorWood() {
+  const b = new P.Buf(T, T), wood = ramp(3, 32, 0.38, [0.5, 0.66], 12);
+  b.rect(0, 0, T, T, wood[1]);
+  for (let y = 0; y < T; y += 4) b.rect(0, y + 3, T, y + 4, wood[0]);            // plank seams
+  for (let y = 0; y < T; y += 4) b.pset(((y / 4) % 2) * 8 + 3, y + 1, wood[2]);
+  b.pset(((y => y)(0)) + 11, 6, wood[0]); b.pset(5, 10, wood[0]);                 // board ends
+  return b;
+}
+function floorTile() {
+  const b = new P.Buf(T, T), tile = ramp(3, 210, 0.06, [0.72, 0.86], 10);
+  b.rect(0, 0, T, T, tile[1]);
+  b.rect(0, 0, T, 1, tile[0]); b.rect(0, 0, 1, T, tile[0]);                      // grout
+  b.rect(1, 1, 3, 2, tile[2]);
+  return b;
+}
+// Back wall face, one tile tall: plaster with a skirting board at the bottom
+function wallFace() {
+  const b = new P.Buf(T, T), wall = ramp(3, 40, 0.18, [0.6, 0.8], 8);
+  b.rect(0, 0, T, T, wall[1]);
+  b.rect(0, 0, T, 1, wall[2]);
+  b.rect(0, T - 3, T, T, WOOD[1]); b.rect(0, T - 3, T, T - 2, WOOD[2]);
+  return b;
+}
+// Top of a wall seen from above (the edge around the room)
+function wallTop() {
+  const b = new P.Buf(T, T), top = ramp(2, 30, 0.12, [0.22, 0.32], 8);
+  b.rect(0, 0, T, T, top[1]);
+  b.rect(0, T - 1, T, T, top[0]);
+  return b;
+}
+
+// Counter: wide top, front face, a register on top. w tiles wide, 2 tiles tall
+function counter(wT = 3) {
+  const W = wT * T, H = 2 * T, b = new P.Buf(W, H);
+  const top = ramp(3, 30, 0.4, [0.42, 0.62], 12), face = ramp(2, 25, 0.42, [0.26, 0.36], 12);
+  b.rect(0, 6, W, 16, top[1]); b.rect(0, 6, W, 7, top[2]);
+  b.rect(0, 16, W, H, face[1]); b.rect(0, 16, W, 17, face[0]);
+  for (let x = 8; x < W; x += 16) b.rect(x, 18, x + 1, H, face[0]);              // panels
+  b.rect(W - 14, 2, W - 4, 10, [70, 74, 82]); b.rect(W - 13, 3, W - 5, 6, [120, 170, 160]); // register
+  b.wall = 12;
+  return b;
+}
+// Shop shelf with goods in colour rows. 2 x 2 tiles
+function shelf(seed = 1) {
+  const W = 2 * T, H = 2 * T, b = new P.Buf(W, H), r = P.rng(seed);
+  const frame = ramp(2, 215, 0.08, [0.55, 0.72], 8);
+  b.rect(1, 2, W - 1, H - 1, frame[0]);
+  b.rect(1, 2, W - 1, 4, frame[1]);
+  const goods = [[200, 80, 70], [230, 190, 80], [90, 150, 200], [120, 170, 90], [210, 140, 170], [240, 240, 230]];
+  for (let row = 0; row < 3; row++) {
+    const y = 6 + row * 8;
+    b.rect(3, y + 5, W - 3, y + 6, frame[1]);                                   // shelf board
+    for (let x = 3; x < W - 4; x += 3) {
+      const c = goods[Math.floor(r() * goods.length)];
+      b.rect(x, y + 1, x + 2, y + 5, c);
+    }
+  }
+  b.wall = 10;
+  return b;
+}
+function bookshelf(seed = 2) {
+  const W = 2 * T, H = 2 * T, b = new P.Buf(W, H), r = P.rng(seed);
+  b.rect(1, 2, W - 1, H - 1, WOOD[1]); b.rect(1, 2, W - 1, 4, WOOD[2]);
+  const spines = [[150, 60, 55], [60, 90, 140], [70, 120, 80], [180, 150, 90], [110, 80, 120]];
+  for (let row = 0; row < 3; row++) {
+    const y = 6 + row * 8;
+    b.rect(3, y + 5, W - 3, y + 6, WOOD[2]);
+    for (let x = 3; x < W - 3; x += 2) if (r() > 0.15) b.rect(x, y + 1 + (r() > 0.7 ? 1 : 0), x + 2, y + 5, spines[Math.floor(r() * spines.length)]);
+  }
+  b.wall = 10;
+  return b;
+}
+// Waiting bench: 2 x 1 tiles
+function bench() {
+  const W = 2 * T, H = T, b = new P.Buf(W, H), seat = ramp(2, 210, 0.3, [0.35, 0.5], 12);
+  b.rect(1, 3, W - 1, 9, seat[1]); b.rect(1, 3, W - 1, 4, seat[0] === seat[1] ? seat[1] : seat[1]);
+  b.rect(1, 9, W - 1, 11, seat[0]);
+  b.rect(3, 11, 5, H, FRAME[0]); b.rect(W - 5, 11, W - 3, H, FRAME[0]);
+  b.wall = 5;
+  return b;
+}
+// Café table with two stools: 2 x 2 tiles
+function cafeTable() {
+  const W = 2 * T, H = 2 * T, b = new P.Buf(W, H), top = ramp(2, 30, 0.4, [0.45, 0.6], 12);
+  b.blob(16, 14, 9, top[1]); b.blob(15, 13, 6, top[1]); b.rect(15, 22, 17, 28, FRAME[0]);
+  b.blob(4, 24, 3.5, WOOD[2]); b.blob(28, 24, 3.5, WOOD[2]);
+  b.wall = 8;
+  return b;
+}
+// Washing machine: 1 x 2 tiles
+function washer() {
+  const W = T, H = 2 * T, b = new P.Buf(W, H), body = ramp(3, 210, 0.05, [0.7, 0.9], 8);
+  b.rect(1, 4, W - 1, H - 1, body[1]); b.rect(1, 4, W - 1, 6, body[2]); b.rect(W - 2, 6, W - 1, H - 1, body[0]);
+  b.ring(8, 19, 4, 1.2, FRAME[0]); b.blob(8, 19, 4, GLASS[1]); b.rect(3, 8, 7, 10, [90, 160, 120]);
+  b.wall = 10;
+  return b;
+}
+
+const PROPS = {
+  FloorWood: ["Lantai kayu", floorWood], FloorTile: ["Lantai keramik", floorTile],
+  WallFace: ["Dinding", wallFace], WallTop: ["Atas dinding", wallTop],
+  Counter: ["Kasir", () => counter(3)], Shelf: ["Rak", () => shelf(1)], Bookshelf: ["Rak buku", () => bookshelf(2)],
+  Bench: ["Bangku", bench], CafeTable: ["Meja kafe", cafeTable], Washer: ["Mesin cuci", washer],
+};
+module.exports.PROPS = PROPS;
+
+// Mock room for the preview: a shop of 12 x 8 tiles with walls, counter, shelves
+function mockRoom(kind) {
+  const w = 12, h = 8, b = new P.Buf((w + 2) * T, (h + 3) * T);
+  const blit = (s, x, y) => { for (let j = 0; j < s.h; j++) for (let i = 0; i < s.w; i++) { const c = s.px[j * s.w + i]; if (c >>> 24) b.px[(y + j) * b.w + x + i] = c; } };
+  const fl = kind === "office" ? floorTile() : floorWood(), wf = wallFace(), wt = wallTop();
+  for (let x = 0; x < w + 2; x++) { blit(wt, x * T, 0); blit(wt, x * T, (h + 2) * T); }
+  for (let y = 1; y < h + 2; y++) { blit(wt, 0, y * T); blit(wt, (w + 1) * T, y * T); }
+  for (let x = 1; x <= w; x++) blit(wf, x * T, T);
+  for (let y = 2; y < h + 2; y++) for (let x = 1; x <= w; x++) blit(fl, x * T, y * T);
+  if (kind === "office") {
+    blit(counter(3), 3 * T, 2 * T); blit(counter(3), 6 * T, 2 * T); blit(counter(3), 9 * T, 2 * T);
+    blit(bench(), 3 * T, 6 * T); blit(bench(), 6 * T, 6 * T); blit(bench(), 9 * T, 6 * T);
+  } else if (kind === "cafe") {
+    blit(counter(3), 8 * T, 2 * T); blit(cafeTable(), 2 * T, 4 * T); blit(cafeTable(), 5 * T, 6 * T); blit(cafeTable(), 9 * T, 6 * T);
+  } else {
+    blit(counter(3), 8 * T, 2 * T);
+    for (let i = 0; i < 3; i++) blit(shelf(i + 3), (2 + i * 2) * T, 5 * T);
+    blit(shelf(7), 1 * T, 2 * T); blit(shelf(8), 3 * T, 2 * T);
+  }
+  // exit door gap in the bottom wall
+  b.rect(Math.floor((w + 2) / 2) * T - 8, (h + 2) * T, Math.floor((w + 2) / 2) * T + 8, (h + 3) * T, [40, 30, 25]);
+  return b;
+}
+
+if (require.main === module && process.argv[2] === "interior") {
+  const items = Object.entries(PROPS).map(([k, [name, make]]) => ({ buf: make(), label: name, scale: 3 }));
+  items.push({ buf: mockRoom("shop"), label: "contoh: toko", scale: 2 });
+  items.push({ buf: mockRoom("office"), label: "contoh: kantor", scale: 2 });
+  items.push({ buf: mockRoom("cafe"), label: "contoh: kafe", scale: 2 });
+  P.save(P.sheet(items, { cols: 5, gap: 8 }), path.join(__dirname, "preview_interior.png"));
+  console.log("interior preview written");
+}
