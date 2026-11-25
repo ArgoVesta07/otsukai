@@ -76,6 +76,20 @@
    "w": 1,
    "h": 2,
    "wall": 0.63
+  },
+  {
+   "key": "Bed",
+   "name": "Kasur",
+   "w": 1,
+   "h": 2,
+   "wall": 0.88
+  },
+  {
+   "key": "Desk",
+   "name": "Meja surat",
+   "w": 2,
+   "h": 1,
+   "wall": 0.38
   }
  ]
 }

@@ -282,7 +282,7 @@ public static class InteriorBuilder
     }
 
     // A Tile asset for an interior sprite, made once in Assets/Art/Interior/Tiles
-    static TileBase TileFor(string key)
+    internal static TileBase TileFor(string key)
     {
         string path = TileFolder + key + ".asset";
         Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(ArtFolder + "Interior_" + key + ".png");
