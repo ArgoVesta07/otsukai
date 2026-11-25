@@ -671,15 +671,15 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.000967118
+    x: 0
     y: 0
-    width: 0.99806577
-    height: 0.9982788
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 9.0625
+  orthographic size: 7.0625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1156,7 +1156,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
   sceneToLoad: MainScene
-  spawnPosition: {x: -11, y: 0, z: 0}
+  spawnPosition: {x: 8, y: -12.5, z: 0}
   promptOffset: {x: 0, y: 1.2}
   promptText: '[E] Exit'
 --- !u!61 &1480548851

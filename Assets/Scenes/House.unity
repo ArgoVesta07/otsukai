@@ -701,15 +701,15 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.0010893246
+    x: 0
     y: 0
-    width: 0.99782133
-    height: 0.99806577
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 8.0625
+  orthographic size: 7.0625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -753,6 +753,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 1105809785}
+  useBounds: 1
+  boundsCenter: {x: 0, y: 0}
+  boundsSize: {x: 64, y: 40}
 --- !u!114 &1063329156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1641,7 +1644,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
   sceneToLoad: MainScene
-  spawnPosition: {x: 5, y: 2, z: 0}
+  spawnPosition: {x: -28.5, y: -28.5, z: 0}
   promptOffset: {x: 0, y: 1.2}
   promptText: '[E] Exit'
 --- !u!114 &2019569282
