@@ -94,6 +94,25 @@ public class NPC : MonoBehaviour
     bool playerNear;
     bool inDialogue;     // bottom box is open (player locked)
     bool bubbleActive;   // speech bubble is showing (player free)
+    bool wasQuiet;
+    Follower follower;
+
+    // Walking along with the player (Follower): no prompt and no talking, so E reaches the place the player
+    // is walking to. Talking works again when the errand's current step is this NPC ("Give the medicine to Mom").
+    bool Quiet
+    {
+        get
+        {
+            if (follower == null || !follower.IsFollowing) return false;
+            QuestManager quest = QuestManager.Instance;
+            return quest == null || !quest.IsCurrentTarget(targetId);
+        }
+    }
+
+    void Awake()
+    {
+        follower = GetComponent<Follower>();
+    }
 
     void OnEnable()
     {
@@ -107,7 +126,7 @@ public class NPC : MonoBehaviour
         {
             playerNear = true;
 
-            if (!bubbleActive)
+            if (!bubbleActive && !Quiet)
                 InteractionPrompt.Show(promptText, transform);
         }
     }
@@ -139,6 +158,15 @@ public class NPC : MonoBehaviour
     {
         UpdateOfferMarker();
 
+        // Started or stopped walking along while the player is next to us: hide or bring back the prompt
+        bool quiet = Quiet;
+        if (quiet != wasQuiet && playerNear && !inDialogue && !bubbleActive)
+        {
+            if (quiet) InteractionPrompt.Hide();
+            else InteractionPrompt.Show(promptText, transform);
+        }
+        wasQuiet = quiet;
+
         var k = Keyboard.current;
         if (k == null) return;
         if (!k.eKey.wasPressedThisFrame) return;
@@ -152,7 +180,7 @@ public class NPC : MonoBehaviour
             return;
         }
 
-        if (!playerNear) return;
+        if (!playerNear || quiet) return;
 
         if (bubbleActive)
         {

@@ -22,6 +22,16 @@ public class Follower : MonoBehaviour
 
     string Id => !string.IsNullOrEmpty(followerId) ? followerId : npc != null ? npc.targetId : null;
 
+    // True while a running errand has this as its companion
+    public bool IsFollowing
+    {
+        get
+        {
+            QuestManager quest = QuestManager.Instance;
+            return quest != null && quest.IsCompanion(Id);
+        }
+    }
+
     void Awake()
     {
         npc = GetComponent<NPC>();
@@ -29,8 +39,7 @@ public class Follower : MonoBehaviour
 
     void Update()
     {
-        QuestManager quest = QuestManager.Instance;
-        if (quest == null || !quest.IsCompanion(Id)) return;
+        if (!IsFollowing) return;
 
         if (player == null)
         {
