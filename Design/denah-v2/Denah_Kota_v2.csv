@@ -1,50 +1,50 @@
-No,Nama,Ukuran (tile),Bisa masuk,Posisi root Unity X,Posisi root Unity Y,Pintu X,Pintu Y,Jarak jalan dari rumah (tile),Target Id,Errand Spot,Label
-4,Stasiun,14x6,Tidak,0.0,23,-0.5,22.5,78,Station,Ya,Station
-17,Koban,4x4,Tidak,12.0,19,11.5,18.5,86,Koban,Ya,Koban
-12c,SMA,11x7,Tidak,19.5,21,19.5,20.5,96,HighSchool,Ya,High School
-12b,SMP,11x7,Tidak,34.5,21,34.5,20.5,111,JuniorHigh,Ya,Junior High School
-2i,Rumah,5x5,Tidak,-14.5,19,-14.5,18.5,66,,Tidak,
-11,Perpus,10x6,Ya,-26.0,19,-26.5,18.5,54,Library,Ya,Library
-23,Shiyakusho,12x7,Ya,-41.0,19,-41.5,18.5,59,CityHall,Ya,City Hall
-13,Bunga,4x5,Ya,-22.0,11,-22.5,10.5,50,FlowerShop,Ya,Flower Shop
-24,Kue,4x5,Ya,-18.0,11,-18.5,10.5,52,CakeShop,Ya,Cake Shop
-20,Roti,4x5,Ya,-14.0,11,-14.5,10.5,52,Bakery,Ya,Bakery
-25,Kopi,4x5,Ya,-10.0,11,-10.5,10.5,56,Cafe,Ya,Coffee Shop
-14,Restoran,6x5,Ya,-5.0,11,-5.5,10.5,61,Restaurant,Ya,Restaurant
-21,Daging,4x5,Ya,4.0,11,3.5,10.5,70,Butcher,Ya,Butcher
-22,Yaoya,4x5,Ya,8.0,11,7.5,10.5,74,Greengrocer,Ya,Greengrocer
-16,Drugstore,8x5,Ya,14.0,11,13.5,10.5,80,Drugstore,Ya,Drugstore
-3,Konbini,7x5,Ya,-25.5,1,-25.5,0.5,31,Konbini,Ya,Convenience Store
-2j,Rumah,5x5,Tidak,-19.5,1,-19.5,0.5,37,,Tidak,
-8,Yuubin+ATM,7x5,Ya,-8.5,1,-8.5,0.5,48,PostOffice,Ya,Post Office
-27b,Papan Mode,2x2,Ya,3.0,1,2.5,0.5,59,ModeBoard,Tidak,
-5,Daiso,8x5,Ya,8.0,1,7.5,0.5,64,Daiso,Ya,100-Yen Shop
-2k,Rumah,5x5,Tidak,17.5,1,17.5,0.5,74,,Tidak,
-6,Rumah Sakit,12x8,Ya,36.0,1,35.5,0.5,92,Hospital,Ya,Hospital
-10,Apotek,4x4,Ya,45.0,1,44.5,0.5,101,Pharmacy,Ya,Pharmacy
-2b,Rumah,5x5,Tidak,-44.5,-11,-44.5,-11.5,32,,Tidak,
-2c,Rumah,5x5,Tidak,-38.5,-11,-38.5,-11.5,26,,Tidak,
-2d,Rumah,5x5,Tidak,-28.5,-11,-28.5,-11.5,22,,Tidak,
-15,Laundry,4x5,Ya,-22.0,-11,-22.5,-11.5,22,Laundry,Ya,Laundromat
-2h,Rumah,5x5,Tidak,-16.5,-11,-16.5,-11.5,28,,Tidak,
-1,Supa,8x6,Ya,8.0,-11,7.5,-11.5,52,Supermarket,Tidak,
-18,Juntendo,12x7,Ya,38.0,-11,37.5,-11.5,82,HomeCenter,Ya,Home Center
-2e,Rumah,5x5,Tidak,-44.5,-27,-44.5,-27.5,16,,Tidak,
-2f,Rumah,5x5,Tidak,-38.5,-27,-38.5,-27.5,10,,Tidak,
-2,Rumah Player,5x5,Ya,-28.5,-27,-28.5,-27.5,0,Home,Tidak,
-19,Sampah,3x2,Ya,-23.5,-27,-23.5,-27.5,5,TrashArea,Ya,Trash Collection Point
-27,Papan Mode,2x2,Ya,-21.0,-27,-21.5,-27.5,7,ModeBoard,Tidak,
-12a,SD,14x8,Tidak,-12.0,-27,-12.5,-27.5,16,SchoolGate,Ya,Elementary School
-26,Dagashiya,5x5,Ya,5.5,-27,5.5,-27.5,34,Dagashiya,Ya,Candy Shop
-2g,Rumah,5x5,Tidak,12.5,-27,12.5,-27.5,41,,Tidak,
-19b,Sampah,3x2,Ya,18.5,-27,18.5,-27.5,47,TrashAreaEast,Ya,Trash Collection Point
-T1,ATM,0x0,Tidak,-6.5,0.5,-6.5,0.5,48,ATM,Ya,ATM
-T2,Taman barat,0x0,Tidak,-41.5,-21.5,-41.5,-21.5,18,ParkWest,Ya,Park
-T3,Jembatan,0x0,Tidak,-0.5,-27.5,-0.5,-27.5,27,Bridge,Ya,Bridge
-T4,Taman tepi sungai,0x0,Tidak,37.5,-27.5,37.5,-27.5,65,ParkRiverside,Ya,Riverside Park
-T5,Kotak pos,0x0,Tidak,-9.5,20.5,-9.5,20.5,71,Mailbox,Ya,Postbox
-T6,Kotak pos,0x0,Tidak,-4.5,1.5,-4.5,1.5,51,Mailbox,Ya,Postbox
-T7,Kotak pos,0x0,Tidak,-34.5,-26.5,-34.5,-26.5,5,Mailbox,Ya,Postbox
-T8,Kotak pos,0x0,Tidak,-25.5,11.5,-25.5,11.5,46,Mailbox,Ya,Postbox
-T9,Halte bus,0x0,Tidak,7.5,20.5,7.5,20.5,82,,Tidak,
-T10,Halte bus,0x0,Tidak,29.5,0.5,29.5,0.5,84,,Tidak,
+No,Name,Size (tiles),Enterable,Root X,Root Y,Door X,Door Y,Walk From Home (tiles),Target Id,Errand Spot,Label
+4,Station,14x6,No,0.0,23,-0.5,22.5,78,Station,Yes,Station
+17,Koban,4x4,No,12.0,19,11.5,18.5,86,Koban,Yes,Koban
+12c,High School,11x7,No,19.5,21,19.5,20.5,96,HighSchool,Yes,High School
+12b,Junior High,11x7,No,34.5,21,34.5,20.5,111,JuniorHigh,Yes,Junior High School
+2i,House,5x5,No,-14.5,19,-14.5,18.5,66,,No,
+11,Library,10x6,Yes,-26.0,19,-26.5,18.5,54,Library,Yes,Library
+23,City Hall,12x7,Yes,-41.0,19,-41.5,18.5,59,CityHall,Yes,City Hall
+13,Flower Shop,4x5,Yes,-22.0,11,-22.5,10.5,50,FlowerShop,Yes,Flower Shop
+24,Cake Shop,4x5,Yes,-18.0,11,-18.5,10.5,52,CakeShop,Yes,Cake Shop
+20,Bakery,4x5,Yes,-14.0,11,-14.5,10.5,52,Bakery,Yes,Bakery
+25,Coffee Shop,4x5,Yes,-10.0,11,-10.5,10.5,56,Cafe,Yes,Coffee Shop
+14,Restaurant,6x5,Yes,-5.0,11,-5.5,10.5,61,Restaurant,Yes,Restaurant
+21,Butcher,4x5,Yes,4.0,11,3.5,10.5,70,Butcher,Yes,Butcher
+22,Greengrocer,4x5,Yes,8.0,11,7.5,10.5,74,Greengrocer,Yes,Greengrocer
+16,Drugstore,8x5,Yes,14.0,11,13.5,10.5,80,Drugstore,Yes,Drugstore
+3,Konbini,7x5,Yes,-25.5,1,-25.5,0.5,31,Konbini,Yes,Convenience Store
+2j,House,5x5,No,-19.5,1,-19.5,0.5,37,,No,
+8,Post Office,7x5,Yes,-8.5,1,-8.5,0.5,48,PostOffice,Yes,Post Office
+27b,Mode Board,2x2,Yes,3.0,1,2.5,0.5,59,ModeBoard,No,
+5,Daiso,8x5,Yes,8.0,1,7.5,0.5,64,Daiso,Yes,100-Yen Shop
+2k,House,5x5,No,17.5,1,17.5,0.5,74,,No,
+6,Hospital,12x8,Yes,36.0,1,35.5,0.5,92,Hospital,Yes,Hospital
+10,Pharmacy,4x4,Yes,45.0,1,44.5,0.5,101,Pharmacy,Yes,Pharmacy
+2b,House,5x5,No,-44.5,-11,-44.5,-11.5,32,,No,
+2c,House,5x5,No,-38.5,-11,-38.5,-11.5,26,,No,
+2d,House,5x5,No,-28.5,-11,-28.5,-11.5,22,,No,
+15,Laundromat,4x5,Yes,-22.0,-11,-22.5,-11.5,22,Laundry,Yes,Laundromat
+2h,House,5x5,No,-16.5,-11,-16.5,-11.5,28,,No,
+1,Supermarket,8x6,Yes,8.0,-11,7.5,-11.5,52,Supermarket,No,
+18,Home Center,12x7,Yes,38.0,-11,37.5,-11.5,82,HomeCenter,Yes,Home Center
+2e,House,5x5,No,-44.5,-27,-44.5,-27.5,16,,No,
+2f,House,5x5,No,-38.5,-27,-38.5,-27.5,10,,No,
+2,Player House,5x5,Yes,-28.5,-27,-28.5,-27.5,0,Home,No,
+19,Trash Point,3x2,Yes,-23.5,-27,-23.5,-27.5,5,TrashArea,Yes,Trash Collection Point
+27,Mode Board,2x2,Yes,-21.0,-27,-21.5,-27.5,7,ModeBoard,No,
+12a,Elementary School,14x8,No,-12.0,-27,-12.5,-27.5,16,SchoolGate,Yes,Elementary School
+26,Dagashiya,5x5,Yes,5.5,-27,5.5,-27.5,34,Dagashiya,Yes,Candy Shop
+2g,House,5x5,No,12.5,-27,12.5,-27.5,41,,No,
+19b,Trash Point,3x2,Yes,18.5,-27,18.5,-27.5,47,TrashAreaEast,Yes,Trash Collection Point
+T1,ATM,0x0,No,-6.5,0.5,-6.5,0.5,48,ATM,Yes,ATM
+T2,Park West,0x0,No,-41.5,-21.5,-41.5,-21.5,18,ParkWest,Yes,Park
+T3,Bridge,0x0,No,-0.5,-27.5,-0.5,-27.5,27,Bridge,Yes,Bridge
+T4,Riverside Park,0x0,No,37.5,-27.5,37.5,-27.5,65,ParkRiverside,Yes,Riverside Park
+T5,Postbox,0x0,No,-9.5,20.5,-9.5,20.5,71,Mailbox,Yes,Postbox
+T6,Postbox,0x0,No,-4.5,1.5,-4.5,1.5,51,Mailbox,Yes,Postbox
+T7,Postbox,0x0,No,-34.5,-26.5,-34.5,-26.5,5,Mailbox,Yes,Postbox
+T8,Postbox,0x0,No,-25.5,11.5,-25.5,11.5,46,Mailbox,Yes,Postbox
+T9,Bus Stop,0x0,No,7.5,20.5,7.5,20.5,82,,No,
+T10,Bus Stop,0x0,No,29.5,0.5,29.5,0.5,84,,No,

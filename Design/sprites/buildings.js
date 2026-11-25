@@ -280,42 +280,42 @@ const NEIGHBOUR_ROOFS = [
 ];
 
 const BUILDINGS = {
-  "1":   ["Supa",        () => store(8, 6, { signHue: 355 })],
-  "2":   ["Rumah Player", () => house(5, 5, { roofHue: 8, roofSat: 0.42, roofShift: 18 })],
+  "1":   ["Supermarket",        () => store(8, 6, { signHue: 355 })],
+  "2":   ["Player House", () => house(5, 5, { roofHue: 8, roofSat: 0.42, roofShift: 18 })],
   "3":   ["Konbini",     () => store(7, 5, { signHue: 140, signSat: 0.5, stripe: 25, roofShare: 0.3 })],
-  "4":   ["Stasiun",     () => civic(14, 6, { signHue: 210, doorTiles: 3, clock: false })],
+  "4":   ["Station",     () => civic(14, 6, { signHue: 210, doorTiles: 3, clock: false })],
   "5":   ["Daiso",       () => store(8, 5, { signHue: 330, signSat: 0.6, roofShare: 0.3 })],
-  "6":   ["Rumah Sakit", () => civic(12, 8, { signHue: 200, wallLight: [0.7, 0.9] })],
-  "8":   ["Yuubin+ATM",  () => store(7, 5, { signHue: 0, signSat: 0.7, signLight: [0.36, 0.56], roofShare: 0.3 })],
-  "10":  ["Apotek",      () => store(4, 4, { signHue: 145, signSat: 0.5, roofShare: 0.3, signH: 6 })],
-  "11":  ["Perpus",      () => civic(10, 6, { wallHue: 25, wallSat: 0.22, wallLight: [0.5, 0.7] })],
-  "12a": ["SD",          () => civic(14, 8, { clock: true })],
-  "12b": ["SMP",         () => civic(11, 7, { clock: true })],
-  "12c": ["SMA",         () => civic(11, 7, { clock: true, wallHue: 200, wallSat: 0.06 })],
-  "13":  ["Bunga",       () => house(4, 5, { roofShare: 0.34, awning: 330, roofHue: 200, noWindows: true })],
-  "14":  ["Restoran",    () => house(6, 5, { roofShare: 0.34, awning: 5, roofHue: 20, roofSat: 0.3, roofShift: 18 })],
-  "15":  ["Laundry",     () => store(4, 5, { signHue: 195, signSat: 0.5, roofShare: 0.3, signH: 6 })],
+  "6":   ["Hospital", () => civic(12, 8, { signHue: 200, wallLight: [0.7, 0.9] })],
+  "8":   ["Post Office",  () => store(7, 5, { signHue: 0, signSat: 0.7, signLight: [0.36, 0.56], roofShare: 0.3 })],
+  "10":  ["Pharmacy",      () => store(4, 4, { signHue: 145, signSat: 0.5, roofShare: 0.3, signH: 6 })],
+  "11":  ["Library",      () => civic(10, 6, { wallHue: 25, wallSat: 0.22, wallLight: [0.5, 0.7] })],
+  "12a": ["Elementary School",          () => civic(14, 8, { clock: true })],
+  "12b": ["Junior High",         () => civic(11, 7, { clock: true })],
+  "12c": ["High School",         () => civic(11, 7, { clock: true, wallHue: 200, wallSat: 0.06 })],
+  "13":  ["Flower Shop",       () => house(4, 5, { roofShare: 0.34, awning: 330, roofHue: 200, noWindows: true })],
+  "14":  ["Restaurant",    () => house(6, 5, { roofShare: 0.34, awning: 5, roofHue: 20, roofSat: 0.3, roofShift: 18 })],
+  "15":  ["Laundromat",     () => store(4, 5, { signHue: 195, signSat: 0.5, roofShare: 0.3, signH: 6 })],
   "16":  ["Drugstore",   () => store(8, 5, { signHue: 215, signSat: 0.55, roofShare: 0.3 })],
   "17":  ["Koban",       () => house(4, 4, { roofShare: 0.36, roofHue: 220, roofSat: 0.18, wallSat: 0.06, lamp: true, noWindows: true })],
-  "18":  ["Juntendo",    () => store(12, 7, { signHue: 30, signSat: 0.75, signLight: [0.36, 0.58], roofShare: 0.32, doorTiles: 2 })],
-  "19":  ["Sampah",      () => gomi(3, 2)],
-  "20":  ["Roti",        () => house(4, 5, { roofShare: 0.34, awning: 35, roofHue: 25, roofSat: 0.3, roofShift: 18, noWindows: true })],
-  "21":  ["Daging",      () => house(4, 5, { roofShare: 0.34, awning: 0, awningSat: 0.5, roofHue: 215, noWindows: true })],
-  "22":  ["Yaoya",       () => house(4, 5, { roofShare: 0.34, awning: 100, roofHue: 150, roofSat: 0.25, roofShift: 30, noWindows: true })],
-  "24":  ["Kue",         () => house(4, 5, { roofShare: 0.34, awning: 345, awningSat: 0.4, roofHue: 15, roofSat: 0.3, roofShift: 18, noWindows: true })],
-  "25":  ["Kopi",        () => house(4, 5, { roofShare: 0.34, awning: 25, awningSat: 0.35, roofHue: 215, noWindows: true, wood: true })],
-  "23":  ["Shiyakusho",  () => civic(12, 7, { signHue: 215 })],
+  "18":  ["Home Center",    () => store(12, 7, { signHue: 30, signSat: 0.75, signLight: [0.36, 0.58], roofShare: 0.32, doorTiles: 2 })],
+  "19":  ["Trash Point",      () => gomi(3, 2)],
+  "20":  ["Bakery",        () => house(4, 5, { roofShare: 0.34, awning: 35, roofHue: 25, roofSat: 0.3, roofShift: 18, noWindows: true })],
+  "21":  ["Butcher",      () => house(4, 5, { roofShare: 0.34, awning: 0, awningSat: 0.5, roofHue: 215, noWindows: true })],
+  "22":  ["Greengrocer",       () => house(4, 5, { roofShare: 0.34, awning: 100, roofHue: 150, roofSat: 0.25, roofShift: 30, noWindows: true })],
+  "24":  ["Cake Shop",         () => house(4, 5, { roofShare: 0.34, awning: 345, awningSat: 0.4, roofHue: 15, roofSat: 0.3, roofShift: 18, noWindows: true })],
+  "25":  ["Coffee Shop",        () => house(4, 5, { roofShare: 0.34, awning: 25, awningSat: 0.35, roofHue: 215, noWindows: true, wood: true })],
+  "23":  ["City Hall",  () => civic(12, 7, { signHue: 215 })],
   "26":  ["Dagashiya",   () => house(5, 5, { awning: 210, awningSat: 0.35, wood: true, roofHue: 215, roofSat: 0.2 })],
 };
 // Neighbour houses 2b..2k cycle through the three roof colours
 ["2b", "2c", "2d", "2e", "2f", "2g", "2h", "2i", "2j", "2k"].forEach((no, i) => {
-  BUILDINGS[no] = ["Rumah", () => house(5, 5, NEIGHBOUR_ROOFS[i % 3])];
+  BUILDINGS[no] = ["House", () => house(5, 5, NEIGHBOUR_ROOFS[i % 3])];
 });
-BUILDINGS["19b"] = ["Sampah", () => gomi(3, 2)];
+BUILDINGS["19b"] = ["Trash Point", () => gomi(3, 2)];
 // Props from the town layout spots
-BUILDINGS["Mailbox"] = ["Kotak pos", mailbox];
-BUILDINGS["BusStop"] = ["Halte bus", busStop];
-BUILDINGS["ModeBoard"] = ["Papan Mode", signpost];
+BUILDINGS["Mailbox"] = ["Postbox", mailbox];
+BUILDINGS["BusStop"] = ["Bus Stop", busStop];
+BUILDINGS["ModeBoard"] = ["Mode Board", signpost];
 
 module.exports = { house, store, civic, gomi, mailbox, busStop, signpost, BUILDINGS };
 
@@ -481,11 +481,11 @@ function desk() {
 }
 
 const PROPS = {
-  FloorWood: ["Lantai kayu", floorWood], FloorTile: ["Lantai keramik", floorTile],
-  WallFaceUpper: ["Dinding atas", wallFaceUpper], WallFace: ["Dinding", wallFace], WallTop: ["Atas dinding", wallTop],
-  Counter: ["Kasir", () => counter(3)], Shelf: ["Rak", () => shelf(1)], Bookshelf: ["Rak buku", () => bookshelf(2)],
-  Bench: ["Bangku", bench], CafeTable: ["Meja kafe", cafeTable], Washer: ["Mesin cuci", washer],
-  Bed: ["Kasur", bed], Desk: ["Meja surat", desk],
+  FloorWood: ["Wood floor", floorWood], FloorTile: ["Tile floor", floorTile],
+  WallFaceUpper: ["Wall (upper)", wallFaceUpper], WallFace: ["Wall", wallFace], WallTop: ["Wall top", wallTop],
+  Counter: ["Counter", () => counter(3)], Shelf: ["Shelf", () => shelf(1)], Bookshelf: ["Bookshelf", () => bookshelf(2)],
+  Bench: ["Bench", bench], CafeTable: ["Cafe table", cafeTable], Washer: ["Washing machine", washer],
+  Bed: ["Bed", bed], Desk: ["Writing desk", desk],
 };
 module.exports.PROPS = PROPS;
 
@@ -529,9 +529,9 @@ if (require.main === module && process.argv[2] === "export") {
 
 if (require.main === module && process.argv[2] === "interior") {
   const items = Object.entries(PROPS).map(([k, [name, make]]) => ({ buf: make(), label: name, scale: 3 }));
-  items.push({ buf: mockRoom("shop"), label: "contoh: toko", scale: 2 });
-  items.push({ buf: mockRoom("office"), label: "contoh: kantor", scale: 2 });
-  items.push({ buf: mockRoom("cafe"), label: "contoh: kafe", scale: 2 });
+  items.push({ buf: mockRoom("shop"), label: "example: shop", scale: 2 });
+  items.push({ buf: mockRoom("office"), label: "example: office", scale: 2 });
+  items.push({ buf: mockRoom("cafe"), label: "example: cafe", scale: 2 });
   P.save(P.sheet(items, { cols: 5, gap: 8 }), path.join(__dirname, "preview_interior.png"));
   console.log("interior preview written");
 }

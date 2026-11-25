@@ -9,7 +9,7 @@ using UnityEngine.Rendering;
 // Otsukai > Town > Place Building Sprites: puts the blockout sprites from Assets/Art/Buildings onto the
 // "Town Layout" objects made by Import Layout CSV, following the project's object structure:
 //   root (Sorting Group + wall collider, only the lower wall part, not the roof) + child "Visual" (SpriteRenderer).
-// Buildings use their number (TownBuilding), spots use their name ("Kotak pos", "Halte bus").
+// Buildings use their number (TownBuilding), spots use their name ("Postbox", "Bus Stop").
 // The player's house (2) and Supa (1) are prefabs with their own Visual: the sprite is set in the prefab asset.
 // Mode boards are their own objects (ModeSelectPoint), not Town Layout ones: they get the "ModeBoard" signpost
 // sprite in their Visual and a small solid collider at the pole. Running it again updates what is there.
@@ -29,8 +29,8 @@ public static class TownSpritePlacer
     };
     static readonly Dictionary<string, string> SpotKey = new Dictionary<string, string>
     {
-        { "Kotak pos", "Mailbox" },
-        { "Halte bus", "BusStop" },
+        { "Postbox", "Mailbox" },
+        { "Bus Stop", "BusStop" },
     };
 
     [MenuItem("Otsukai/Town/Place Building Sprites")]

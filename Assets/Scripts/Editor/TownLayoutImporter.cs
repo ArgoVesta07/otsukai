@@ -35,8 +35,8 @@ public static class TownLayoutImporter
         string[] header = lines[0].Split(',');
         for (int i = 0; i < header.Length; i++) col[header[i].Trim()] = i;
 
-        string[] needed = { "No", "Nama", "Ukuran (tile)", "Bisa masuk", "Posisi root Unity X", "Posisi root Unity Y",
-                            "Pintu X", "Pintu Y", "Target Id", "Errand Spot" };
+        string[] needed = { "No", "Name", "Size (tiles)", "Enterable", "Root X", "Root Y",
+                            "Door X", "Door Y", "Target Id", "Errand Spot" };
         foreach (string c in needed)
         {
             if (!col.ContainsKey(c))
@@ -65,18 +65,18 @@ public static class TownLayoutImporter
             }
 
             string no = v[col["No"]].Trim();
-            string objName = no + " " + v[col["Nama"]].Trim();
-            Vector3 rootPos = new Vector3(Num(v[col["Posisi root Unity X"]]), Num(v[col["Posisi root Unity Y"]]), 0f);
-            Vector3 doorPos = new Vector3(Num(v[col["Pintu X"]]), Num(v[col["Pintu Y"]]), 0f);
+            string objName = no + " " + v[col["Name"]].Trim();
+            Vector3 rootPos = new Vector3(Num(v[col["Root X"]]), Num(v[col["Root Y"]]), 0f);
+            Vector3 doorPos = new Vector3(Num(v[col["Door X"]]), Num(v[col["Door Y"]]), 0f);
             string targetId = v[col["Target Id"]].Trim();
-            bool spot = v[col["Errand Spot"]].Trim() == "Ya";
+            bool spot = v[col["Errand Spot"]].Trim() == "Yes";
             string label = col.TryGetValue("Label", out int li) && li < v.Length ? v[li].Trim() : "";
 
-            GameObject building = Child(root.transform, objName);
+            GameObject building = Numbered(root.transform, no, objName);
             Undo.RecordObject(building.transform, "Import town layout");
             building.transform.position = rootPos;
 
-            string[] size = v[col["Ukuran (tile)"]].Split('x');
+            string[] size = v[col["Size (tiles)"]].Split('x');
             if (size.Length == 2 && Num(size[0]) > 0f)
             {
                 TownBuilding tb = building.GetComponent<TownBuilding>();
@@ -84,7 +84,7 @@ public static class TownLayoutImporter
                 Undo.RecordObject(tb, "Import town layout");
                 tb.number = no;
                 tb.size = new Vector2(Num(size[0]), Num(size[1]));
-                tb.enterable = v[col["Bisa masuk"]].Trim() == "Ya";
+                tb.enterable = v[col["Enterable"]].Trim() == "Yes";
             }
 
             if (!string.IsNullOrEmpty(targetId))
@@ -125,6 +125,22 @@ public static class TownLayoutImporter
         Undo.RecordObject(es, "Import town layout");
         es.targetId = targetId;
         if (string.IsNullOrEmpty(es.idleLabel)) es.idleLabel = label;
+    }
+
+    // The child for this layout number ("23 ..."), renamed if the name in the CSV changed; made if missing
+    static GameObject Numbered(Transform parent, string no, string childName)
+    {
+        foreach (Transform t in parent)
+        {
+            if (!t.name.StartsWith(no + " ")) continue;
+            if (t.name != childName)
+            {
+                Undo.RecordObject(t.gameObject, "Import town layout");
+                t.name = childName;
+            }
+            return t.gameObject;
+        }
+        return Child(parent, childName);
     }
 
     static GameObject Child(Transform parent, string childName)

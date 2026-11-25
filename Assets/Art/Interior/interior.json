@@ -2,91 +2,91 @@
  "items": [
   {
    "key": "FloorWood",
-   "name": "Lantai kayu",
+   "name": "Wood floor",
    "w": 1,
    "h": 1,
    "wall": 1
   },
   {
    "key": "FloorTile",
-   "name": "Lantai keramik",
+   "name": "Tile floor",
    "w": 1,
    "h": 1,
    "wall": 1
   },
   {
    "key": "WallFaceUpper",
-   "name": "Dinding atas",
+   "name": "Wall (upper)",
    "w": 1,
    "h": 1,
    "wall": 1
   },
   {
    "key": "WallFace",
-   "name": "Dinding",
+   "name": "Wall",
    "w": 1,
    "h": 1,
    "wall": 1
   },
   {
    "key": "WallTop",
-   "name": "Atas dinding",
+   "name": "Wall top",
    "w": 1,
    "h": 1,
    "wall": 1
   },
   {
    "key": "Counter",
-   "name": "Kasir",
+   "name": "Counter",
    "w": 3,
    "h": 2,
    "wall": 0.75
   },
   {
    "key": "Shelf",
-   "name": "Rak",
+   "name": "Shelf",
    "w": 2,
    "h": 2,
    "wall": 0.63
   },
   {
    "key": "Bookshelf",
-   "name": "Rak buku",
+   "name": "Bookshelf",
    "w": 2,
    "h": 2,
    "wall": 0.63
   },
   {
    "key": "Bench",
-   "name": "Bangku",
+   "name": "Bench",
    "w": 2,
    "h": 1,
    "wall": 0.31
   },
   {
    "key": "CafeTable",
-   "name": "Meja kafe",
+   "name": "Cafe table",
    "w": 2,
    "h": 2,
    "wall": 0.5
   },
   {
    "key": "Washer",
-   "name": "Mesin cuci",
+   "name": "Washing machine",
    "w": 1,
    "h": 2,
    "wall": 0.63
   },
   {
    "key": "Bed",
-   "name": "Kasur",
+   "name": "Bed",
    "w": 1,
    "h": 2,
    "wall": 0.88
   },
   {
    "key": "Desk",
-   "name": "Meja surat",
+   "name": "Writing desk",
    "w": 2,
    "h": 1,
    "wall": 0.38

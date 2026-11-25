@@ -10,7 +10,7 @@ Repo: https://github.com/ArgoVesta07/otsukai — Oput commits with GitHub Deskto
 
 - Explain in **Indonesian**, casual (lu/gw). Go **step by step** and wait for "lanjut" before the next step.
 - Be concise. Unity instructions must be concrete (which object, which component, which field).
-- **Code, comments and Debug.Log in English.**
+- **Code, comments and Debug.Log in English.** Also every name Claude makes: GameObjects, assets, CSV columns and values, generator labels. Only the chat with Oput is Indonesian.
 - **Everything editable in the Inspector / prefabs / ScriptableObjects.** No hardcoded text, numbers or visuals in scripts.
 - **All player-facing text in English + Japanese** (see Localization). Japanese = standard style, kanji, short (panels are small). Not childish hiragana-only.
 - When replacing a script, give the whole file and say what changed. Keep old serialized fields alive with `[FormerlySerializedAs]` when renaming.

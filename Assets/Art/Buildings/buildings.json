@@ -2,14 +2,14 @@
  "items": [
   {
    "key": "1",
-   "name": "Supa",
+   "name": "Supermarket",
    "w": 8,
    "h": 6,
    "wall": 3.94
   },
   {
    "key": "2",
-   "name": "Rumah Player",
+   "name": "Player House",
    "w": 5,
    "h": 5,
    "wall": 3
@@ -23,7 +23,7 @@
   },
   {
    "key": "4",
-   "name": "Stasiun",
+   "name": "Station",
    "w": 14,
    "h": 6,
    "wall": 4.31
@@ -37,49 +37,49 @@
   },
   {
    "key": "6",
-   "name": "Rumah Sakit",
+   "name": "Hospital",
    "w": 12,
    "h": 8,
    "wall": 5.75
   },
   {
    "key": "8",
-   "name": "Yuubin+ATM",
+   "name": "Post Office",
    "w": 7,
    "h": 5,
    "wall": 3.5
   },
   {
    "key": "10",
-   "name": "Apotek",
+   "name": "Pharmacy",
    "w": 4,
    "h": 4,
    "wall": 2.81
   },
   {
    "key": "11",
-   "name": "Perpus",
+   "name": "Library",
    "w": 10,
    "h": 6,
    "wall": 4.31
   },
   {
    "key": "13",
-   "name": "Bunga",
+   "name": "Flower Shop",
    "w": 4,
    "h": 5,
    "wall": 3.31
   },
   {
    "key": "14",
-   "name": "Restoran",
+   "name": "Restaurant",
    "w": 6,
    "h": 5,
    "wall": 3.31
   },
   {
    "key": "15",
-   "name": "Laundry",
+   "name": "Laundromat",
    "w": 4,
    "h": 5,
    "wall": 3.5
@@ -100,56 +100,56 @@
   },
   {
    "key": "18",
-   "name": "Juntendo",
+   "name": "Home Center",
    "w": 12,
    "h": 7,
    "wall": 4.75
   },
   {
    "key": "19",
-   "name": "Sampah",
+   "name": "Trash Point",
    "w": 3,
    "h": 2,
    "wall": 1.75
   },
   {
    "key": "20",
-   "name": "Roti",
+   "name": "Bakery",
    "w": 4,
    "h": 5,
    "wall": 3.31
   },
   {
    "key": "21",
-   "name": "Daging",
+   "name": "Butcher",
    "w": 4,
    "h": 5,
    "wall": 3.31
   },
   {
    "key": "22",
-   "name": "Yaoya",
+   "name": "Greengrocer",
    "w": 4,
    "h": 5,
    "wall": 3.31
   },
   {
    "key": "23",
-   "name": "Shiyakusho",
+   "name": "City Hall",
    "w": 12,
    "h": 7,
    "wall": 5.06
   },
   {
    "key": "24",
-   "name": "Kue",
+   "name": "Cake Shop",
    "w": 4,
    "h": 5,
    "wall": 3.31
   },
   {
    "key": "25",
-   "name": "Kopi",
+   "name": "Coffee Shop",
    "w": 4,
    "h": 5,
    "wall": 3.31
@@ -163,119 +163,119 @@
   },
   {
    "key": "12a",
-   "name": "SD",
+   "name": "Elementary School",
    "w": 14,
    "h": 8,
    "wall": 5.75
   },
   {
    "key": "12b",
-   "name": "SMP",
+   "name": "Junior High",
    "w": 11,
    "h": 7,
    "wall": 5.06
   },
   {
    "key": "12c",
-   "name": "SMA",
+   "name": "High School",
    "w": 11,
    "h": 7,
    "wall": 5.06
   },
   {
    "key": "2b",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2c",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2d",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2e",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2f",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2g",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2h",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2i",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2j",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "2k",
-   "name": "Rumah",
+   "name": "House",
    "w": 5,
    "h": 5,
    "wall": 3
   },
   {
    "key": "19b",
-   "name": "Sampah",
+   "name": "Trash Point",
    "w": 3,
    "h": 2,
    "wall": 1.75
   },
   {
    "key": "Mailbox",
-   "name": "Kotak pos",
+   "name": "Postbox",
    "w": 1,
    "h": 1.5,
    "wall": 0.38
   },
   {
    "key": "BusStop",
-   "name": "Halte bus",
+   "name": "Bus Stop",
    "w": 1,
    "h": 2,
    "wall": 0.19
   },
   {
    "key": "ModeBoard",
-   "name": "Papan Mode",
+   "name": "Mode Board",
    "w": 2,
    "h": 2,
    "wall": 0.25
