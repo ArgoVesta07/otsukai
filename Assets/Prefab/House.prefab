@@ -175,7 +175,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -7435372754168082463, guid: 56051f34e5206e148ba8cc4d68830da8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cda4db540c05d2743bdd10d5bc31274d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -280,6 +280,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
   sceneToLoad: 
+  spawnAtTarget: Entrance
+  spawnOffset: {x: 0, y: 0}
   spawnPosition: {x: 0, y: -7, z: 0}
   promptOffset: {x: 0, y: 1.2}
   promptText: '[E] Enter'
