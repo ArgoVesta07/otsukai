@@ -576,6 +576,342 @@ MonoBehaviour:
     m_Localized: '[E] Take {0}'
     m_Metadata:
       m_Items: []
+  - m_Id: 11946052268814336
+    m_Localized: Payment slip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174464
+    m_Localized: Clean laundry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174465
+    m_Localized: Laundry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174466
+    m_Localized: Fertilizer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174467
+    m_Localized: Flowers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174468
+    m_Localized: Library book
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174469
+    m_Localized: Meat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174470
+    m_Localized: Medicine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174471
+    m_Localized: Melon bread
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174472
+    m_Localized: Cash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174473
+    m_Localized: Package
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174474
+    m_Localized: Printout
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174475
+    m_Localized: Sponge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174476
+    m_Localized: Trash bag
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174477
+    m_Localized: USB stick
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174478
+    m_Localized: Get cash from the ATM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174479
+    m_Localized: Buy fertilizer at the home center
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174480
+    m_Localized: Bring the fertilizer to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174481
+    m_Localized: We're out of fertilizer for the garden. Could you get some cash from the ATM and buy some at the home center?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174482
+    m_Localized: Buy flowers at the flower shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174483
+    m_Localized: Bring the flowers to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174484
+    m_Localized: Could you pick up some flowers for the table?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174485
+    m_Localized: Buy meat at the butcher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174486
+    m_Localized: Bring the meat to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174487
+    m_Localized: Could you grab some meat from the butcher for dinner?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174488
+    m_Localized: Go to city hall with {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174489
+    m_Localized: I have some business at city hall. Mind coming along?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174490
+    m_Localized: Buy a sponge at the 100-yen shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174491
+    m_Localized: Bring the sponge to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174492
+    m_Localized: We're out of sponges. Could you get one at the 100-yen shop?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174493
+    m_Localized: Do the laundry at the laundromat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174494
+    m_Localized: Bring the clean laundry to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174495
+    m_Localized: The washing machine broke... Could you wash these at the laundromat?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174496
+    m_Localized: Go to the hospital with {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174497
+    m_Localized: Pick up the medicine at the pharmacy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174498
+    m_Localized: Give the medicine to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174499
+    m_Localized: I have a doctor's appointment today. Would you come with me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174500
+    m_Localized: Buy melon bread at the bakery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174501
+    m_Localized: Bring the melon bread to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174502
+    m_Localized: I'm craving melon bread from the bakery...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174503
+    m_Localized: Pay the bill at the convenience store
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174504
+    m_Localized: Could you pay this at the convenience store?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174505
+    m_Localized: Print the file at the convenience store
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174506
+    m_Localized: Bring the printout to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174507
+    m_Localized: Could you print this at the convenience store? It's on the USB stick.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174508
+    m_Localized: Return the book to the library
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174509
+    m_Localized: Could you return this book to the library?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174510
+    m_Localized: Mail the package at the post office
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174511
+    m_Localized: Could you mail this package at the post office?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174512
+    m_Localized: Take your sister to the candy shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174513
+    m_Localized: Your sister wants snacks. Could you take her to the candy shop?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174514
+    m_Localized: Walk your sister to school
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174515
+    m_Localized: Could you walk your sister to school?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174516
+    m_Localized: Take out the trash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174517
+    m_Localized: It's trash day! Take it out before the garbage truck comes.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174518
+    m_Localized: Walk the dog to the park
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174519
+    m_Localized: Walk the dog to the bridge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174520
+    m_Localized: Walk the dog to the riverside park
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174521
+    m_Localized: The dog wants a walk! Go by the park, then along the river.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174522
+    m_Localized: Bring the cash to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 11946052298174523
+    m_Localized: Could you run to the ATM and get some cash?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803520598016
+    m_Localized: Birthday cake
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735360
+    m_Localized: Coffee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735361
+    m_Localized: Wallet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735362
+    m_Localized: Umbrella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735363
+    m_Localized: Post the letter for {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735364
+    m_Localized: Could you drop this letter in a postbox for me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735365
+    m_Localized: Pick up {giver}'s medicine at the pharmacy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735366
+    m_Localized: Bring the medicine to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735367
+    m_Localized: My back hurts today... Could you pick up my medicine at the pharmacy?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735368
+    m_Localized: Buy flowers for {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735369
+    m_Localized: It's our anniversary. Could you buy flowers for my wife?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735370
+    m_Localized: Pick up the cake at the cake shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735371
+    m_Localized: Bring the cake to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735372
+    m_Localized: I ordered a cake for my grandson's birthday. Could you pick it up?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735373
+    m_Localized: Buy a coffee at the coffee shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735374
+    m_Localized: Bring the coffee to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735375
+    m_Localized: I'm stuck here working. Could you get me a coffee?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735376
+    m_Localized: Take the wallet to the koban
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735377
+    m_Localized: I found this wallet on the street. Could you take it to the koban?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735378
+    m_Localized: Take the umbrella to the station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735379
+    m_Localized: My son forgot his umbrella. Could you take it to him at the station?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194833686032384
+    m_Localized: Sister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194833686032385
+    m_Localized: Dog
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

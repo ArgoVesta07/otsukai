@@ -44,11 +44,11 @@ MonoBehaviour:
   flagsOnFail: []
   takeBackRewardsOnFail: 1
   allowAtNight: 0
-  offerInClassic: 1
+  offerInClassic: 0
   classicWeight: 1
   offerLines:
   - Could you buy some eggs for me?
-  allowInChallenge: 1
+  allowInChallenge: 0
   weight: 1
   minDay: 1
   challengeDeadlineMinutes: 60

@@ -49,7 +49,7 @@ public class ModeSelectPoint : MonoBehaviour
         if (string.IsNullOrEmpty(text)) return;
 
         var k = Keyboard.current;
-        if (k != null && k.eKey.wasPressedThisFrame)
+        if (k != null && k.eKey.wasPressedThisFrame && InteractionState.TryUseInteract())
         {
             SetPrompt(null);
             ModeSelectUI.Open();   // the menu itself decides: mode list, or "back to free mode?"

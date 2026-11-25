@@ -31,7 +31,7 @@ MonoBehaviour:
     targetId: Mailbox
     navTargetId: Mailbox
     requiredItem: Letter
-    requiredAmount: 0
+    requiredAmount: 1
     consumeRequiredItem: 1
     rewardItem: 
     rewardAmount: 1

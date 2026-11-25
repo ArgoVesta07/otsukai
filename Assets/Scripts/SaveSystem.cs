@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 // and LoadGame() from the main menu's Continue button.
 public static class SaveSystem
 {
-    public const int CurrentVersion = 2;   // 2 = added story days and periods
+    public const int CurrentVersion = 3;   // 2 = added story days and periods, 3 = errand giver and deadline
     const string FileName = "story.json";   // story mode only; classic mode will get its own file
 
     static SaveData pendingLoad;   // waiting to be applied once the game scene has loaded
@@ -56,7 +56,7 @@ public static class SaveSystem
             sceneName = SceneManager.GetActiveScene().name
         };
 
-        GameObject player = GameObject.Find("player");
+        GameObject player = PlayerMovement.FindPlayer();
         if (player != null)
             data.playerPosition = player.transform.position;
 
@@ -142,7 +142,7 @@ public static class SaveSystem
         }
         else
         {
-            GameObject player = GameObject.Find("player");
+            GameObject player = PlayerMovement.FindPlayer();
             if (player != null)
                 player.transform.position = data.playerPosition;
         }

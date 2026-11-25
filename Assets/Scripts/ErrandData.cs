@@ -22,6 +22,13 @@ public class ErrandData : ScriptableObject
     [Tooltip("Steps are done in order. The errand completes after the last one.")]
     public ErrandStep[] steps;
 
+    [Tooltip("Items handed to the player when the errand starts (e.g. the book to return). Taken back if it fails.")]
+    public ItemAmount[] startItems;
+
+    [Tooltip("Who walks along while the errand runs (needs a Follower on them): \"Giver\" = whoever asked, " +
+             "or a Follower id such as \"Sibling\" or \"Pet\". Empty = nobody.")]
+    public string companionId;
+
     [Header("Flags")]
     [Tooltip("Flags set to 1 when the errand is completed.")]
     public string[] flagsOnComplete;
@@ -32,6 +39,16 @@ public class ErrandData : ScriptableObject
     [Header("On fail")]
     [Tooltip("Take back the reward items this errand already gave the player when it fails.")]
     public bool takeBackRewardsOnFail = true;
+
+    [Header("When it can be given (classic / challenge)")]
+    [Tooltip("Earliest hour (0-24) an NPC can hand it out.")]
+    public float earliestHour = 0f;
+
+    [Tooltip("Hand it out only before this hour, e.g. 10 = mornings only (taking out the trash). 24 = any time.")]
+    public float latestHour = 24f;
+
+    [Tooltip("Days to wait after it was started before it can be given again. 1 = never two days in a row. 0 = any time.")]
+    public int cooldownDays = 0;
 
     [Header("Night")]
     [Tooltip("Classic / challenge: can NPCs give this errand at night? (Errands running when night starts fail.)")]
@@ -63,6 +80,13 @@ public class ErrandData : ScriptableObject
 
     [Tooltip("Points for finishing it in challenge mode (plus a bonus for time left).")]
     [FormerlySerializedAs("classicScore")] public int challengeScore = 100;
+
+    // True if the clock time (minutes since midnight) is inside Earliest / Latest Hour
+    public bool FitsHour(float clockMinutes)
+    {
+        float hour = clockMinutes / 60f;
+        return hour >= earliestHour && hour < latestHour;
+    }
 }
 
 // An item and how many of it (shopping lists)
@@ -71,6 +95,9 @@ public class ItemAmount
 {
     public string itemId;
     public int amount = 1;
+
+    // 0 or less in the Inspector counts as 1, so a forgotten amount can't make the item free
+    public int Amount => Mathf.Max(1, amount);
 }
 
 [Serializable]
@@ -109,6 +136,9 @@ public class ErrandStep
     public ItemAmount[] requiredItems;
 
     public bool IsShopping => shoppingList != null && shoppingList.Length > 0;
+
+    // 0 or less in the Inspector counts as 1, so a forgotten amount can't make the item free
+    public int RequiredAmount => Mathf.Max(1, requiredAmount);
 
     public string NavId => string.IsNullOrEmpty(navTargetId) ? targetId : navTargetId;
 }

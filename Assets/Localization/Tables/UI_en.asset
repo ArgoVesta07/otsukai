@@ -51,27 +51,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 81329197903872
-    m_Localized: 'Finish your errands before time runs out!
-
-
-
-      Move: WASD / Arrow keys
-
-      Talk / Interact: E
-
-      Switch errand: Tab
-
-      Inventory: I
-
-      Pause: Esc
-
-
-
-      Find the mode spot in town to start:
-
-      Story: get through each day, one errand at a time.
-
-      Classic: clear as many errands as you can for a high score.'
+    m_Localized: "Finish your errands before time runs out!\n\nMove: WASD / Arrow keys\nTalk / Interact: E\nShopping memo: Tab\nSwitch errand: Q\nInventory: I\nPause: Esc\n\nFind a mode board in town to start:\nClassic: a relaxed day of errands for your family and neighbors.\nChallenge: clear as many errands as you can for a high score.\nStory: coming soon."
     m_Metadata:
       m_Items: []
   references:

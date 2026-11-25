@@ -53,7 +53,7 @@ public class Bed : MonoBehaviour
         if (busy || !usable) return;
 
         var k = Keyboard.current;
-        if (k != null && k.eKey.wasPressedThisFrame)
+        if (k != null && k.eKey.wasPressedThisFrame && InteractionState.TryUseInteract())
         {
             bool slept = story ? TimeManager.Instance.Sleep() : WorldClock.Instance.TrySleep();
             if (slept) SetPrompt(null, false);

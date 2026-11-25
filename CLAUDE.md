@@ -3,6 +3,13 @@
 Indie game development managed through 49 coordinated Claude Code subagents.
 Each agent owns a specific domain, enforcing separation of concerns and quality.
 
+## Otsukai project guide
+
+Project-specific rules (language, workflow with Oput, pixel standard, systems, town plan, localization) — these
+take priority for this game:
+
+@docs/otsukai-guide.md
+
 ## Technology Stack
 
 - **Engine**: Unity 6000.6.4f1

@@ -271,6 +271,7 @@ public class ClassicManager : MonoBehaviour
         {
             if (e == null || e.kind != ErrandKind.Otsukai || !e.offerInClassic || e.classicWeight <= 0f) continue;
             if (night && !e.allowAtNight) continue;
+            if (!quest.CanGiveNow(e)) continue;
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;
             pool.Add(e);
         }
@@ -402,6 +403,7 @@ public class ClassicManager : MonoBehaviour
         {
             if (e == null || e.kind != ErrandKind.Request || !e.offerInClassic || e.classicWeight <= 0f) continue;
             if (night && !e.allowAtNight) continue;
+            if (!quest.CanGiveNow(e)) continue;
             if (quest.GetState(e.errandId) == ErrandState.Active) continue;
             pool.Add(e);
         }

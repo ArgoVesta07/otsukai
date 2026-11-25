@@ -21,6 +21,7 @@ public class ActiveErrand
     public string deadlineLabel; // optional text for the HUD, e.g. "by 10:30" (challenge mode)
     public string giverId;       // NPC that gave this errand (classic mode). Steps with Target Id "Giver" go there.
     public string giverName;     // that NPC's name, for "{giver}" in errand texts
+    public int startedDay;       // WorldClock day it started (0 = no clock running)
 
     public bool HasTimer => timeLimit > 0f;
     public bool IsOtsukai => data != null && data.kind == ErrandKind.Otsukai;
@@ -30,6 +31,9 @@ public class ActiveErrand
     // Target and arrow id of the current step, with "Giver" replaced by the real NPC id
     public string CurrentTargetId => CurrentStep != null ? Resolve(CurrentStep.targetId) : null;
     public string CurrentNavId => CurrentStep != null ? Resolve(CurrentStep.NavId) : null;
+
+    // Who walks along (Follower id), with "Giver" replaced by the real NPC id. Null = nobody.
+    public string CompanionId => string.IsNullOrEmpty(data.companionId) ? null : Resolve(data.companionId);
 
     string Resolve(string id)
     {
@@ -61,6 +65,7 @@ public class QuestManager : MonoBehaviour
     readonly List<ActiveErrand> active = new List<ActiveErrand>();
     readonly HashSet<string> completed = new HashSet<string>();
     readonly HashSet<string> failed = new HashSet<string>();
+    readonly Dictionary<string, int> lastStartedDay = new Dictionary<string, int>();   // for Cooldown Days
 
     // Story mode: only these errands can be started this round. Off when no story is running.
     readonly HashSet<string> available = new HashSet<string>();
@@ -69,17 +74,18 @@ public class QuestManager : MonoBehaviour
     InventoryManager inventory;
 
     // The errand shown on the HUD with the arrow. Change it with CycleTracked().
+    // Kept as a reference (not an index) so it doesn't jump to another errand when one ends.
     public ActiveErrand Tracked
     {
         get
         {
             if (active.Count == 0) return null;
-            if (trackedIndex >= active.Count) trackedIndex = 0;
-            return active[trackedIndex];
+            if (tracked == null || !active.Contains(tracked)) tracked = active[0];
+            return tracked;
         }
     }
 
-    int trackedIndex;
+    ActiveErrand tracked;
 
     // Fired when an errand finishes (classic mode uses these for score and strikes)
     public event Action<ActiveErrand> ErrandCompleted;
@@ -89,7 +95,8 @@ public class QuestManager : MonoBehaviour
     public void CycleTracked()
     {
         if (active.Count <= 1) return;
-        trackedIndex = (trackedIndex + 1) % active.Count;
+        int index = active.IndexOf(Tracked);
+        tracked = active[(index + 1) % active.Count];
     }
 
     // The last errand that failed, so the HUD can show "Time's up". Cleared when a new errand starts.
@@ -141,7 +148,7 @@ public class QuestManager : MonoBehaviour
             ActiveErrand errand = active[i];
             ErrandStep step = errand.CurrentStep;
             if (step == null || !step.IsShopping || !string.IsNullOrEmpty(step.targetId)) continue;
-            if (!HasAll(step.shoppingList)) continue;
+            if (!HasItemsFor(errand)) continue;   // the items stay in the bag for the next step
 
             Debug.Log("Errand '" + errand.data.errandId + "' shopping done: " + step.shortText);
             errand.stepIndex++;
@@ -151,16 +158,81 @@ public class QuestManager : MonoBehaviour
     }
 
     // ---------- Items ----------
+    // Every running errand "holds" the items its current step needs. Items in the bag go to the errands
+    // in the order they were started, so one egg can't count for two errands at once.
 
-    public bool HasAll(ItemAmount[] list)
+    int Count(string itemId)
     {
-        if (list == null) return true;
-        foreach (ItemAmount item in list)
+        return inventory != null ? inventory.GetItemCount(itemId) : 0;
+    }
+
+    // Items the current step of this errand needs to hold: item id -> amount.
+    // A shopping list and the Required Items often list the same things, so the larger amount counts.
+    static Dictionary<string, int> Claims(ActiveErrand errand)
+    {
+        Dictionary<string, int> required = new Dictionary<string, int>();
+        ErrandStep step = errand != null ? errand.CurrentStep : null;
+        if (step == null) return required;
+
+        if (!string.IsNullOrEmpty(step.requiredItem))
+            AddAmount(required, step.requiredItem, step.RequiredAmount);
+
+        if (step.requiredItems != null)
         {
-            if (item == null || string.IsNullOrEmpty(item.itemId)) continue;
-            if (inventory == null || !inventory.HasItem(item.itemId, item.amount)) return false;
+            foreach (ItemAmount item in step.requiredItems)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.itemId))
+                    AddAmount(required, item.itemId, item.Amount);
+            }
         }
-        return true;
+
+        if (step.IsShopping)
+        {
+            Dictionary<string, int> shopping = new Dictionary<string, int>();
+            foreach (ItemAmount item in step.shoppingList)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.itemId))
+                    AddAmount(shopping, item.itemId, item.Amount);
+            }
+
+            foreach (var pair in shopping)
+            {
+                required.TryGetValue(pair.Key, out int have);
+                required[pair.Key] = Mathf.Max(have, pair.Value);
+            }
+        }
+
+        return required;
+    }
+
+    static void AddAmount(Dictionary<string, int> into, string itemId, int amount)
+    {
+        into.TryGetValue(itemId, out int have);
+        into[itemId] = have + amount;
+    }
+
+    static int ClaimOf(ActiveErrand errand, string itemId)
+    {
+        return Claims(errand).TryGetValue(itemId, out int amount) ? amount : 0;
+    }
+
+    // How many of this item are held by the running errands started before this one (all of them if null)
+    int ClaimedBefore(ActiveErrand errand, string itemId)
+    {
+        int claimed = 0;
+        foreach (ActiveErrand other in active)
+        {
+            if (other == errand) break;
+            claimed += ClaimOf(other, itemId);
+        }
+        return claimed;
+    }
+
+    // How many of this item in the bag belong to this errand (for the shopping memo)
+    public int HeldFor(ActiveErrand errand, string itemId)
+    {
+        if (errand == null || string.IsNullOrEmpty(itemId)) return 0;
+        return Mathf.Max(0, Count(itemId) - ClaimedBefore(errand, itemId));
     }
 
     // How many more of this item the running shopping lists still need (0 = none)
@@ -168,20 +240,30 @@ public class QuestManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(itemId)) return 0;
 
+        bool onAList = false;
         int need = 0;
         foreach (ActiveErrand errand in active)
         {
             ErrandStep step = errand.CurrentStep;
-            if (step == null || !step.IsShopping) continue;
+            if (step == null) continue;
 
-            foreach (ItemAmount item in step.shoppingList)
-            {
-                if (item != null && item.itemId == itemId) need += item.amount;
-            }
+            int claim = ClaimOf(errand, itemId);
+            need += claim;   // errands on their way back hold their items too
+            if (step.IsShopping && claim > 0) onAList = true;
         }
 
-        int have = inventory != null ? inventory.GetItemCount(itemId) : 0;
-        return Mathf.Max(0, need - have);
+        if (!onAList) return 0;
+        return Mathf.Max(0, need - Count(itemId));
+    }
+
+    // Removes up to this many, but never items another running errand still holds
+    void RemoveUnclaimed(string itemId, int amount)
+    {
+        if (inventory == null || string.IsNullOrEmpty(itemId)) return;
+
+        int free = Count(itemId) - ClaimedBefore(null, itemId);
+        int remove = Mathf.Min(amount, free);
+        if (remove > 0) inventory.RemoveItem(itemId, remove);
     }
 
     // ---------- Starting ----------
@@ -228,6 +310,7 @@ public class QuestManager : MonoBehaviour
         LastFailed = null;
 
         float limit = timeLimitOverride >= 0f ? timeLimitOverride : data.timeLimit;
+        int day = WorldClock.IsActive ? WorldClock.Instance.Day : 0;
 
         active.Add(new ActiveErrand
         {
@@ -237,12 +320,24 @@ public class QuestManager : MonoBehaviour
             timeLeft = limit,
             deadlineLabel = deadlineLabel,
             giverId = giverId,
-            giverName = giverName
+            giverName = giverName,
+            startedDay = day
         });
+
+        if (day > 0) lastStartedDay[data.errandId] = day;
+
+        if (data.startItems != null && inventory != null)
+        {
+            foreach (ItemAmount item in data.startItems)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.itemId))
+                    inventory.AddItem(item.itemId, item.Amount);
+            }
+        }
 
         // An otsukai becomes the errand the HUD and arrow follow
         if (data.kind == ErrandKind.Otsukai)
-            trackedIndex = active.Count - 1;
+            tracked = active[active.Count - 1];
 
         Debug.Log("Errand started: " + data.errandId);
         return true;
@@ -256,31 +351,25 @@ public class QuestManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(targetId)) return false;
 
-        foreach (ActiveErrand errand in active)
+        // Copy: Complete() changes the list
+        foreach (ActiveErrand errand in new List<ActiveErrand>(active))
         {
             ErrandStep step = errand.CurrentStep;
             if (step == null || errand.CurrentTargetId != targetId) continue;
 
-            // Check the required items (and the shopping list, if this step has one and a target)
+            // Check the required items (and the shopping list, if this step has one and a target).
+            // Missing items here: another errand waiting at the same target may still be ready.
             if (!HasItemsFor(errand))
             {
                 Debug.Log("Errand '" + errand.data.errandId + "': missing items for " + step.shortText + ".");
-                return false;
+                continue;
             }
 
+            // Uses up everything this step holds (required items, and the shopping list if it has a target)
             if (step.consumeRequiredItem && inventory != null)
             {
-                if (!string.IsNullOrEmpty(step.requiredItem))
-                    inventory.RemoveItem(step.requiredItem, step.requiredAmount);
-
-                if (step.requiredItems != null)
-                {
-                    foreach (ItemAmount item in step.requiredItems)
-                    {
-                        if (item != null && !string.IsNullOrEmpty(item.itemId))
-                            inventory.RemoveItem(item.itemId, item.amount);
-                    }
-                }
+                foreach (var pair in Claims(errand))
+                    inventory.RemoveItem(pair.Key, pair.Value);
             }
 
             // Give the reward item
@@ -312,28 +401,58 @@ public class QuestManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(targetId)) return null;
 
+        // Prefer one the player already has the items for, so the NPC doesn't say "you're missing something"
+        ActiveErrand first = null;
         foreach (ActiveErrand errand in active)
         {
-            if (errand.CurrentStep != null && errand.CurrentTargetId == targetId) return errand;
+            if (errand.CurrentStep == null || errand.CurrentTargetId != targetId) continue;
+            if (HasItemsFor(errand)) return errand;
+            if (first == null) first = errand;
         }
 
-        return null;
+        return first;
     }
 
     // True if the player carries what the current step of this errand needs
     public bool HasItemsFor(ActiveErrand errand)
     {
-        ErrandStep step = errand != null ? errand.CurrentStep : null;
-        if (step == null) return true;
+        if (errand == null || errand.CurrentStep == null) return true;
 
-        if (!string.IsNullOrEmpty(step.requiredItem) &&
-            (inventory == null || !inventory.HasItem(step.requiredItem, step.requiredAmount)))
-            return false;
+        foreach (var pair in Claims(errand))
+        {
+            if (HeldFor(errand, pair.Key) < pair.Value) return false;
+        }
 
-        return HasAll(step.requiredItems) && (!step.IsShopping || HasAll(step.shoppingList));
+        return true;
     }
 
     // ---------- Queries ----------
+
+    // Classic / challenge: may an NPC hand this out now? (Earliest / Latest Hour and Cooldown Days)
+    public bool CanGiveNow(ErrandData data)
+    {
+        if (data == null) return false;
+
+        WorldClock clock = WorldClock.Instance;
+        if (clock == null || !WorldClock.IsActive) return true;
+        if (!data.FitsHour(clock.Clock)) return false;
+
+        return data.cooldownDays <= 0 ||
+               !lastStartedDay.TryGetValue(data.errandId, out int last) ||
+               clock.Day - last > data.cooldownDays;
+    }
+
+    // True while a running errand needs this Follower to walk along
+    public bool IsCompanion(string followerId)
+    {
+        if (string.IsNullOrEmpty(followerId)) return false;
+
+        foreach (ActiveErrand errand in active)
+        {
+            if (errand.CompanionId == followerId) return true;
+        }
+        return false;
+    }
 
     public ErrandState GetState(string errandId)
     {
@@ -398,12 +517,20 @@ public class QuestManager : MonoBehaviour
         for (int i = 0; i < doneSteps; i++)
         {
             ErrandStep step = errand.data.steps[i];
-            if (string.IsNullOrEmpty(step.rewardItem)) continue;
+            if (step == null || string.IsNullOrEmpty(step.rewardItem)) continue;
 
-            // Never remove more than the player still has (they may have used some already)
-            int amount = Mathf.Min(step.rewardAmount, inventory.GetItemCount(step.rewardItem));
-            if (amount > 0)
-                inventory.RemoveItem(step.rewardItem, amount);
+            // Never more than the player still has, nor items another running errand holds
+            RemoveUnclaimed(step.rewardItem, step.rewardAmount);
+        }
+
+        // Items handed out when the errand started (whatever wasn't used up yet)
+        if (errand.data.startItems != null)
+        {
+            foreach (ItemAmount item in errand.data.startItems)
+            {
+                if (item != null && !string.IsNullOrEmpty(item.itemId))
+                    RemoveUnclaimed(item.itemId, item.Amount);
+            }
         }
 
         // Shopping lists of the steps done so far (and the current one, partly bought)
@@ -416,8 +543,7 @@ public class QuestManager : MonoBehaviour
             foreach (ItemAmount item in step.shoppingList)
             {
                 if (item == null || string.IsNullOrEmpty(item.itemId)) continue;
-                int amount = Mathf.Min(item.amount, inventory.GetItemCount(item.itemId));
-                if (amount > 0) inventory.RemoveItem(item.itemId, amount);
+                RemoveUnclaimed(item.itemId, item.Amount);
             }
         }
     }
@@ -538,7 +664,11 @@ public class QuestManager : MonoBehaviour
             {
                 errandId = errand.data.errandId,
                 stepIndex = errand.stepIndex,
-                timeLeft = errand.timeLeft
+                timeLeft = errand.timeLeft,
+                timeLimit = errand.timeLimit,
+                deadlineLabel = errand.deadlineLabel,
+                giverId = errand.giverId,
+                giverName = errand.giverName
             });
         }
     }
@@ -565,8 +695,12 @@ public class QuestManager : MonoBehaviour
             {
                 data = data,
                 stepIndex = Mathf.Clamp(saved.stepIndex, 0, Mathf.Max(lastStep, 0)),
-                timeLimit = data.timeLimit,
-                timeLeft = saved.timeLeft
+                // Saves older than version 3 have no time limit: use the asset's
+                timeLimit = saved.timeLimit > 0f ? saved.timeLimit : data.timeLimit,
+                timeLeft = saved.timeLeft,
+                deadlineLabel = saved.deadlineLabel,
+                giverId = saved.giverId,
+                giverName = saved.giverName
             });
         }
     }
@@ -575,6 +709,8 @@ public class QuestManager : MonoBehaviour
     public void ResetState()
     {
         active.Clear();
+        tracked = null;
+        lastStartedDay.Clear();
         completed.Clear();
         failed.Clear();
         LastFailed = null;

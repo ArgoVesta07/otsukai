@@ -67,7 +67,7 @@ public class ShopItem : MonoBehaviour
         if (busy || !needed) return;
 
         var k = Keyboard.current;
-        if (k == null || !k.eKey.wasPressedThisFrame) return;
+        if (k == null || !k.eKey.wasPressedThisFrame || !InteractionState.TryUseInteract()) return;
 
         QuestManager quest = QuestManager.Instance;
         if (quest == null || quest.Inventory == null) return;

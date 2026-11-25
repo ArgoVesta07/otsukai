@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0df4d451d2415f4b9a7265a95b35b3a, type: 3}
   m_Name: Bread
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemId: 'Bread '
+  itemId: Bread
   displayName: Bread
   icon: {fileID: 0}
   description: 

@@ -31,7 +31,11 @@ public class ShoppingMemo : MonoBehaviour
     [SerializeField] string doneMark = "■";   // filled square
     [SerializeField] string todoMark = "□";   // empty square
 
+    [Tooltip("Seconds between memo updates while it is open (the list rarely changes every frame).")]
+    [SerializeField] float refreshEvery = 0.2f;
+
     string shown;
+    float nextRefresh;
 
     public static bool IsOpen => instance != null && instance.panel != null && instance.panel.activeSelf;
 
@@ -54,7 +58,7 @@ public class ShoppingMemo : MonoBehaviour
         if (k != null && k[toggleKey].wasPressedThisFrame && !InteractionState.IsInteracting)
             Toggle();
 
-        if (IsOpen) Refresh();
+        if (IsOpen && Time.unscaledTime >= nextRefresh) Refresh();
     }
 
     // Can also be hooked to a HUD button
@@ -68,6 +72,7 @@ public class ShoppingMemo : MonoBehaviour
 
     void Refresh()
     {
+        nextRefresh = Time.unscaledTime + refreshEvery;
         QuestManager quest = QuestManager.Instance;
         ActiveErrand errand = PickErrand(quest);
 
@@ -128,9 +133,11 @@ public class ShoppingMemo : MonoBehaviour
                 {
                     if (item == null || string.IsNullOrEmpty(item.itemId)) continue;
 
-                    int have = done ? item.amount : Mathf.Min(item.amount, Count(quest, item.itemId));
-                    string mark = have >= item.amount ? doneMark : todoMark;
-                    Append(lines, string.Format(itemLineFormat, mark, ItemName(quest, item.itemId), have, item.amount));
+                    int needed = item.Amount;
+                    // Only the items that belong to this errand (another errand may hold some of the same)
+                    int have = done ? needed : Mathf.Min(needed, quest.HeldFor(errand, item.itemId));
+                    string mark = have >= needed ? doneMark : todoMark;
+                    Append(lines, string.Format(itemLineFormat, mark, ItemName(quest, item.itemId), have, needed));
                 }
             }
             else if (showOtherSteps)
@@ -147,11 +154,6 @@ public class ShoppingMemo : MonoBehaviour
     {
         if (lines.Length > 0) lines.Append('\n');
         lines.Append(line);
-    }
-
-    static int Count(QuestManager quest, string itemId)
-    {
-        return quest.Inventory != null ? quest.Inventory.GetItemCount(itemId) : 0;
     }
 
     static string ItemName(QuestManager quest, string itemId)

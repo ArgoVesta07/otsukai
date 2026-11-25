@@ -51,6 +51,12 @@ public class SavedErrand
     public string errandId;
     public int stepIndex;
     public float timeLeft;
+
+    // Version 3
+    public float timeLimit;
+    public string deadlineLabel;
+    public string giverId;     // NPC that gave the errand, for steps that target "Giver"
+    public string giverName;
 }
 
 // JsonUtility can't save dictionaries, so key/value pairs are stored as a list

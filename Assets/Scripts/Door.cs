@@ -34,7 +34,7 @@ public class Door : MonoBehaviour
         if (!playerNear) return;
         if (InteractionState.IsInteracting) return;
 
-        if (Keyboard.current.eKey.wasPressedThisFrame)
+        if (Keyboard.current.eKey.wasPressedThisFrame && InteractionState.TryUseInteract())
         {
             InteractionPrompt.Hide();   // NEW: required; see the note below
 
