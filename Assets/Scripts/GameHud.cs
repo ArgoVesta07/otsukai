@@ -398,6 +398,14 @@ public class GameHud : MonoBehaviour
             if (target == null) target = NavTarget.Find(fallbackTargetId);
         }
 
+        // Inside a room, the step's own target there (a desk, a shelf) beats an arrow id that leads to the building
+        if (tracked != null && player != null)
+        {
+            RoomArea room = RoomArea.At(player.position);
+            NavTarget here = room != null ? NavTarget.Find(tracked.CurrentTargetId) : null;
+            if (here != null && RoomArea.At(here.transform.position) == room) target = here;
+        }
+
         bool show = target != null && player != null;
         SetActive(navArrow.gameObject, show);
         if (!show) return;
