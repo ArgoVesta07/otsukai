@@ -131,6 +131,14 @@ dist = {b[0]: from_home.get(door(b)) for b in B}
 assert all(v is not None for v in dist.values()), dist
 
 # ---- CSV
+# Ground areas in tile coordinates (x, y = bottom-left tile), for Otsukai > Town > Paint Ground And Roads.
+# Later rows paint over earlier ones.
+with open(OUT+"/Denah_Kota_v2_ground.csv","w",newline="") as f:
+    w = csv.writer(f)
+    w.writerow(["Kind","X","Y","W","H","Label"])
+    w.writerow(["ground",W0,H0,W1-W0,H1-H0,"Whole map (Ground tilemap)"])
+    for k,(x0,y0,w_,h_),lab in ground:
+        w.writerow([k,x0,y0,w_,h_,lab])
 with open(OUT+"/Denah_Kota_v2.csv","w",newline="") as f:
     w = csv.writer(f)
     w.writerow(["No","Nama","Ukuran (tile)","Bisa masuk","Posisi root Unity X","Posisi root Unity Y","Pintu X","Pintu Y",
