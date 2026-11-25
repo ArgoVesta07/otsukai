@@ -35,13 +35,20 @@ public class SceneTransition : MonoBehaviour
 
     public void GoToScene(string sceneName, Vector3 spawnPosition)
     {
+        GoToScene(sceneName, null, Vector2.zero, spawnPosition);
+    }
+
+    // spawnAtTarget: NavTarget id in the loaded scene where the player appears (plus offset).
+    // spawnPosition is used when the id is empty or no such NavTarget exists there.
+    public void GoToScene(string sceneName, string spawnAtTarget, Vector2 offset, Vector3 spawnPosition)
+    {
         if (isLoading) return;
 
         string sceneToLoad = string.IsNullOrEmpty(sceneName) ? houseSceneName : sceneName;
-        StartCoroutine(LoadRoutine(sceneToLoad, spawnPosition));
+        StartCoroutine(LoadRoutine(sceneToLoad, spawnAtTarget, offset, spawnPosition));
     }
 
-    IEnumerator LoadRoutine(string sceneToLoad, Vector3 spawnPosition)
+    IEnumerator LoadRoutine(string sceneToLoad, string spawnAtTarget, Vector2 offset, Vector3 spawnPosition)
     {
         isLoading = true;
         InteractionState.IsInteracting = true;   // lock movement during the transition
@@ -74,9 +81,18 @@ public class SceneTransition : MonoBehaviour
         while (!op.isDone) yield return null;
         yield return null;   // wait one frame so all scene objects are ready
 
+        if (!string.IsNullOrEmpty(spawnAtTarget))
+        {
+            NavTarget target = NavTarget.Find(spawnAtTarget);
+            if (target != null)
+                spawnPosition = target.transform.position + (Vector3)offset;
+            else
+                Debug.LogWarning("No NavTarget '" + spawnAtTarget + "' in " + sceneToLoad + ", using the Door's Spawn Position.");
+        }
+
         GameObject player = PlayerMovement.FindPlayer();
         if (player != null)
-            player.transform.position = spawnPosition;
+            player.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, player.transform.position.z);
         else
             Debug.LogWarning("Player object was not found in the scene!");
 
