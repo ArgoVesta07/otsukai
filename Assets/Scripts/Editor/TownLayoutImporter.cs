@@ -109,7 +109,8 @@ public static class TownLayoutImporter
         Undo.RecordObject(nav, "Import town layout");
         nav.targetId = targetId;
 
-        if (!spot) return;
+        // Buildings with a room (Build Interiors) have a Door here instead of an errand spot: leave them alone
+        if (!spot || door.GetComponent<Door>() != null) return;
 
         BoxCollider2D box = door.GetComponent<BoxCollider2D>();
         if (box == null)

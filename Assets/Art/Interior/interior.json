@@ -1,0 +1,81 @@
+{
+ "items": [
+  {
+   "key": "FloorWood",
+   "name": "Lantai kayu",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "FloorTile",
+   "name": "Lantai keramik",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "WallFaceUpper",
+   "name": "Dinding atas",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "WallFace",
+   "name": "Dinding",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "WallTop",
+   "name": "Atas dinding",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "Counter",
+   "name": "Kasir",
+   "w": 3,
+   "h": 2,
+   "wall": 0.75
+  },
+  {
+   "key": "Shelf",
+   "name": "Rak",
+   "w": 2,
+   "h": 2,
+   "wall": 0.63
+  },
+  {
+   "key": "Bookshelf",
+   "name": "Rak buku",
+   "w": 2,
+   "h": 2,
+   "wall": 0.63
+  },
+  {
+   "key": "Bench",
+   "name": "Bangku",
+   "w": 2,
+   "h": 1,
+   "wall": 0.31
+  },
+  {
+   "key": "CafeTable",
+   "name": "Meja kafe",
+   "w": 2,
+   "h": 2,
+   "wall": 0.5
+  },
+  {
+   "key": "Washer",
+   "name": "Mesin cuci",
+   "w": 1,
+   "h": 2,
+   "wall": 0.63
+  }
+ ]
+}

@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba93f2a9d6ed411e838cd2cba18f1b19, type: 3}
+  m_Name: InteriorPlan
+  m_EditorClassIdentifier: Assembly-CSharp::InteriorPlan
+  firstRoom: {x: -40, y: -50}
+  spacing: {x: 28, y: 20}
+  roomsPerRow: 4
+  rooms:
+  - buildingId: Konbini
+    placeName: Convenience Store
+    template: 1
+    size: {x: 0, y: 0}
+  - buildingId: Daiso
+    placeName: 100-Yen Shop
+    template: 1
+    size: {x: 0, y: 0}
+  - buildingId: HomeCenter
+    placeName: Home Center
+    template: 1
+    size: {x: 0, y: 0}
+  - buildingId: FlowerShop
+    placeName: Flower Shop
+    template: 0
+    size: {x: 0, y: 0}
+  - buildingId: CakeShop
+    placeName: Cake Shop
+    template: 0
+    size: {x: 0, y: 0}
+  - buildingId: Bakery
+    placeName: Bakery
+    template: 0
+    size: {x: 0, y: 0}
+  - buildingId: Butcher
+    placeName: Butcher
+    template: 0
+    size: {x: 0, y: 0}
+  - buildingId: Dagashiya
+    placeName: Candy Shop
+    template: 0
+    size: {x: 0, y: 0}
+  - buildingId: PostOffice
+    placeName: Post Office
+    template: 2
+    size: {x: 0, y: 0}
+  - buildingId: CityHall
+    placeName: City Hall
+    template: 2
+    size: {x: 0, y: 0}
+  - buildingId: Hospital
+    placeName: Hospital
+    template: 2
+    size: {x: 0, y: 0}
+  - buildingId: Pharmacy
+    placeName: Pharmacy
+    template: 2
+    size: {x: 0, y: 0}
+  - buildingId: Library
+    placeName: Library
+    template: 3
+    size: {x: 0, y: 0}
+  - buildingId: Cafe
+    placeName: Coffee Shop
+    template: 4
+    size: {x: 0, y: 0}
+  - buildingId: Laundry
+    placeName: Laundromat
+    template: 5
+    size: {x: 0, y: 0}

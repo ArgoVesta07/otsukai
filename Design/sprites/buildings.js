@@ -368,7 +368,14 @@ function floorTile() {
   b.rect(1, 1, 3, 2, tile[2]);
   return b;
 }
-// Back wall face, one tile tall: plaster with a skirting board at the bottom
+// Back wall face, upper tile: plain plaster with a lighter line where it meets the ceiling
+function wallFaceUpper() {
+  const b = new P.Buf(T, T), wall = ramp(3, 40, 0.18, [0.6, 0.8], 8);
+  b.rect(0, 0, T, T, wall[1]);
+  b.rect(0, 0, T, 1, wall[2]);
+  return b;
+}
+// Back wall face, lower tile: plaster with a skirting board at the bottom
 function wallFace() {
   const b = new P.Buf(T, T), wall = ramp(3, 40, 0.18, [0.6, 0.8], 8);
   b.rect(0, 0, T, T, wall[1]);
@@ -453,7 +460,7 @@ function washer() {
 
 const PROPS = {
   FloorWood: ["Lantai kayu", floorWood], FloorTile: ["Lantai keramik", floorTile],
-  WallFace: ["Dinding", wallFace], WallTop: ["Atas dinding", wallTop],
+  WallFaceUpper: ["Dinding atas", wallFaceUpper], WallFace: ["Dinding", wallFace], WallTop: ["Atas dinding", wallTop],
   Counter: ["Kasir", () => counter(3)], Shelf: ["Rak", () => shelf(1)], Bookshelf: ["Rak buku", () => bookshelf(2)],
   Bench: ["Bangku", bench], CafeTable: ["Meja kafe", cafeTable], Washer: ["Mesin cuci", washer],
 };
@@ -461,26 +468,40 @@ module.exports.PROPS = PROPS;
 
 // Mock room for the preview: a shop of 12 x 8 tiles with walls, counter, shelves
 function mockRoom(kind) {
-  const w = 12, h = 8, b = new P.Buf((w + 2) * T, (h + 3) * T);
+  const w = 12, h = 8, b = new P.Buf((w + 2) * T, (h + 4) * T);
   const blit = (s, x, y) => { for (let j = 0; j < s.h; j++) for (let i = 0; i < s.w; i++) { const c = s.px[j * s.w + i]; if (c >>> 24) b.px[(y + j) * b.w + x + i] = c; } };
-  const fl = kind === "office" ? floorTile() : floorWood(), wf = wallFace(), wt = wallTop();
-  for (let x = 0; x < w + 2; x++) { blit(wt, x * T, 0); blit(wt, x * T, (h + 2) * T); }
-  for (let y = 1; y < h + 2; y++) { blit(wt, 0, y * T); blit(wt, (w + 1) * T, y * T); }
-  for (let x = 1; x <= w; x++) blit(wf, x * T, T);
-  for (let y = 2; y < h + 2; y++) for (let x = 1; x <= w; x++) blit(fl, x * T, y * T);
+  const fl = kind === "office" ? floorTile() : floorWood(), wu = wallFaceUpper(), wf = wallFace(), wt = wallTop();
+  for (let x = 0; x < w + 2; x++) { blit(wt, x * T, 0); blit(wt, x * T, (h + 3) * T); }
+  for (let y = 1; y < h + 3; y++) { blit(wt, 0, y * T); blit(wt, (w + 1) * T, y * T); }
+  for (let x = 1; x <= w; x++) { blit(wu, x * T, T); blit(wf, x * T, 2 * T); }
+  for (let y = 3; y < h + 3; y++) for (let x = 1; x <= w; x++) blit(fl, x * T, y * T);
+  const off = T;   // furniture moves down one tile with the taller wall
   if (kind === "office") {
-    blit(counter(3), 3 * T, 2 * T); blit(counter(3), 6 * T, 2 * T); blit(counter(3), 9 * T, 2 * T);
-    blit(bench(), 3 * T, 6 * T); blit(bench(), 6 * T, 6 * T); blit(bench(), 9 * T, 6 * T);
+    blit(counter(3), 3 * T, 2 * T + off); blit(counter(3), 6 * T, 2 * T + off); blit(counter(3), 9 * T, 2 * T + off);
+    blit(bench(), 3 * T, 6 * T + off); blit(bench(), 6 * T, 6 * T + off); blit(bench(), 9 * T, 6 * T + off);
   } else if (kind === "cafe") {
-    blit(counter(3), 8 * T, 2 * T); blit(cafeTable(), 2 * T, 4 * T); blit(cafeTable(), 5 * T, 6 * T); blit(cafeTable(), 9 * T, 6 * T);
+    blit(counter(3), 8 * T, 2 * T + off); blit(cafeTable(), 2 * T, 4 * T + off); blit(cafeTable(), 5 * T, 6 * T + off); blit(cafeTable(), 9 * T, 6 * T + off);
   } else {
-    blit(counter(3), 8 * T, 2 * T);
-    for (let i = 0; i < 3; i++) blit(shelf(i + 3), (2 + i * 2) * T, 5 * T);
-    blit(shelf(7), 1 * T, 2 * T); blit(shelf(8), 3 * T, 2 * T);
+    blit(counter(3), 8 * T, 2 * T + off);
+    for (let i = 0; i < 3; i++) blit(shelf(i + 3), (2 + i * 2) * T, 5 * T + off);
+    blit(shelf(7), 1 * T, 2 * T + off); blit(shelf(8), 3 * T, 2 * T + off);
   }
   // exit door gap in the bottom wall
-  b.rect(Math.floor((w + 2) / 2) * T - 8, (h + 2) * T, Math.floor((w + 2) / 2) * T + 8, (h + 3) * T, [40, 30, 25]);
+  b.rect(Math.floor((w + 2) / 2) * T - 8, (h + 3) * T, Math.floor((w + 2) / 2) * T + 8, (h + 4) * T, [40, 30, 25]);
   return b;
+}
+
+if (require.main === module && process.argv[2] === "export") {
+  const out = path.join(__dirname, "../../Assets/Art/Interior");
+  fs.mkdirSync(out, { recursive: true });
+  const meta = [];
+  for (const [key, [name, make]] of Object.entries(PROPS)) {
+    const buf = make();
+    P.save(buf, path.join(out, "Interior_" + key + ".png"));
+    meta.push({ key, name, w: buf.w / T, h: buf.h / T, wall: Math.round((buf.wall ?? buf.h) / T * 100) / 100 });
+  }
+  fs.writeFileSync(path.join(out, "interior.json"), JSON.stringify({ items: meta }, null, 1) + "\n");
+  console.log("exported", meta.length, "interior pieces to", out);
 }
 
 if (require.main === module && process.argv[2] === "interior") {
