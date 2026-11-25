@@ -233,13 +233,12 @@ function busStop() {
   return b;
 }
 
-// Signpost (mode board): red-brown pole with two dark arrow boards and yellow tips. 2 x 2 tiles
+// Signpost (mode board): plain wooden pole with two arrow boards, painted arrows and lettering. 2 x 2 tiles
 function signpost() {
   const W = 2 * T, H = 2 * T, b = new P.Buf(W, H);
-  const pole = ramp(3, 8, 0.5, [0.2, 0.42], 15);
-  const board = ramp(3, 30, 0.18, [0.12, 0.3], 15);
-  const yellow = ramp(2, 48, 0.85, [0.45, 0.6], 8);
-  const ink = [225, 222, 210];
+  const pole = ramp(3, 26, 0.42, [0.24, 0.44], 15);           // plain wood
+  const board = ramp(3, 32, 0.45, [0.4, 0.62], 15);
+  const ink = ramp(1, 25, 0.35, [0.22, 0.22])[0];             // dark brown lettering
   b.rect(14, 2, 18, H - 2, pole[1]);
   b.rect(14, 2, 15, H - 2, pole[2]);                             // lit left side
   b.rect(17, 2, 18, H - 2, pole[0]);
@@ -255,11 +254,11 @@ function signpost() {
     }
     b.rect(x0, y0, x1, y0 + 1, board[2]);                        // top edge catches the light
     b.rect(x0, y1 - 1, x1, y1, board[0]);
-    // Yellow triangle near the pointing end, pointing the same way
+    // Painted triangle near the pointing end, pointing the same way
     const mid = (y0 + y1) / 2, tx = right ? x1 - 4 : x0 + 1;
     for (let i = 0; i < 3; i++) {
       const x = right ? tx + i : tx + 2 - i, h = 3 - i;
-      b.rect(x, Math.round(mid - h + 0.5) - 0, x + 1, Math.round(mid + h - 0.5), yellow[1]);
+      b.rect(x, Math.round(mid - h + 0.5) - 0, x + 1, Math.round(mid + h - 0.5), ink);
     }
     for (let i = 0; i < 2; i++) b.rect(right ? x0 + 3 + i * 7 : x0 + 4 + i * 7, y0 + 3, (right ? x0 + 3 + i * 7 : x0 + 4 + i * 7) + 5, y0 + 4, ink); // text lines
     b.pset(right ? x0 + 2 : x1 - 3, y0 + 2, [170, 170, 165]);    // bolt
