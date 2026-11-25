@@ -14,7 +14,7 @@ public class TownBuilding : MonoBehaviour
         Gizmos.color = enterable ? new Color(0.9f, 0.5f, 0.3f, 0.8f) : new Color(0.5f, 0.6f, 0.9f, 0.8f);
         Gizmos.DrawWireCube(centre, new Vector3(size.x, size.y, 0f));
 #if UNITY_EDITOR
-        UnityEditor.Handles.Label(centre, number + " " + name);
+        UnityEditor.Handles.Label(centre, name);   // the object name already starts with the number
 #endif
     }
 }
