@@ -105,8 +105,8 @@ Inventory (`InventoryManager/UI/Row`, `ItemData`), `Door` + `SceneTransition` (s
 - [ ] Props as root + Visual: Mailbox, ModeBoard, Bed, LetterDesk, EggShelf.
 - [ ] Interior tilemap floors + camera bounds per interior scene.
 - [x] Spawn NavTargets on every door (Import Layout CSV).
-- [ ] **StairZone** script (slow down + optional visual offset on stairs) — stairs to the school hill.
-- [ ] Update How to Play text (Memo = Tab).
+- [x] **StairZone** script (slows the player; `StairZone_Hill` on the school hill path). Visual offset on stairs not done.
+- [x] Update How to Play text (Memo = Tab, switch = Q, modes).
 - [x] Playtest + commit (errand test list passed, 2026-11-25).
 
 ## 7. Town plan (96×64 tiles) — layout v2
