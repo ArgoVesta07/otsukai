@@ -10,7 +10,7 @@ Repo: https://github.com/ArgoVesta07/otsukai — Oput commits with GitHub Deskto
 
 - Explain in **Indonesian**, casual (lu/gw). Go **step by step** and wait for "lanjut" before the next step.
 - Be concise. Unity instructions must be concrete (which object, which component, which field).
-- **Code, comments and Debug.Log in English.**
+- **Code, comments and Debug.Log in English.** Also every name Claude makes: GameObjects, assets, CSV columns and values, generator labels. Only the chat with Oput is Indonesian.
 - **Everything editable in the Inspector / prefabs / ScriptableObjects.** No hardcoded text, numbers or visuals in scripts.
 - **All player-facing text in English + Japanese** (see Localization). Japanese = standard style, kanji, short (panels are small). Not childish hiragana-only.
 - When replacing a script, give the whole file and say what changed. Keep old serialized fields alive with `[FormerlySerializedAs]` when renaming.
@@ -111,8 +111,8 @@ Inventory (`InventoryManager/UI/Row`, `ItemData`), `Door` + `SceneTransition` (s
 
 ## 7. Town plan (96×64 tiles) — layout v2
 
-Source of truth: `Design/denah-v2/` → `Denah_Kota_v2.png` (map), `Denah_Kota_v2.csv` (positions, doors, Target Ids,
-walking distance from home), `denah.py` (edit positions here, then run `python3 Design/denah-v2/denah.py Design/denah-v2`:
+Source of truth: `Design/town-v2/` → `Town_Map_v2.png` (map), `Town_Map_v2.csv` (positions, doors, Target Ids,
+walking distance from home), `town_map.py` (edit positions here, then run `python3 Design/town-v2/town_map.py Design/town-v2`:
 checks overlaps / doors-on-road and rewrites PNG + CSV).
 Into the scene: **Otsukai > Town > Import Layout CSV** (TownBuilding placeholders, NavTarget at doors, ErrandSpot where
 errands happen; re-running moves existing objects). CSV positions are Unity coords (centre 0,0), root = bottom-centre.

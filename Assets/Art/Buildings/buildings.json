@@ -1,0 +1,284 @@
+{
+ "items": [
+  {
+   "key": "1",
+   "name": "Supermarket",
+   "w": 8,
+   "h": 6,
+   "wall": 3.94
+  },
+  {
+   "key": "2",
+   "name": "Player House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "3",
+   "name": "Konbini",
+   "w": 7,
+   "h": 5,
+   "wall": 3.5
+  },
+  {
+   "key": "4",
+   "name": "Station",
+   "w": 14,
+   "h": 6,
+   "wall": 4.31
+  },
+  {
+   "key": "5",
+   "name": "Daiso",
+   "w": 8,
+   "h": 5,
+   "wall": 3.5
+  },
+  {
+   "key": "6",
+   "name": "Hospital",
+   "w": 12,
+   "h": 8,
+   "wall": 5.75
+  },
+  {
+   "key": "8",
+   "name": "Post Office",
+   "w": 7,
+   "h": 5,
+   "wall": 3.5
+  },
+  {
+   "key": "10",
+   "name": "Pharmacy",
+   "w": 4,
+   "h": 4,
+   "wall": 2.81
+  },
+  {
+   "key": "11",
+   "name": "Library",
+   "w": 10,
+   "h": 6,
+   "wall": 4.31
+  },
+  {
+   "key": "13",
+   "name": "Flower Shop",
+   "w": 4,
+   "h": 5,
+   "wall": 3.31
+  },
+  {
+   "key": "14",
+   "name": "Restaurant",
+   "w": 6,
+   "h": 5,
+   "wall": 3.31
+  },
+  {
+   "key": "15",
+   "name": "Laundromat",
+   "w": 4,
+   "h": 5,
+   "wall": 3.5
+  },
+  {
+   "key": "16",
+   "name": "Drugstore",
+   "w": 8,
+   "h": 5,
+   "wall": 3.5
+  },
+  {
+   "key": "17",
+   "name": "Koban",
+   "w": 4,
+   "h": 4,
+   "wall": 2.56
+  },
+  {
+   "key": "18",
+   "name": "Home Center",
+   "w": 12,
+   "h": 7,
+   "wall": 4.75
+  },
+  {
+   "key": "19",
+   "name": "Trash Point",
+   "w": 3,
+   "h": 2,
+   "wall": 1.75
+  },
+  {
+   "key": "20",
+   "name": "Bakery",
+   "w": 4,
+   "h": 5,
+   "wall": 3.31
+  },
+  {
+   "key": "21",
+   "name": "Butcher",
+   "w": 4,
+   "h": 5,
+   "wall": 3.31
+  },
+  {
+   "key": "22",
+   "name": "Greengrocer",
+   "w": 4,
+   "h": 5,
+   "wall": 3.31
+  },
+  {
+   "key": "23",
+   "name": "City Hall",
+   "w": 12,
+   "h": 7,
+   "wall": 5.06
+  },
+  {
+   "key": "24",
+   "name": "Cake Shop",
+   "w": 4,
+   "h": 5,
+   "wall": 3.31
+  },
+  {
+   "key": "25",
+   "name": "Coffee Shop",
+   "w": 4,
+   "h": 5,
+   "wall": 3.31
+  },
+  {
+   "key": "26",
+   "name": "Dagashiya",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "12a",
+   "name": "Elementary School",
+   "w": 14,
+   "h": 8,
+   "wall": 5.75
+  },
+  {
+   "key": "12b",
+   "name": "Junior High",
+   "w": 11,
+   "h": 7,
+   "wall": 5.06
+  },
+  {
+   "key": "12c",
+   "name": "High School",
+   "w": 11,
+   "h": 7,
+   "wall": 5.06
+  },
+  {
+   "key": "2b",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2c",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2d",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2e",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2f",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2g",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2h",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2i",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2j",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "2k",
+   "name": "House",
+   "w": 5,
+   "h": 5,
+   "wall": 3
+  },
+  {
+   "key": "19b",
+   "name": "Trash Point",
+   "w": 3,
+   "h": 2,
+   "wall": 1.75
+  },
+  {
+   "key": "Mailbox",
+   "name": "Postbox",
+   "w": 1,
+   "h": 1.5,
+   "wall": 0.38
+  },
+  {
+   "key": "BusStop",
+   "name": "Bus Stop",
+   "w": 1,
+   "h": 2,
+   "wall": 0.19
+  },
+  {
+   "key": "ModeBoard",
+   "name": "Mode Board",
+   "w": 2,
+   "h": 2,
+   "wall": 0.25
+  }
+ ]
+}

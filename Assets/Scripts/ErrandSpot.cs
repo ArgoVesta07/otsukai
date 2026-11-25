@@ -63,7 +63,8 @@ public class ErrandSpot : MonoBehaviour
 
         var k = Keyboard.current;
         if (k == null || !k.eKey.wasPressedThisFrame) return;
-        if (busy || !InteractionState.TryUseInteract()) return;
+        // Only take the press when this spot does something, so a ShopItem on the same shelf still gets it
+        if (busy || (!needed && !HasInspectLines) || !InteractionState.TryUseInteract()) return;
 
         if (needed)
         {

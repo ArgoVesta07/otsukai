@@ -25,16 +25,26 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // The active player (set while it is enabled), so lookups don't search the scene every frame
+    public static PlayerMovement Current { get; private set; }
+
     // The player in the loaded scene, found by component (not by object name), or null
     public static GameObject FindPlayer()
     {
-        PlayerMovement player = FindAnyObjectByType<PlayerMovement>();
+        PlayerMovement player = Current != null ? Current : FindAnyObjectByType<PlayerMovement>();
         return player != null ? player.gameObject : null;
     }
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    void OnEnable() => Current = this;
+
+    void OnDisable()
+    {
+        if (Current == this) Current = null;
     }
 
     void Update()

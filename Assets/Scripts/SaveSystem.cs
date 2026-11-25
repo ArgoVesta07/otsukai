@@ -136,7 +136,18 @@ public static class SaveSystem
         lastSavedFingerprint = Fingerprint(data);
 
         // The save was made in another scene (e.g. House): go there with the loading screen
-        if (!string.IsNullOrEmpty(data.sceneName) && data.sceneName != scene.name && SceneTransition.Instance != null)
+        Vector3 position = data.playerPosition;
+        bool otherScene = !string.IsNullOrEmpty(data.sceneName) && data.sceneName != scene.name;
+
+        // Saved in a scene that is now a room in the town (House, Supermarket): start at that room's entrance
+        if (otherScene && !Application.CanStreamedLevelBeLoaded(data.sceneName))
+        {
+            NavTarget entrance = NavTarget.FindExact((data.sceneName == "House" ? "Home" : data.sceneName) + "/In");
+            if (entrance != null) position = entrance.transform.position;
+            otherScene = false;
+        }
+
+        if (otherScene && SceneTransition.Instance != null)
         {
             SceneTransition.Instance.GoToScene(data.sceneName, data.playerPosition);
         }
@@ -144,7 +155,8 @@ public static class SaveSystem
         {
             GameObject player = PlayerMovement.FindPlayer();
             if (player != null)
-                player.transform.position = data.playerPosition;
+                player.transform.position = position;
+            RoomArea.ApplyCamera(position);   // saved inside a room: use its camera bounds
         }
 
         Debug.Log("Game loaded (saved " + data.savedAt + ").");

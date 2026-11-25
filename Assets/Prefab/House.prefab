@@ -94,6 +94,51 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 5, y: 3}
   m_EdgeRadius: 0
+--- !u!1 &2962912508629158068
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5826367886847816568}
+  - component: {fileID: 1730259368041026726}
+  m_Layer: 0
+  m_Name: Out
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5826367886847816568
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2962912508629158068}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7002872903015484580}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1730259368041026726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2962912508629158068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c9542e5a73e89343bb522c034c68ede, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NavTarget
+  targetId: Home/Out
 --- !u!1 &6091272055487102723
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,7 +220,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -7435372754168082463, guid: 56051f34e5206e148ba8cc4d68830da8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cda4db540c05d2743bdd10d5bc31274d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -218,7 +263,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5826367886847816568}
   m_Father: {fileID: 3368038860578933678}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &946717236368335087
@@ -279,10 +325,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a65a629ef166fa43b23a5031f8085c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Door
+  stayInScene: 1
   sceneToLoad: 
+  spawnAtTarget: Home/In
+  spawnOffset: {x: 0, y: 0}
   spawnPosition: {x: 0, y: -7, z: 0}
   promptOffset: {x: 0, y: 1.2}
   promptText: '[E] Enter'
+  placeName: 
 --- !u!114 &8349002314369525202
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,0 +1,95 @@
+{
+ "items": [
+  {
+   "key": "FloorWood",
+   "name": "Wood floor",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "FloorTile",
+   "name": "Tile floor",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "WallFaceUpper",
+   "name": "Wall (upper)",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "WallFace",
+   "name": "Wall",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "WallTop",
+   "name": "Wall top",
+   "w": 1,
+   "h": 1,
+   "wall": 1
+  },
+  {
+   "key": "Counter",
+   "name": "Counter",
+   "w": 3,
+   "h": 2,
+   "wall": 0.75
+  },
+  {
+   "key": "Shelf",
+   "name": "Shelf",
+   "w": 2,
+   "h": 2,
+   "wall": 0.63
+  },
+  {
+   "key": "Bookshelf",
+   "name": "Bookshelf",
+   "w": 2,
+   "h": 2,
+   "wall": 0.63
+  },
+  {
+   "key": "Bench",
+   "name": "Bench",
+   "w": 2,
+   "h": 1,
+   "wall": 0.31
+  },
+  {
+   "key": "CafeTable",
+   "name": "Cafe table",
+   "w": 2,
+   "h": 2,
+   "wall": 0.5
+  },
+  {
+   "key": "Washer",
+   "name": "Washing machine",
+   "w": 1,
+   "h": 2,
+   "wall": 0.63
+  },
+  {
+   "key": "Bed",
+   "name": "Bed",
+   "w": 1,
+   "h": 2,
+   "wall": 0.88
+  },
+  {
+   "key": "Desk",
+   "name": "Writing desk",
+   "w": 2,
+   "h": 1,
+   "wall": 0.38
+  }
+ ]
+}
