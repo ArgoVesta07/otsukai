@@ -82,6 +82,7 @@ function house(wT, hT, opt = {}) {
   const roof = ramp(5, opt.roofHue ?? 215, opt.roofSat ?? 0.28, [0.16, 0.52], opt.roofShift ?? 60);
   const wall = opt.wood ? ramp(4, 28, 0.38, [0.3, 0.52], 12) : ramp(4, opt.wallHue ?? 40, opt.wallSat ?? 0.3, [0.58, 0.86], 8);
   const eave = Math.round(H * (opt.roofShare ?? 0.4)), inset = 3;
+  b.wall = H - eave;
   tiledRoof(b, W, 2, eave, roof);
 
   b.rect(inset, eave, W - inset, H, wall[2]);
@@ -128,6 +129,7 @@ function store(wT, hT, opt = {}) {
   const wall = ramp(3, 40, 0.12, [0.66, 0.86], 8);
   const sign = ramp(3, opt.signHue ?? 355, opt.signSat ?? 0.62, opt.signLight ?? [0.32, 0.55], 15);
   const eave = Math.round(H * (opt.roofShare ?? 0.34)), signH = opt.signH ?? 8;
+  b.wall = H - eave;
   flatRoof(b, W, 2, eave);
 
   b.rect(0, eave, W, eave + signH, sign[1]);
@@ -158,6 +160,7 @@ function civic(wT, hT, opt = {}) {
   const W = wT * T, H = hT * T, b = new P.Buf(W, H);
   const wall = ramp(3, opt.wallHue ?? 40, opt.wallSat ?? 0.08, opt.wallLight ?? [0.62, 0.84], 10);
   const eave = Math.round(H * (opt.roofShare ?? 0.28));
+  b.wall = H - eave;
   flatRoof(b, W, 2, eave);
 
   b.rect(0, eave, W, H, wall[1]);
@@ -197,6 +200,36 @@ function gomi(wT, hT) {
   for (let x = 4; x < W - 2; x += 4) b.rect(x, 6, x + 1, H - 6, net[0]);
   for (let y = 9; y < H - 6; y += 4) b.rect(2, y, W - 2, y + 1, net[0]);
   b.rect(2, 4, W - 2, 6, net[2]);
+  b.wall = H - 4;
+  return b;
+}
+
+// Japanese post box: red, rounded top, slot, white plate. 1 x 1.5 tiles
+function mailbox() {
+  const W = T, H = Math.round(T * 1.5), b = new P.Buf(W, H);
+  const red = ramp(4, 358, 0.7, [0.25, 0.6], 15);
+  b.rect(3, 4, 13, H - 3, red[2]);
+  b.rect(4, 3, 12, 4, red[2]); b.rect(5, 2, 11, 3, red[3]);   // rounded top
+  b.rect(3, 4, 4, H - 3, red[3]);                               // lit left side
+  b.rect(12, 4, 13, H - 3, red[1]);                             // shaded right side
+  b.rect(5, 7, 11, 8, red[0]);                                  // letter slot
+  b.rect(6, 11, 10, 15, [235, 230, 220]);                       // white plate
+  b.rect(6, 15, 10, 16, red[1]);
+  b.rect(4, H - 3, 12, H - 1, STONE[0]);                        // base
+  b.wall = 6;
+  return b;
+}
+
+// Bus stop sign: pole with a round blue sign and a small timetable box. 1 x 2 tiles
+function busStop() {
+  const W = T, H = 2 * T, b = new P.Buf(W, H);
+  const blue = ramp(3, 210, 0.6, [0.3, 0.6], 15);
+  b.rect(7, 8, 9, H - 2, FRAME[1]);                             // pole
+  b.blob(8, 6, 5.5, blue[1]); b.blob(7.5, 5.5, 3.5, blue[2]);   // sign
+  b.rect(5, 5, 11, 7, [235, 235, 230]);                         // white band on the sign
+  b.rect(5, 16, 11, 22, [220, 220, 210]); b.rect(5, 16, 11, 17, FRAME[0]); // timetable
+  b.rect(4, H - 2, 12, H, STONE[0]);                            // base
+  b.wall = 3;
   return b;
 }
 
@@ -241,17 +274,27 @@ const BUILDINGS = {
   BUILDINGS[no] = ["Rumah", () => house(5, 5, NEIGHBOUR_ROOFS[i % 3])];
 });
 BUILDINGS["19b"] = ["Sampah", () => gomi(3, 2)];
+// Props from the town layout spots
+BUILDINGS["Mailbox"] = ["Kotak pos", mailbox];
+BUILDINGS["BusStop"] = ["Halte bus", busStop];
 
-module.exports = { house, store, civic, gomi, BUILDINGS };
+module.exports = { house, store, civic, gomi, mailbox, busStop, BUILDINGS };
 
 if (require.main === module) {
-  const items = Object.entries(BUILDINGS).filter(([no]) => !/^2[c-k]$|^19b$/.test(no) || no === "2c" || no === "2d")
+  const items = Object.entries(BUILDINGS).filter(([no]) => !/^2[e-k]$|^19b$/.test(no))
     .map(([no, [name, make]]) => ({ buf: make(), label: no + " " + name }));
   if (process.argv[2] === "export") {
     const out = path.join(__dirname, "../../Assets/Art/Buildings");
     fs.mkdirSync(out, { recursive: true });
-    for (const [no, [name, make]] of Object.entries(BUILDINGS)) P.save(make(), path.join(out, "Building_" + no + ".png"));
-    console.log("exported", Object.keys(BUILDINGS).length, "sprites to", out);
+    // One PNG per sprite, plus buildings.json with each size and wall height (tiles) for the wall collider
+    const meta = [];
+    for (const [key, [name, make]] of Object.entries(BUILDINGS)) {
+      const buf = make();
+      P.save(buf, path.join(out, "Building_" + key + ".png"));
+      meta.push({ key, name, w: buf.w / T, h: buf.h / T, wall: Math.round((buf.wall ?? buf.h) / T * 100) / 100 });
+    }
+    fs.writeFileSync(path.join(out, "buildings.json"), JSON.stringify({ items: meta }, null, 1) + "\n");
+    console.log("exported", meta.length, "sprites to", out);
   } else {
     P.save(P.sheet(items, { cols: 6, scale: 2, gap: 8 }), path.join(__dirname, "preview_buildings.png"));
     for (const it of items) {

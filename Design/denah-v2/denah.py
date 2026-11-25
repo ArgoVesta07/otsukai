@@ -153,12 +153,14 @@ with open(OUT+"/Denah_Kota_v2.csv","w",newline="") as f:
                     dist[b[0]], tid, spot])
     # spots and mailboxes: size 0x0, root = the spot itself
     extra = SPOTS + [("Kotak pos","Mailbox",x,y) for n,x,y in props if n=="Kotak pos"]
+    # Bus stops: decoration only (no Target Id, no errand spot), listed last so the T numbers above stay the same
+    extra += [("Halte bus","",x,y) for n,x,y in props if n=="Halte bus"]
     for i,(name,tid,x,y) in enumerate(extra, 1):
         t = (math.floor(x), math.floor(y))
         assert t not in occupied, ("spot inside a building", name)
         near = min(from_home.get((t[0]+dx,t[1]+dy), 10**9) for dx in (-1,0,1) for dy in (-1,0,1))
         assert near < 10**9, ("spot not reachable", name)
-        w.writerow([f"T{i}",name,"0x0","Tidak",x,y,x,y,near,tid,"Ya"])
+        w.writerow([f"T{i}",name,"0x0","Tidak",x,y,x,y,near,tid,"Ya" if tid else "Tidak"])
 
 # ---- picture
 col = {"rail":"#7d7068","river":"#7fb2dc","bridge":"#a9845c","path":"#e2cfa9","road":"#b9b5ad","plaza":"#d9cfc3",

@@ -46,3 +46,5 @@ T5,Kotak pos,0x0,Tidak,-9.5,20.5,-9.5,20.5,71,Mailbox,Ya
 T6,Kotak pos,0x0,Tidak,-4.5,1.5,-4.5,1.5,51,Mailbox,Ya
 T7,Kotak pos,0x0,Tidak,-25.5,-23.5,-25.5,-23.5,6,Mailbox,Ya
 T8,Kotak pos,0x0,Tidak,-25.5,11.5,-25.5,11.5,46,Mailbox,Ya
+T9,Halte bus,0x0,Tidak,7.5,20.5,7.5,20.5,82,,Tidak
+T10,Halte bus,0x0,Tidak,29.5,0.5,29.5,0.5,84,,Tidak
