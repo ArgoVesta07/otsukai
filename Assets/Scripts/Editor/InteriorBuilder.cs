@@ -285,11 +285,15 @@ public static class InteriorBuilder
     static TileBase TileFor(string key)
     {
         string path = TileFolder + key + ".asset";
-        Tile tile = AssetDatabase.LoadAssetAtPath<Tile>(path);
-        if (tile != null) return tile;
-
         Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(ArtFolder + "Interior_" + key + ".png");
         if (sprite == null) { Debug.LogWarning("Interiors: " + ArtFolder + "Interior_" + key + ".png is missing or not a sprite."); return null; }
+
+        Tile tile = AssetDatabase.LoadAssetAtPath<Tile>(path);
+        if (tile != null)
+        {
+            if (tile.sprite != sprite) { tile.sprite = sprite; EditorUtility.SetDirty(tile); }   // the sprite was re-imported
+            return tile;
+        }
 
         if (!AssetDatabase.IsValidFolder("Assets/Art/Interior/Tiles")) AssetDatabase.CreateFolder("Assets/Art/Interior", "Tiles");
         tile = ScriptableObject.CreateInstance<Tile>();
