@@ -93,8 +93,8 @@ Inventory (`InventoryManager/UI/Row`, `ItemData`), `Door` + `SceneTransition` (s
 | Phase | Content | Status |
 |---|---|---|
 | 1 | Core systems (above) | **Done** |
-| 1.5 | Tidy map, sizes, prefabs | **In progress** |
-| 2 | Content: more errands, requests, incidents, NPCs | Next |
+| 1.5 | Tidy map, sizes, prefabs | **Done** (2026-11-25) |
+| 2 | Content: more errands, requests, incidents, NPCs | **In progress** (17 otsukai + 7 requests done) |
 | 3 | Story mode flow | Later |
 | 4 | Final visuals (art, layered art, time-of-day lighting) | Later |
 | 5 | Polish: UI animation, sound | Later |
@@ -102,8 +102,8 @@ Inventory (`InventoryManager/UI/Row`, `ItemData`), `Door` + `SceneTransition` (s
 ### Phase 1.5 checklist
 - [x] Resize town to **96×64 tiles** (centre 0,0): Otsukai > Town > Paint Ground And Roads, CameraFollow `boundsSize` 96×64, `MapBounds` Edge Collider 2D around ±48 / ±32.
 - [x] Place buildings / NPCs per the town plan (section 7). Neighbour houses 2b–2k are still placeholders (need a door-less decor house prefab).
-- [ ] Props as root + Visual: Mailbox, ModeBoard, Bed, LetterDesk, EggShelf.
-- [ ] Interior tilemap floors + camera bounds per interior scene.
+- [x] Props as root + Visual (Otsukai > Tools > Convert To Root + Visual): ModeBoard ×2, Bed, LetterDesk, Egg/Milk/BreadShelf. Mailboxes are Town Layout spots (no art yet).
+- [x] Interior tilemap floors (`FloorTiles`, Otsukai > Tools > Fit Floor To Walls) + camera bounds: House 22×22, Supermarket 22×12.
 - [x] Spawn NavTargets on every door (Import Layout CSV).
 - [x] **StairZone** script (slows the player; `StairZone_Hill` on the school hill path). Visual offset on stairs not done.
 - [x] Update How to Play text (Memo = Tab, switch = Q, modes).
