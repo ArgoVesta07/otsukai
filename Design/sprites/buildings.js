@@ -1,5 +1,5 @@
 // Blockout building sprites for Otsukai (16 px per tile, 3/4 top-down view, light from the top left).
-// Every sprite has its door at the bottom centre, like the doors in Design/denah-v2.
+// Every sprite has its door at the bottom centre, like the doors in Design/town-v2.
 // Run: node Design/sprites/buildings.js          -> preview_buildings.png (review sheet)
 //      node Design/sprites/buildings.js export   -> one PNG per building in Assets/Art/Buildings/
 const fs = require("fs");
@@ -271,7 +271,7 @@ function signpost() {
   return out;
 }
 
-// --- Every building of layout v2, by its number in Design/denah-v2 --------------------------------
+// --- Every building of layout v2, by its number in Design/town-v2 --------------------------------
 
 const NEIGHBOUR_ROOFS = [
   { roofHue: 215, roofSat: 0.28 },                  // blue-grey

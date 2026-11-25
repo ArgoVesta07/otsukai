@@ -144,13 +144,13 @@ assert all(v is not None for v in dist.values()), dist
 # ---- CSV
 # Ground areas in tile coordinates (x, y = bottom-left tile), for Otsukai > Town > Paint Ground And Roads.
 # Later rows paint over earlier ones.
-with open(OUT+"/Denah_Kota_v2_ground.csv","w",newline="") as f:
+with open(OUT+"/Town_Map_v2_ground.csv","w",newline="") as f:
     w = csv.writer(f)
     w.writerow(["Kind","X","Y","W","H","Label"])
     w.writerow(["ground",W0,H0,W1-W0,H1-H0,"Whole map (Ground tilemap)"])
     for k,(x0,y0,w_,h_),lab in ground:
         w.writerow([k,x0,y0,w_,h_,lab])
-with open(OUT+"/Denah_Kota_v2.csv","w",newline="") as f:
+with open(OUT+"/Town_Map_v2.csv","w",newline="") as f:
     w = csv.writer(f)
     w.writerow(["No","Name","Size (tiles)","Enterable","Root X","Root Y","Door X","Door Y",
                 "Walk From Home (tiles)","Target Id","Errand Spot","Label"])
@@ -198,7 +198,7 @@ ax.set_title("Otsukai town v2 · 96x64 tiles · blue numbers = walking distance 
 import matplotlib.patches as mp
 handles=[mp.Patch(color=c,label=l) for l,c in [("House","#f1c46d"),("Shop","#e8896a"),("Shotengai","#e7a1c4"),("Public","#91aee0"),("Trash point","#4f7d4f"),("Postbox","#d64545"),("Bus stop","#2f6db5"),("Door (enter)","#6b4423"),("Door (decor)","#9a9a9a")]]
 ax.legend(handles=handles,loc="upper left",bbox_to_anchor=(1.01,1),fontsize=8,frameon=False)
-plt.tight_layout(); plt.savefig(OUT+"/Denah_Kota_v2.png")
+plt.tight_layout(); plt.savefig(OUT+"/Town_Map_v2.png")
 for b in sorted(B,key=lambda b: dist[b[0]]):
     if b[6] or b[0] in ("12a","4"): print(f"{b[0]:>4} {b[1]:<13} {dist[b[0]]:>3} tile  ~{dist[b[0]]/5:4.1f}s @speed5")
 

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-// Otsukai > Town > Import Layout CSV: reads Design/denah-v2/Denah_Kota_v2.csv (made by denah.py) and puts,
+// Otsukai > Town > Import Layout CSV: reads Design/town-v2/Town_Map_v2.csv (made by town_map.py) and puts,
 // under a "Town Layout" object in the open scene:
 //   - one TownBuilding placeholder per building (footprint drawn in the Scene view),
 //   - a NavTarget (HUD arrow) at each door that has a Target Id,
@@ -14,7 +14,7 @@ using UnityEngine;
 // Running it again moves the existing objects instead of making new ones, so art placed under them stays.
 public static class TownLayoutImporter
 {
-    const string DefaultCsv = "Design/denah-v2/Denah_Kota_v2.csv";
+    const string DefaultCsv = "Design/town-v2/Town_Map_v2.csv";
     const string RootName = "Town Layout";
 
     [MenuItem("Otsukai/Town/Import Layout CSV")]
@@ -41,7 +41,7 @@ public static class TownLayoutImporter
         {
             if (!col.ContainsKey(c))
             {
-                Debug.LogWarning("Town layout: column '" + c + "' is missing. Run denah.py again.");
+                Debug.LogWarning("Town layout: column '" + c + "' is missing. Run town_map.py again.");
                 return;
             }
         }

@@ -6,11 +6,11 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 // Otsukai > Town > Paint Ground And Roads: paints the "Ground" and "Road" tilemaps of the open scene from
-// Design/denah-v2/Denah_Kota_v2_ground.csv (written by denah.py). Both tilemaps are cleared first; Undo works.
+// Design/town-v2/Town_Map_v2_ground.csv (written by town_map.py). Both tilemaps are cleared first; Undo works.
 // Pick the tiles in the window. Defaults are the placeholder tiles of the "Town" palette.
 public class TownGroundPainter : EditorWindow
 {
-    const string CsvPath = "Design/denah-v2/Denah_Kota_v2_ground.csv";
+    const string CsvPath = "Design/town-v2/Town_Map_v2_ground.csv";
     const string TileFolder = "Assets/Art/Tilesets/TIles/";
 
     TileBase groundTile;   // "ground" row: whole map, on the Ground tilemap
@@ -48,7 +48,7 @@ public class TownGroundPainter : EditorWindow
 
         if (!File.Exists(CsvPath))
         {
-            Debug.LogWarning("Town paint: " + CsvPath + " not found. Run denah.py first.");
+            Debug.LogWarning("Town paint: " + CsvPath + " not found. Run town_map.py first.");
             return;
         }
 
