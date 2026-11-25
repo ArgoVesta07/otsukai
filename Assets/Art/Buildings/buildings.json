@@ -272,6 +272,13 @@
    "w": 1,
    "h": 2,
    "wall": 0.19
+  },
+  {
+   "key": "ModeBoard",
+   "name": "Papan Mode",
+   "w": 2,
+   "h": 2,
+   "wall": 0.25
   }
  ]
 }

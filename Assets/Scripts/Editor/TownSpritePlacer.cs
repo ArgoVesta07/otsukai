@@ -11,7 +11,8 @@ using UnityEngine.Rendering;
 //   root (Sorting Group + wall collider, only the lower wall part, not the roof) + child "Visual" (SpriteRenderer).
 // Buildings use their number (TownBuilding), spots use their name ("Kotak pos", "Halte bus").
 // The player's house (2) and Supa (1) are prefabs with their own Visual: the sprite is set in the prefab asset.
-// Mode boards (27, 27b) are skipped; they have their own objects. Running it again updates what is there.
+// Mode boards are their own objects (ModeSelectPoint), not Town Layout ones: they get the "ModeBoard" signpost
+// sprite in their Visual and a small solid collider at the pole. Running it again updates what is there.
 public static class TownSpritePlacer
 {
     const string RootName = "Town Layout";
@@ -77,6 +78,21 @@ public static class TownSpritePlacer
             placed++;
         }
 
+        // Mode boards: signpost sprite
+        if (items.TryGetValue("ModeBoard", out Item board))
+        {
+            Sprite boardSprite = AssetDatabase.LoadAssetAtPath<Sprite>(Folder + "Building_ModeBoard.png");
+            foreach (GameObject sceneRoot in root.scene.GetRootGameObjects())
+            {
+                foreach (ModeSelectPoint point in sceneRoot.GetComponentsInChildren<ModeSelectPoint>())
+                {
+                    if (boardSprite == null) break;
+                    DressBoard(point.gameObject, boardSprite, board);
+                    placed++;
+                }
+            }
+        }
+
         EditorSceneManager.MarkSceneDirty(root.scene);
         Debug.Log("Town sprites: " + placed + " placed" + (missing > 0 ? ", " + missing + " missing (see warnings)." : "."));
     }
@@ -122,6 +138,39 @@ public static class TownSpritePlacer
         float height = isSpot ? Mathf.Min(item.wall, 0.5f) : item.wall;
         wall.size = new Vector2(width, height);
         wall.offset = new Vector2(0f, baseY + height / 2f);
+    }
+
+    // Root stays where it is (bottom centre); Visual gets the sprite at scale 1. Only the solid collider is resized:
+    // the trigger that opens the mode menu keeps its size.
+    static void DressBoard(GameObject go, Sprite sprite, Item item)
+    {
+        Transform visual = go.transform.Find(VisualName);
+        SpriteRenderer sr = visual != null ? visual.GetComponent<SpriteRenderer>() : go.GetComponent<SpriteRenderer>();
+        if (sr == null)
+        {
+            Debug.LogWarning("Town sprites: '" + go.name + "' has no SpriteRenderer. Run Otsukai > Tools > Convert To Root + Visual on it first.", go);
+            return;
+        }
+        if (visual == null)
+        {
+            Debug.LogWarning("Town sprites: '" + go.name + "' has no Visual child. Run Otsukai > Tools > Convert To Root + Visual on it first.", go);
+            return;
+        }
+
+        Undo.RecordObject(visual, "Place building sprites");
+        visual.localPosition = new Vector3(0f, item.h / 2f, 0f);
+        visual.localRotation = Quaternion.identity;
+        visual.localScale = Vector3.one;
+        Undo.RecordObject(sr, "Place building sprites");
+        sr.sprite = sprite;
+
+        foreach (BoxCollider2D c in go.GetComponents<BoxCollider2D>())
+        {
+            if (c.isTrigger) continue;
+            Undo.RecordObject(c, "Place building sprites");
+            c.size = new Vector2(0.5f, item.wall);
+            c.offset = new Vector2(0f, item.wall / 2f);
+        }
     }
 
     static void SetPrefabSprite(string prefabPath, Sprite sprite)
