@@ -820,6 +820,98 @@ MonoBehaviour:
     m_Localized: Could you run to the ATM and get some cash?
     m_Metadata:
       m_Items: []
+  - m_Id: 12194803520598016
+    m_Localized: Birthday cake
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735360
+    m_Localized: Coffee
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735361
+    m_Localized: Wallet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735362
+    m_Localized: Umbrella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735363
+    m_Localized: Post the letter for {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735364
+    m_Localized: Could you drop this letter in a postbox for me?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735365
+    m_Localized: Pick up {giver}'s medicine at the pharmacy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735366
+    m_Localized: Bring the medicine to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735367
+    m_Localized: My back hurts today... Could you pick up my medicine at the pharmacy?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735368
+    m_Localized: Buy flowers for {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735369
+    m_Localized: It's our anniversary. Could you buy flowers for my wife?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735370
+    m_Localized: Pick up the cake at the cake shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735371
+    m_Localized: Bring the cake to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735372
+    m_Localized: I ordered a cake for my grandson's birthday. Could you pick it up?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735373
+    m_Localized: Buy a coffee at the coffee shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735374
+    m_Localized: Bring the coffee to {giver}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735375
+    m_Localized: I'm stuck here working. Could you get me a coffee?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735376
+    m_Localized: Take the wallet to the koban
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735377
+    m_Localized: I found this wallet on the street. Could you take it to the koban?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735378
+    m_Localized: Take the umbrella to the station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194803566735379
+    m_Localized: My son forgot his umbrella. Could you take it to him at the station?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194833686032384
+    m_Localized: Sister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12194833686032385
+    m_Localized: Dog
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
