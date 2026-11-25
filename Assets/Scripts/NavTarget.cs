@@ -28,25 +28,32 @@ public class NavTarget : MonoBehaviour
         return null;
     }
 
-    // Returns the active target with this id that is closest to the player (the first one without a player), or null.
-    // Closest matters when the same id is in town and inside a room: in town the arrow goes to the shop door,
-    // inside the shop it goes to the counter.
+    // Returns the active target with this id for where the player is, or null. The same id can be in town (a shop
+    // door) and inside a room (its counter): inside that room the arrow goes to the counter, anywhere else in town
+    // to the door. Order: a target in the player's room, then one in town, then any; the closest of those.
     public static NavTarget Find(string id)
     {
         if (string.IsNullOrEmpty(id)) return null;
 
         PlayerMovement player = PlayerMovement.Current;
+        if (player == null) return FindExact(id);
+
+        Vector2 p = player.transform.position;
+        RoomArea playerRoom = RoomArea.At(p);
         NavTarget best = null;
+        int bestRank = int.MaxValue;
         float bestDistance = float.MaxValue;
 
         foreach (NavTarget t in all)
         {
             if (t.targetId != id) continue;
-            if (player == null) return t;
 
-            float d = (t.transform.position - player.transform.position).sqrMagnitude;
-            if (d < bestDistance)
+            RoomArea room = RoomArea.At(t.transform.position);
+            int rank = room == playerRoom ? 0 : room == null ? 1 : 2;
+            float d = ((Vector2)t.transform.position - p).sqrMagnitude;
+            if (rank < bestRank || (rank == bestRank && d < bestDistance))
             {
+                bestRank = rank;
                 bestDistance = d;
                 best = t;
             }

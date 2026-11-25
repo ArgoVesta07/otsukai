@@ -77,13 +77,7 @@ public class SceneTransition : MonoBehaviour
         if (player != null) player.transform.position = new Vector3(pos.x, pos.y, player.transform.position.z);
         Physics2D.SyncTransforms();
 
-        CameraFollow cam = Camera.main != null ? Camera.main.GetComponent<CameraFollow>() : null;
-        if (cam != null)
-        {
-            RoomArea room = target != null ? target.GetComponentInParent<RoomArea>() : null;
-            if (room != null) cam.SetBounds(room.Center, room.size);
-            else cam.ResetBounds();
-        }
+        RoomArea.ApplyCamera(pos);
 
         yield return null;   // the camera catches up before the fade opens
         yield return Fade(fadeGroup, 0f, roomFadeDuration);
@@ -153,6 +147,7 @@ public class SceneTransition : MonoBehaviour
             player.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, player.transform.position.z);
         else
             Debug.LogWarning("Player object was not found in the scene!");
+        RoomArea.ApplyCamera(spawnPosition);
 
         yield return Fade(0f);
 
