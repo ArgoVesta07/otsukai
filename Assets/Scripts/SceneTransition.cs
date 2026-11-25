@@ -13,6 +13,12 @@ public class SceneTransition : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.3f;
     [SerializeField] private float minLoadingTime = 0.8f;
 
+    [Header("Doors inside the same scene")]
+    [Tooltip("Fade for doors with Stay In Scene. Empty = a plain full-screen fade is made at start.")]
+    [SerializeField] private CanvasGroup fadeGroup;
+    [SerializeField] private Color fadeColor = Color.black;
+    [SerializeField] private float roomFadeDuration = 0.15f;
+
     private bool isLoading;
 
     void Awake()
@@ -31,6 +37,58 @@ public class SceneTransition : MonoBehaviour
             loadingGroup.alpha = 0f;
             loadingGroup.blocksRaycasts = false;
         }
+
+        if (fadeGroup == null) fadeGroup = MakeFade();
+    }
+
+    // A full-screen image on its own canvas, above everything
+    CanvasGroup MakeFade()
+    {
+        GameObject go = new GameObject("RoomFade", typeof(Canvas), typeof(CanvasGroup), typeof(Image));
+        go.transform.SetParent(transform, false);
+        Canvas canvas = go.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 32000;
+        go.GetComponent<Image>().color = fadeColor;
+        CanvasGroup group = go.GetComponent<CanvasGroup>();
+        group.alpha = 0f;
+        group.blocksRaycasts = false;
+        return group;
+    }
+
+    // Door with Stay In Scene: short fade, move the player, switch the camera to the room's bounds (or back to town)
+    public void MoveInScene(string spawnAtTarget, Vector2 offset, Vector3 fallback)
+    {
+        if (isLoading) return;
+        StartCoroutine(MoveRoutine(spawnAtTarget, offset, fallback));
+    }
+
+    IEnumerator MoveRoutine(string spawnAtTarget, Vector2 offset, Vector3 fallback)
+    {
+        isLoading = true;
+        InteractionState.IsInteracting = true;
+        yield return Fade(fadeGroup, 1f, roomFadeDuration);
+
+        NavTarget target = NavTarget.FindExact(spawnAtTarget);
+        Vector3 pos = target != null ? target.transform.position + (Vector3)offset : fallback;
+        if (target == null) Debug.LogWarning("No NavTarget '" + spawnAtTarget + "' in this scene, using the Door's Spawn Position.");
+
+        GameObject player = PlayerMovement.FindPlayer();
+        if (player != null) player.transform.position = new Vector3(pos.x, pos.y, player.transform.position.z);
+        Physics2D.SyncTransforms();
+
+        CameraFollow cam = Camera.main != null ? Camera.main.GetComponent<CameraFollow>() : null;
+        if (cam != null)
+        {
+            RoomArea room = target != null ? target.GetComponentInParent<RoomArea>() : null;
+            if (room != null) cam.SetBounds(room.Center, room.size);
+            else cam.ResetBounds();
+        }
+
+        yield return null;   // the camera catches up before the fade opens
+        yield return Fade(fadeGroup, 0f, roomFadeDuration);
+        InteractionState.IsInteracting = false;
+        isLoading = false;
     }
 
     public void GoToScene(string sceneName, Vector3 spawnPosition)
@@ -83,7 +141,7 @@ public class SceneTransition : MonoBehaviour
 
         if (!string.IsNullOrEmpty(spawnAtTarget))
         {
-            NavTarget target = NavTarget.Find(spawnAtTarget);
+            NavTarget target = NavTarget.FindExact(spawnAtTarget);
             if (target != null)
                 spawnPosition = target.transform.position + (Vector3)offset;
             else
@@ -110,20 +168,25 @@ public class SceneTransition : MonoBehaviour
 
     IEnumerator Fade(float target)
     {
-        if (loadingGroup == null) yield break;
+        yield return Fade(loadingGroup, target, fadeDuration);
+    }
 
-        loadingGroup.blocksRaycasts = true;
-        float start = loadingGroup.alpha;
+    static IEnumerator Fade(CanvasGroup group, float target, float duration)
+    {
+        if (group == null) yield break;
+
+        group.blocksRaycasts = true;
+        float start = group.alpha;
         float t = 0f;
 
-        while (t < fadeDuration)
+        while (t < duration)
         {
             t += Time.unscaledDeltaTime;
-            loadingGroup.alpha = Mathf.Lerp(start, target, t / fadeDuration);
+            group.alpha = Mathf.Lerp(start, target, t / duration);
             yield return null;
         }
 
-        loadingGroup.alpha = target;
-        loadingGroup.blocksRaycasts = target > 0f;
+        group.alpha = target;
+        group.blocksRaycasts = target > 0f;
     }
 }

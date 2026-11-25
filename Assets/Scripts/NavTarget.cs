@@ -19,16 +19,39 @@ public class NavTarget : MonoBehaviour
         all.Remove(this);
     }
 
-    // Returns the first active target with this id in the loaded scene, or null.
+    // First active target with this id, wherever the player is (spawn points; their ids are unique)
+    public static NavTarget FindExact(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+        foreach (NavTarget t in all)
+            if (t.targetId == id) return t;
+        return null;
+    }
+
+    // Returns the active target with this id that is closest to the player (the first one without a player), or null.
+    // Closest matters when the same id is in town and inside a room: in town the arrow goes to the shop door,
+    // inside the shop it goes to the counter.
     public static NavTarget Find(string id)
     {
         if (string.IsNullOrEmpty(id)) return null;
 
+        PlayerMovement player = PlayerMovement.Current;
+        NavTarget best = null;
+        float bestDistance = float.MaxValue;
+
         foreach (NavTarget t in all)
         {
-            if (t.targetId == id) return t;
+            if (t.targetId != id) continue;
+            if (player == null) return t;
+
+            float d = (t.transform.position - player.transform.position).sqrMagnitude;
+            if (d < bestDistance)
+            {
+                bestDistance = d;
+                best = t;
+            }
         }
 
-        return null;
+        return best;
     }
 }
