@@ -17,6 +17,7 @@ No,Nama,Ukuran (tile),Bisa masuk,Posisi root Unity X,Posisi root Unity Y,Pintu X
 3,Konbini,7x5,Ya,-25.5,1,-25.5,0.5,31,Konbini,Ya
 2j,Rumah,5x5,Tidak,-19.5,1,-19.5,0.5,37,,Tidak
 8,Yuubin+ATM,7x5,Ya,-8.5,1,-8.5,0.5,48,PostOffice,Ya
+27b,Papan Mode,2x2,Ya,3.0,1,2.5,0.5,59,ModeBoard,Tidak
 5,Daiso,8x5,Ya,8.0,1,7.5,0.5,64,Daiso,Ya
 2k,Rumah,5x5,Tidak,17.5,1,17.5,0.5,74,,Tidak
 6,Rumah Sakit,12x8,Ya,36.0,1,35.5,0.5,92,Hospital,Ya

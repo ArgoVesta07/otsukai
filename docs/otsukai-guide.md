@@ -154,7 +154,7 @@ Layout concept (north → south):
 | 24 | Cake shop | 4×5 | yes | -18, 11 | CakeShop | 52 |
 | 25 | Coffee shop | 4×5 | yes | -10, 11 | Cafe | 56 |
 | 26 | Dagashiya | 5×5 | yes | 5.5, -27 | Dagashiya | 34 |
-| 27 | Mode board (ModeSelectPoint) | 2×2 | E | -21, -27 | ModeBoard | 7 |
+| 27 / 27b | Mode board (ModeSelectPoint), near home / town centre | 2×2 | E | -21, -27 / 3, 1 | ModeBoard | 7 / 59 |
 
 Walk = tiles door-to-door from the player's door (player speed 5 → divide by 5 for seconds).
 "Enter = no" buildings are decorative doors for now (can be changed). Map size may be tightened after playtest if walking feels too long.
