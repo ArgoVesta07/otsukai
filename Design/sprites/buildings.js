@@ -233,6 +233,45 @@ function busStop() {
   return b;
 }
 
+// Signpost (mode board): red-brown pole with two dark arrow boards and yellow tips. 2 x 2 tiles
+function signpost() {
+  const W = 2 * T, H = 2 * T, b = new P.Buf(W, H);
+  const pole = ramp(3, 8, 0.5, [0.2, 0.42], 15);
+  const board = ramp(3, 30, 0.18, [0.12, 0.3], 15);
+  const yellow = ramp(2, 48, 0.85, [0.45, 0.6], 8);
+  const ink = [225, 222, 210];
+  b.rect(14, 2, 18, H - 2, pole[1]);
+  b.rect(14, 2, 15, H - 2, pole[2]);                             // lit left side
+  b.rect(17, 2, 18, H - 2, pole[0]);
+  b.rect(14, 1, 18, 2, board[1]);                                // cap
+  // Board pointing right (upper) and board pointing left (lower)
+  const arrow = (x0, x1, y0, y1, right) => {
+    const tip = 4;
+    for (let y = y0; y < y1; y++) {
+      const half = (y1 - y0) / 2, d = Math.abs(y + 0.5 - (y0 + half));
+      const reach = Math.round(tip * (1 - d / half));
+      const a = right ? x0 : x0 - reach, c = right ? x1 + reach : x1;
+      b.rect(a, y, c, y + 1, board[1]);
+    }
+    b.rect(x0, y0, x1, y0 + 1, board[2]);                        // top edge catches the light
+    b.rect(x0, y1 - 1, x1, y1, board[0]);
+    // Yellow triangle near the pointing end, pointing the same way
+    const mid = (y0 + y1) / 2, tx = right ? x1 - 4 : x0 + 1;
+    for (let i = 0; i < 3; i++) {
+      const x = right ? tx + i : tx + 2 - i, h = 3 - i;
+      b.rect(x, Math.round(mid - h + 0.5) - 0, x + 1, Math.round(mid + h - 0.5), yellow[1]);
+    }
+    for (let i = 0; i < 2; i++) b.rect(right ? x0 + 3 + i * 7 : x0 + 4 + i * 7, y0 + 3, (right ? x0 + 3 + i * 7 : x0 + 4 + i * 7) + 5, y0 + 4, ink); // text lines
+    b.pset(right ? x0 + 2 : x1 - 3, y0 + 2, [170, 170, 165]);    // bolt
+  };
+  arrow(4, 26, 4, 12, true);
+  arrow(6, 27, 14, 21, false);
+  b.rect(12, H - 2, 20, H, STONE[0]);                            // base
+  const out = P.smoothEdge(b);                                   // no one-pixel points on the arrow tips
+  out.wall = 4;
+  return out;
+}
+
 // --- Every building of layout v2, by its number in Design/denah-v2 --------------------------------
 
 const NEIGHBOUR_ROOFS = [
@@ -277,13 +316,20 @@ BUILDINGS["19b"] = ["Sampah", () => gomi(3, 2)];
 // Props from the town layout spots
 BUILDINGS["Mailbox"] = ["Kotak pos", mailbox];
 BUILDINGS["BusStop"] = ["Halte bus", busStop];
+BUILDINGS["ModeBoard"] = ["Papan Mode", signpost];
 
-module.exports = { house, store, civic, gomi, mailbox, busStop, BUILDINGS };
+module.exports = { house, store, civic, gomi, mailbox, busStop, signpost, BUILDINGS };
 
 if (require.main === module) {
   const items = Object.entries(BUILDINGS).filter(([no]) => !/^2[e-k]$|^19b$/.test(no))
     .map(([no, [name, make]]) => ({ buf: make(), label: no + " " + name }));
-  if (process.argv[2] === "export") {
+  if (process.argv[2] === "signpost") {
+    const s = signpost();
+    const scene = new P.Buf(64, 48); scene.clear([120, 170, 90]);
+    for (let y = 0; y < s.h; y++) for (let x = 0; x < s.w; x++) { const c = s.px[y * s.w + x]; if (c >>> 24) scene.px[(y + 8) * scene.w + x + 16] = c; }
+    P.save(P.sheet([{ buf: scene, label: "1x", scale: 2 }, { buf: s, label: "6x", scale: 6 }]), path.join(__dirname, "preview_signpost.png"));
+    console.log("edge", JSON.stringify(P.edgeCheck(s)).slice(0, 80));
+  } else if (process.argv[2] === "export") {
     const out = path.join(__dirname, "../../Assets/Art/Buildings");
     fs.mkdirSync(out, { recursive: true });
     // One PNG per sprite, plus buildings.json with each size and wall height (tiles) for the wall collider

@@ -9,7 +9,8 @@ using UnityEngine;
 // under a "Town Layout" object in the open scene:
 //   - one TownBuilding placeholder per building (footprint drawn in the Scene view),
 //   - a NavTarget (HUD arrow) at each door that has a Target Id,
-//   - an ErrandSpot with a trigger there when "Errand Spot" = Ya (not for buildings with a Door to an interior).
+//   - an ErrandSpot with a trigger there when "Errand Spot" = Ya (not for buildings with a Door to an interior),
+//     with the "Label" column as its Idle Label (the name shown when the player stands there; kept if already set).
 // Running it again moves the existing objects instead of making new ones, so art placed under them stays.
 public static class TownLayoutImporter
 {
@@ -69,6 +70,7 @@ public static class TownLayoutImporter
             Vector3 doorPos = new Vector3(Num(v[col["Pintu X"]]), Num(v[col["Pintu Y"]]), 0f);
             string targetId = v[col["Target Id"]].Trim();
             bool spot = v[col["Errand Spot"]].Trim() == "Ya";
+            string label = col.TryGetValue("Label", out int li) && li < v.Length ? v[li].Trim() : "";
 
             GameObject building = Child(root.transform, objName);
             Undo.RecordObject(building.transform, "Import town layout");
@@ -86,7 +88,7 @@ public static class TownLayoutImporter
             }
 
             if (!string.IsNullOrEmpty(targetId))
-                PlaceDoor(building.transform, doorPos, targetId, spot);
+                PlaceDoor(building.transform, doorPos, targetId, spot, label);
 
             count++;
         }
@@ -96,7 +98,7 @@ public static class TownLayoutImporter
         Debug.Log("Town layout: " + count + " objects placed from " + path + ".");
     }
 
-    static void PlaceDoor(Transform building, Vector3 pos, string targetId, bool spot)
+    static void PlaceDoor(Transform building, Vector3 pos, string targetId, bool spot, string label)
     {
         GameObject door = Child(building, "Door " + targetId);
         Undo.RecordObject(door.transform, "Import town layout");
@@ -121,6 +123,7 @@ public static class TownLayoutImporter
         if (es == null) es = Undo.AddComponent<ErrandSpot>(door);
         Undo.RecordObject(es, "Import town layout");
         es.targetId = targetId;
+        if (string.IsNullOrEmpty(es.idleLabel)) es.idleLabel = label;
     }
 
     static GameObject Child(Transform parent, string childName)

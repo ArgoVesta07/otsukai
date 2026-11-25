@@ -1,50 +1,50 @@
-No,Nama,Ukuran (tile),Bisa masuk,Posisi root Unity X,Posisi root Unity Y,Pintu X,Pintu Y,Jarak jalan dari rumah (tile),Target Id,Errand Spot
-4,Stasiun,14x6,Tidak,0.0,23,-0.5,22.5,78,Station,Ya
-17,Koban,4x4,Tidak,12.0,19,11.5,18.5,86,Koban,Ya
-12c,SMA,11x7,Tidak,19.5,21,19.5,20.5,96,HighSchool,Ya
-12b,SMP,11x7,Tidak,34.5,21,34.5,20.5,111,JuniorHigh,Ya
-2i,Rumah,5x5,Tidak,-14.5,19,-14.5,18.5,66,,Tidak
-11,Perpus,10x6,Ya,-26.0,19,-26.5,18.5,54,Library,Ya
-23,Shiyakusho,12x7,Ya,-41.0,19,-41.5,18.5,59,CityHall,Ya
-13,Bunga,4x5,Ya,-22.0,11,-22.5,10.5,50,FlowerShop,Ya
-24,Kue,4x5,Ya,-18.0,11,-18.5,10.5,52,CakeShop,Ya
-20,Roti,4x5,Ya,-14.0,11,-14.5,10.5,52,Bakery,Ya
-25,Kopi,4x5,Ya,-10.0,11,-10.5,10.5,56,Cafe,Ya
-14,Restoran,6x5,Ya,-5.0,11,-5.5,10.5,61,Restaurant,Ya
-21,Daging,4x5,Ya,4.0,11,3.5,10.5,70,Butcher,Ya
-22,Yaoya,4x5,Ya,8.0,11,7.5,10.5,74,Greengrocer,Ya
-16,Drugstore,8x5,Ya,14.0,11,13.5,10.5,80,Drugstore,Ya
-3,Konbini,7x5,Ya,-25.5,1,-25.5,0.5,31,Konbini,Ya
-2j,Rumah,5x5,Tidak,-19.5,1,-19.5,0.5,37,,Tidak
-8,Yuubin+ATM,7x5,Ya,-8.5,1,-8.5,0.5,48,PostOffice,Ya
-27b,Papan Mode,2x2,Ya,3.0,1,2.5,0.5,59,ModeBoard,Tidak
-5,Daiso,8x5,Ya,8.0,1,7.5,0.5,64,Daiso,Ya
-2k,Rumah,5x5,Tidak,17.5,1,17.5,0.5,74,,Tidak
-6,Rumah Sakit,12x8,Ya,36.0,1,35.5,0.5,92,Hospital,Ya
-10,Apotek,4x4,Ya,45.0,1,44.5,0.5,101,Pharmacy,Ya
-2b,Rumah,5x5,Tidak,-44.5,-11,-44.5,-11.5,32,,Tidak
-2c,Rumah,5x5,Tidak,-38.5,-11,-38.5,-11.5,26,,Tidak
-2d,Rumah,5x5,Tidak,-28.5,-11,-28.5,-11.5,22,,Tidak
-15,Laundry,4x5,Ya,-22.0,-11,-22.5,-11.5,22,Laundry,Ya
-2h,Rumah,5x5,Tidak,-16.5,-11,-16.5,-11.5,28,,Tidak
-1,Supa,8x6,Ya,8.0,-11,7.5,-11.5,52,Supermarket,Tidak
-18,Juntendo,12x7,Ya,38.0,-11,37.5,-11.5,82,HomeCenter,Ya
-2e,Rumah,5x5,Tidak,-44.5,-27,-44.5,-27.5,16,,Tidak
-2f,Rumah,5x5,Tidak,-38.5,-27,-38.5,-27.5,10,,Tidak
-2,Rumah Player,5x5,Ya,-28.5,-27,-28.5,-27.5,0,Home,Tidak
-19,Sampah,3x2,Ya,-23.5,-27,-23.5,-27.5,5,TrashArea,Ya
-27,Papan Mode,2x2,Ya,-21.0,-27,-21.5,-27.5,7,ModeBoard,Tidak
-12a,SD,14x8,Tidak,-12.0,-27,-12.5,-27.5,16,SchoolGate,Ya
-26,Dagashiya,5x5,Ya,5.5,-27,5.5,-27.5,34,Dagashiya,Ya
-2g,Rumah,5x5,Tidak,12.5,-27,12.5,-27.5,41,,Tidak
-19b,Sampah,3x2,Ya,18.5,-27,18.5,-27.5,47,TrashAreaEast,Ya
-T1,ATM,0x0,Tidak,-6.5,0.5,-6.5,0.5,48,ATM,Ya
-T2,Taman barat,0x0,Tidak,-41.5,-21.5,-41.5,-21.5,18,ParkWest,Ya
-T3,Jembatan,0x0,Tidak,-0.5,-27.5,-0.5,-27.5,27,Bridge,Ya
-T4,Taman tepi sungai,0x0,Tidak,37.5,-27.5,37.5,-27.5,65,ParkRiverside,Ya
-T5,Kotak pos,0x0,Tidak,-9.5,20.5,-9.5,20.5,71,Mailbox,Ya
-T6,Kotak pos,0x0,Tidak,-4.5,1.5,-4.5,1.5,51,Mailbox,Ya
-T7,Kotak pos,0x0,Tidak,-25.5,-23.5,-25.5,-23.5,6,Mailbox,Ya
-T8,Kotak pos,0x0,Tidak,-25.5,11.5,-25.5,11.5,46,Mailbox,Ya
-T9,Halte bus,0x0,Tidak,7.5,20.5,7.5,20.5,82,,Tidak
-T10,Halte bus,0x0,Tidak,29.5,0.5,29.5,0.5,84,,Tidak
+No,Nama,Ukuran (tile),Bisa masuk,Posisi root Unity X,Posisi root Unity Y,Pintu X,Pintu Y,Jarak jalan dari rumah (tile),Target Id,Errand Spot,Label
+4,Stasiun,14x6,Tidak,0.0,23,-0.5,22.5,78,Station,Ya,Station
+17,Koban,4x4,Tidak,12.0,19,11.5,18.5,86,Koban,Ya,Koban
+12c,SMA,11x7,Tidak,19.5,21,19.5,20.5,96,HighSchool,Ya,High School
+12b,SMP,11x7,Tidak,34.5,21,34.5,20.5,111,JuniorHigh,Ya,Junior High School
+2i,Rumah,5x5,Tidak,-14.5,19,-14.5,18.5,66,,Tidak,
+11,Perpus,10x6,Ya,-26.0,19,-26.5,18.5,54,Library,Ya,Library
+23,Shiyakusho,12x7,Ya,-41.0,19,-41.5,18.5,59,CityHall,Ya,City Hall
+13,Bunga,4x5,Ya,-22.0,11,-22.5,10.5,50,FlowerShop,Ya,Flower Shop
+24,Kue,4x5,Ya,-18.0,11,-18.5,10.5,52,CakeShop,Ya,Cake Shop
+20,Roti,4x5,Ya,-14.0,11,-14.5,10.5,52,Bakery,Ya,Bakery
+25,Kopi,4x5,Ya,-10.0,11,-10.5,10.5,56,Cafe,Ya,Coffee Shop
+14,Restoran,6x5,Ya,-5.0,11,-5.5,10.5,61,Restaurant,Ya,Restaurant
+21,Daging,4x5,Ya,4.0,11,3.5,10.5,70,Butcher,Ya,Butcher
+22,Yaoya,4x5,Ya,8.0,11,7.5,10.5,74,Greengrocer,Ya,Greengrocer
+16,Drugstore,8x5,Ya,14.0,11,13.5,10.5,80,Drugstore,Ya,Drugstore
+3,Konbini,7x5,Ya,-25.5,1,-25.5,0.5,31,Konbini,Ya,Convenience Store
+2j,Rumah,5x5,Tidak,-19.5,1,-19.5,0.5,37,,Tidak,
+8,Yuubin+ATM,7x5,Ya,-8.5,1,-8.5,0.5,48,PostOffice,Ya,Post Office
+27b,Papan Mode,2x2,Ya,3.0,1,2.5,0.5,59,ModeBoard,Tidak,
+5,Daiso,8x5,Ya,8.0,1,7.5,0.5,64,Daiso,Ya,100-Yen Shop
+2k,Rumah,5x5,Tidak,17.5,1,17.5,0.5,74,,Tidak,
+6,Rumah Sakit,12x8,Ya,36.0,1,35.5,0.5,92,Hospital,Ya,Hospital
+10,Apotek,4x4,Ya,45.0,1,44.5,0.5,101,Pharmacy,Ya,Pharmacy
+2b,Rumah,5x5,Tidak,-44.5,-11,-44.5,-11.5,32,,Tidak,
+2c,Rumah,5x5,Tidak,-38.5,-11,-38.5,-11.5,26,,Tidak,
+2d,Rumah,5x5,Tidak,-28.5,-11,-28.5,-11.5,22,,Tidak,
+15,Laundry,4x5,Ya,-22.0,-11,-22.5,-11.5,22,Laundry,Ya,Laundromat
+2h,Rumah,5x5,Tidak,-16.5,-11,-16.5,-11.5,28,,Tidak,
+1,Supa,8x6,Ya,8.0,-11,7.5,-11.5,52,Supermarket,Tidak,
+18,Juntendo,12x7,Ya,38.0,-11,37.5,-11.5,82,HomeCenter,Ya,Home Center
+2e,Rumah,5x5,Tidak,-44.5,-27,-44.5,-27.5,16,,Tidak,
+2f,Rumah,5x5,Tidak,-38.5,-27,-38.5,-27.5,10,,Tidak,
+2,Rumah Player,5x5,Ya,-28.5,-27,-28.5,-27.5,0,Home,Tidak,
+19,Sampah,3x2,Ya,-23.5,-27,-23.5,-27.5,5,TrashArea,Ya,Trash Collection Point
+27,Papan Mode,2x2,Ya,-21.0,-27,-21.5,-27.5,7,ModeBoard,Tidak,
+12a,SD,14x8,Tidak,-12.0,-27,-12.5,-27.5,16,SchoolGate,Ya,Elementary School
+26,Dagashiya,5x5,Ya,5.5,-27,5.5,-27.5,34,Dagashiya,Ya,Candy Shop
+2g,Rumah,5x5,Tidak,12.5,-27,12.5,-27.5,41,,Tidak,
+19b,Sampah,3x2,Ya,18.5,-27,18.5,-27.5,47,TrashAreaEast,Ya,Trash Collection Point
+T1,ATM,0x0,Tidak,-6.5,0.5,-6.5,0.5,48,ATM,Ya,ATM
+T2,Taman barat,0x0,Tidak,-41.5,-21.5,-41.5,-21.5,18,ParkWest,Ya,Park
+T3,Jembatan,0x0,Tidak,-0.5,-27.5,-0.5,-27.5,27,Bridge,Ya,Bridge
+T4,Taman tepi sungai,0x0,Tidak,37.5,-27.5,37.5,-27.5,65,ParkRiverside,Ya,Riverside Park
+T5,Kotak pos,0x0,Tidak,-9.5,20.5,-9.5,20.5,71,Mailbox,Ya,Postbox
+T6,Kotak pos,0x0,Tidak,-4.5,1.5,-4.5,1.5,51,Mailbox,Ya,Postbox
+T7,Kotak pos,0x0,Tidak,-34.5,-26.5,-34.5,-26.5,5,Mailbox,Ya,Postbox
+T8,Kotak pos,0x0,Tidak,-25.5,11.5,-25.5,11.5,46,Mailbox,Ya,Postbox
+T9,Halte bus,0x0,Tidak,7.5,20.5,7.5,20.5,82,,Tidak,
+T10,Halte bus,0x0,Tidak,29.5,0.5,29.5,0.5,84,,Tidak,
