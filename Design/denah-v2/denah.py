@@ -68,6 +68,7 @@ B = [
  ("2f","Rumah",5,5,-41,-27,False,"rumah"),
  ("2","Rumah Player",5,5,-31,-27,True,"rumah"),
  ("19","Sampah",3,2,-25,-27,True,"sampah"),
+ ("27","Papan Mode",2,2,-22,-27,True,"umum"),   # ModeSelectPoint board, next to home
  ("12a","SD",14,8,-19,-27,False,"umum"),
  ("26","Dagashiya",5,5,3,-27,True,"toko"),
  ("2g","Rumah",5,5,10,-27,False,"rumah"),
@@ -79,8 +80,8 @@ IDS = {"4":"Station","17":"Koban","12c":"HighSchool","12b":"JuniorHigh","3":"Kon
        "23":"CityHall","13":"FlowerShop","24":"CakeShop","20":"Bakery","25":"Cafe","14":"Restaurant",
        "21":"Butcher","22":"Greengrocer","16":"Drugstore","8":"PostOffice","5":"Daiso","6":"Hospital",
        "10":"Pharmacy","15":"Laundry","1":"Supermarket","18":"HomeCenter","2":"Home","19":"TrashArea",
-       "19b":"TrashAreaEast","12a":"SchoolGate","26":"Dagashiya"}
-HAS_INTERIOR = {"1","2"}
+       "19b":"TrashAreaEast","12a":"SchoolGate","26":"Dagashiya","27":"ModeBoard"}
+HAS_INTERIOR = {"1","2","27"}   # no ErrandSpot: their own script (Door / ModeSelectPoint) uses E
 # Extra errand spots that aren't building doors: name, id, x, y (tile centre)
 SPOTS = [("ATM","ATM",-6.5,0.5),("Taman barat","ParkWest",-41.5,-21.5),("Jembatan","Bridge",-0.5,-27.5),
          ("Taman tepi sungai","ParkRiverside",37.5,-27.5)]
