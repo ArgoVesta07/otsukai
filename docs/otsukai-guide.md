@@ -21,7 +21,7 @@ Repo: https://github.com/ArgoVesta07/otsukai — Oput commits with GitHub Deskto
 - Unity **6.6 (6000.6.4f1)**, **URP 2D** (Renderer2D).
 - Packages in use: Localization, TextMeshPro, Addressables (via Localization), Input System + legacy keys.
 - Font: **DotGothic16-Regular SDF** (dynamic, multi-atlas) is the TMP default; LiberationSans SDF as fallback. "Inconsistent result" import warning is harmless.
-- Scenes: `MainMenu`, `MainScene` (town), `House`, `Supermarket` (interiors).
+- Scenes: `MainMenu`, `MainScene` (town **and every interior**: rooms sit outside the map; the old `House` / `Supermarket` scenes were removed).
 - Data: `Assets/Data/` → `Errands/`, `Incidents/`, `Item/`, `Story/`, `TimeOfDay.asset`.
 
 ## 3. Pixel / visual standard (decided)
@@ -74,6 +74,23 @@ Mode switching: `ModeSelectPoint` (board in town) → `ModeSelectUI`. Inside a m
 - `QuestManager` tracks active errands; `NpcRegistry` (id, name, role, awayNavId); `NPC.TryErrandTalk` order: waiting step → classic otsukai → challenge → classic request panel → idle line.
 - `IncidentManager` / `IncidentData` (e.g. RoadClosed) = random obstacles (Challenge).
 - HUD (`GameHud`): task card + nav arrow priority: tracked errand → otsukai giver → challenge offer → bed.
+
+### Doors and rooms (Phase 2)
+- No scene loading in town: `Door` with **Stay In Scene** fades and moves the player to the NavTarget **Spawn At Target** (+ Spawn Offset). Town door → `<id>/In`, room exit → `<id>/Out`. **Place Name** shows above "[E] Enter".
+- `RoomArea` on each room = camera bounds while inside. `NavTarget.Find` prefers targets in the player's room, then town; inside a room the HUD arrow points at the exit when the goal is outside, and at the step's own target when it is inside.
+- Errand spots of shops are at the counter inside (`InteriorPlan.asset`); ATM, postboxes, parks, bridge and trash points stay outside.
+
+### Editor tools (menu Otsukai)
+| Menu | What it does |
+|---|---|
+| Town > Import Layout CSV | `Design/town-v2/Town_Map_v2.csv` → `Town Layout` placeholders, NavTargets, ErrandSpots + labels (renames by layout number) |
+| Town > Paint Ground And Roads | Ground/Road tilemaps from `Town_Map_v2_ground.csv` |
+| Town > Place Building Sprites | blockout sprites + wall colliders on `Town Layout`, House/Supermarket prefab sprites, signpost mode boards |
+| Town > Build Interiors | rooms from `Assets/Data/InteriorPlan.asset` (rebuilds `Interiors` + `InteriorTiles`, turns town doors into room doors) |
+| Town > Restyle Home And Supermarket | blockout look for `Rooms From Scenes` (moved once with Move House And Supermarket Into Town) |
+| Tools > Convert To Root + Visual / Fit Floor To Walls | prop structure / interior floor helpers |
+
+Sprites: `node Design/sprites/buildings.js` (preview) / `export` → `Assets/Art/Buildings`, `Assets/Art/Interior` (+ json with sizes and wall heights). Pixel art follows the **codixel** skill (`.claude/skills/codixel`): preview first, game files after approval.
 
 ### Other scripts
 Inventory (`InventoryManager/UI/Row`, `ItemData`), `Door` + `SceneTransition` (spawn by NavTarget id), `SaveSystem/SaveData/SavePoint`, `DialogBox`, `SpeechBubble`, `Toast`, `PeriodBanner`, `PauseMenu`, `MainMenu`, `InteractionPrompt`, `ErrandSpot` (proximity label, no E needed for simple info), `CameraFollow` (file `CameraFoll.cs`, map bounds), `StaticReset`, `GameFlags`.
@@ -159,7 +176,21 @@ Layout concept (north → south):
 Walk = tiles door-to-door from the player's door (player speed 5 → divide by 5 for seconds).
 "Enter = no" buildings are decorative doors for now (can be changed). Map size may be tightened after playtest if walking feels too long.
 
-## 8. Planned content (Phase 2) — errand ideas
+## 8. Next up — townspeople (agreed plan, not built yet)
+
+Only one Townsperson (Neighbor) gives the 7 requests. Plan: `Assets/Data/Townspeople.asset` (name, id, position, Visual tint, 2 idle lines en+ja) + **Otsukai > Town > Place Townspeople** (NPC prefab instances, Townsperson + Gives Errands, NavTarget id = NPC id).
+
+| Name (en / ja) | Who | Where (Unity x, y) |
+|---|---|---|
+| Mrs. Suzuki / 鈴木さん | housewife | shotengai by the bakery (-12.5, 9.5) |
+| Mr. Tanaka / 田中さん | office worker | ekimae plaza (-5.5, 20.5) |
+| Grandpa Kimura / 木村のおじいさん | retiree | west park (-39.5, -19.5) |
+| Ms. Yamada / 山田さん | librarian | in front of the library (-30.5, 17.5) |
+| Ken / 健太 | high-school student | school hill path (22.5, 19.5) |
+
+Open question: tie requests to fitting givers (Tanaka → coffee, Kimura → medicine)? Needs a small code change; otherwise any townsperson gives any request. After that: more incidents (rain, closed shop, loose dog, train crossing).
+
+## 9. Planned content (Phase 2) — errand ideas
 
 | Errand | Where | Notes |
 |---|---|---|
@@ -183,16 +214,19 @@ Walk = tiles door-to-door from the player's door (player speed 5 → divide by 5
 
 All of these exist as ErrandData assets (17). Escorts use `ErrandData.companionId` + a `Follower` component on the NPC / pet ("Giver", "Sibling", "Pet").
 
-## 9. Art plan (Phase 4, can start early)
+## 10. Art plan (Phase 4, can start early)
 
 - Claude generates clean 16 px base sprites with code (Python/PIL) at the exact sizes above; Oput adds detail / shading / finishing.
 - Order: house → supa → shotengai shops → civic buildings → props.
 - Later ideas: layered art (more "alive"), Light 2D time-of-day + lit windows/street lamps at night, blob shadows, bloom/vignette, swaying grass.
 
-## 10. Known gotchas
+## 11. Known gotchas
 
 - Scene references must point to **scene objects**, not prefab assets (e.g. NPC OtsukaiMarker).
 - Ground tilemap must stay below sprites (order -100) or it hides the player.
 - Errand step `navTargetId` left over from copied assets sends the arrow to the wrong NPC — clear it.
 - `LocalizeText` private fields are `[NonSerialized]` on purpose (domain reload was wiping them).
 - Unity "GUIView" assertion and DotGothic "inconsistent result" warnings are harmless.
+- New PNGs: commit the import rule (`BuildingSpriteImporter`) before the images, or they import at 100 PPU / Multiple.
+- Only one action per E press (`InteractionState.TryUseInteract`): take it only when the object really does something.
+- Template deny rules block `rm -rf`; use `git rm` or plain `rm` on single files.
